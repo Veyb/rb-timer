@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "bosses",
+  "info": {
+    "singularName": "boss",
+    "pluralName": "bosses",
+    "displayName": "Boss",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "quality": {
+      "type": "enumeration",
+      "enum": [
+        "none",
+        "blue",
+        "red",
+        "purple"
+      ],
+      "required": true,
+      "default": "blue"
+    },
+    "interval": {
+      "type": "integer",
+      "min": 1,
+      "required": true
+    },
+    "world": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "chance": {
+      "type": "integer",
+      "required": true,
+      "max": 100,
+      "min": 1
+    },
+    "time": {
+      "type": "datetime",
+      "required": true,
+      "default": "2022-01-31T21:00:00.000Z"
+    }
+  }
+}
