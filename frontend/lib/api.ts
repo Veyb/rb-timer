@@ -20,14 +20,18 @@ export async function get(type: string) {
   return transformBossListApiResponse(data);
 }
 
-export async function updateBossTime(bossId: string, time: string) {
+export async function updateBossTime(
+  bossId: string,
+  time: string,
+  approximately?: boolean
+) {
   const response = await fetch(`${API_URL}/bosses/${bossId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       // 'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: JSON.stringify({ data: { time } }), // body data type must match "Content-Type" header
+    body: JSON.stringify({ data: { time, approximately } }), // body data type must match "Content-Type" header
   });
   const data = await response.json();
   return transformBossApiResponse(data);

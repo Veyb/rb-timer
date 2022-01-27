@@ -48,10 +48,11 @@ export const RespawnTimeColumn = ({
     }
 
     if (bossNotRespawned) {
-      updateBossTime(boss.id, moment(boss.respawnTime).toISOString()).then(
-        (newBossApiInfo) =>
-          updateBossList(expandBoss({ ...newBossApiInfo, approximately: true }))
-      );
+      updateBossTime(
+        boss.id,
+        moment(boss.respawnTime).toISOString(),
+        true
+      ).then((newBossApiInfo) => updateBossList(expandBoss(newBossApiInfo)));
     }
   }, [boss, updateBossList]);
 

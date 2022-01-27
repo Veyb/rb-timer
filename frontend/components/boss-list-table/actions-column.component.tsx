@@ -22,8 +22,8 @@ export const ActionsColumn = ({ boss, updateBossList }: ActionsProps) => {
 
   const onKillClick = useCallback(async () => {
     const date = moment().seconds(0).toISOString();
-    const newBossApiInfo = await updateBossTime(boss.id, date);
-    const bossNewData = expandBoss({ ...newBossApiInfo, approximately: false });
+    const newBossApiInfo = await updateBossTime(boss.id, date, false);
+    const bossNewData = expandBoss(newBossApiInfo);
 
     updateBossList(bossNewData);
   }, [boss.id, updateBossList]);
@@ -33,9 +33,10 @@ export const ActionsColumn = ({ boss, updateBossList }: ActionsProps) => {
 
     const newBossApiInfo = await updateBossTime(
       boss.id,
-      moment(momentDate).toISOString()
+      moment(momentDate).toISOString(),
+      false
     );
-    const bossNewData = expandBoss({ ...newBossApiInfo, approximately: false });
+    const bossNewData = expandBoss(newBossApiInfo);
 
     updateBossList(bossNewData);
     setMomentDate(null);
