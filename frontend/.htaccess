@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Need to disable DirectoryIndex to avoid rewriting directory URL to index.html
+DirectoryIndex disabled
+
+# Redirect home page request to the NextJS server
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^(.*)$ http://127.0.0.1:3000/ [P,L]
+
+# Redirect all other requests to the NextJS server with the URI appended
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ http://127.0.0.1:3000/$1 [P,L]

@@ -1,0 +1,19 @@
+.table {
+  margin: 0 auto;
+  max-width: 1000px;
+}
+
+.approximately {
+  position: absolute;
+  top: 50%;
+  left: -15px;
+  transform: translateY(-50%);
+}
+
+.outDateIcon {
+  position: absolute;
+  top: 50%;
+  right: -25px;
+  color: #a61d24;
+  transform: translateY(-50%);
+}
