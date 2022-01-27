@@ -48,6 +48,11 @@
       "type": "datetime",
       "required": true,
       "default": "2022-01-31T21:00:00.000Z"
+    },
+    "approximately": {
+      "type": "boolean",
+      "default": false,
+      "required": true
     }
   }
 }
