@@ -14,7 +14,7 @@ interface ActionsProps {
 
 export const ActionsColumn = ({ boss, updateBossList }: ActionsProps) => {
   const [momentDate, setMomentDate] = useState(null);
-  const disabled = Date.now() < +new Date(boss.respawnTime);
+  const disabled = moment().valueOf() < moment(boss.respawnTime).valueOf();
 
   const onChange = useCallback((value) => {
     setMomentDate(value);
@@ -33,7 +33,7 @@ export const ActionsColumn = ({ boss, updateBossList }: ActionsProps) => {
 
     const newBossApiInfo = await updateBossTime(
       boss.id,
-      new Date(momentDate).toISOString()
+      moment(momentDate).toISOString()
     );
     const bossNewData = expandBoss({ ...newBossApiInfo, approximately: false });
 

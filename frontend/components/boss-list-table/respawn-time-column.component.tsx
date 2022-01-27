@@ -55,13 +55,13 @@ export const RespawnTimeColumn = ({
     }
   }, [boss, updateBossList]);
 
-  const date = new Date(boss.respawnTime);
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  const outOfDate = Date.now() > boss.respawnTime;
-  const timeOfDeath = new Date(boss.time);
-  const hoursOfDeath = timeOfDeath.getHours().toString().padStart(2, '0');
-  const minutesOfDeath = timeOfDeath.getMinutes().toString().padStart(2, '0');
+  const date = moment(boss.respawnTime);
+  const hours = date.hours().toString().padStart(2, '0');
+  const minutes = date.minutes().toString().padStart(2, '0');
+  const outOfDate = moment().valueOf() > boss.respawnTime;
+  const timeOfDeath = moment(boss.time);
+  const hoursOfDeath = timeOfDeath.hours().toString().padStart(2, '0');
+  const minutesOfDeath = timeOfDeath.minutes().toString().padStart(2, '0');
 
   return (
     <Tooltip
