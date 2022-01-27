@@ -58,7 +58,7 @@ const Main: NextPage<MainProps> = ({ data }) => {
 
 export default Main;
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const data = await get('bosses');
 
   return { props: { data } };

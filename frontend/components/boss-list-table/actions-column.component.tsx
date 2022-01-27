@@ -17,7 +17,7 @@ export const ActionsColumn = ({ boss, updateBossList }: ActionsProps) => {
   const disabled = moment().valueOf() < boss.respawnTime;
 
   const onChange = useCallback((value) => {
-    setMomentDate(value);
+    setMomentDate(value ? moment(value).seconds(0) : value);
   }, []);
 
   const onKillClick = useCallback(async () => {
