@@ -23,7 +23,7 @@ export async function get(type: string) {
 export async function updateBossTime(
   bossId: string,
   time: string,
-  approximately?: boolean
+  approximately: boolean = false
 ) {
   const response = await fetch(`${API_URL}/bosses/${bossId}`, {
     method: 'PUT',
