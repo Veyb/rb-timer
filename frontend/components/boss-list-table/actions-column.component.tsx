@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Space, Button, DatePicker } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
@@ -14,7 +14,7 @@ interface ActionsProps {
 
 export const ActionsColumn = ({ boss, updateBossList }: ActionsProps) => {
   const [momentDate, setMomentDate] = useState(null);
-  const disabled = moment().valueOf() < moment(boss.respawnTime).valueOf();
+  const disabled = moment().valueOf() < boss.respawnTime;
 
   const onChange = useCallback((value) => {
     setMomentDate(value);

@@ -15,7 +15,7 @@ export const transformBossListApiResponse = (data: any) => {
 };
 
 export async function get(type: string) {
-  const res = await fetch(`${API_URL}/${type}`);
+  const res = await fetch(`${API_URL}/${type}`, { cache: 'no-cache' });
   const data = await res.json();
   return transformBossListApiResponse(data);
 }
