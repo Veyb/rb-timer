@@ -1,6 +1,8 @@
+import getConfig from 'next/config';
 import { expandBoss, expandBossListAndSort } from './utils';
 
-const API_URL = 'https://api.l2m-db.ru/api';
+const { env } = getConfig();
+const API_URL = process.env.API_URL || env.API_URL;
 
 export const transformApiResponse = ({
   data: { attributes, ...rest },

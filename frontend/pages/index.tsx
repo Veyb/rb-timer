@@ -5,8 +5,9 @@ import Head from 'next/head';
 
 import { BossListTable } from '../components/boss-list-table';
 import { Header } from '../components/header';
-import { Boss } from '../types';
+import type { Boss } from '../types';
 import { getBossList } from '../lib/api';
+import { sortBossList } from '../lib/utils';
 
 import styles from '../styles/main.module.css';
 
@@ -22,7 +23,7 @@ const Main: NextPage<MainProps> = ({ data }) => {
       const index = bossList.findIndex(({ id }) => id === boss.id);
       const newBossList = bossList.slice();
       newBossList[index] = boss;
-      setBossList(newBossList);
+      setBossList(sortBossList(newBossList));
     },
     [bossList, setBossList]
   );

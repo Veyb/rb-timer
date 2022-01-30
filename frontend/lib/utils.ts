@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { BossApiResponse } from '../types';
+import { Boss, BossApiResponse } from '../types';
 
 export const expandBoss = (boss: BossApiResponse) => {
   const date = moment(boss.time);
@@ -8,6 +8,10 @@ export const expandBoss = (boss: BossApiResponse) => {
   return { ...boss, respawnTime: +date };
 };
 
+export function sortBossList(boss: Boss[]) {
+  return boss.sort((a, b) => a.respawnTime - b.respawnTime);
+}
+
 export const expandBossListAndSort = (bossList: BossApiResponse[]) => {
-  return bossList.map(expandBoss).sort((a, b) => a.respawnTime - b.respawnTime);
+  return sortBossList(bossList.map(expandBoss));
 };
