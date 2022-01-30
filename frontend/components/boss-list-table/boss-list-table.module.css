@@ -1,19 +1,58 @@
 .table {
   margin: 0 auto;
-  max-width: 1000px;
+  max-width: 100rem;
+  min-width: 47rem;
+}
+
+.rowAnimation {
+  animation-name: blink;
+  animation-duration: 2000ms;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes blink {
+  0% {
+    background-color: none;
+  }
+  50% {
+    background-color: #262626;
+  }
+  100% {
+    background-color: none;
+  }
+}
+
+.respawnColumn.respawnColumn {
+  position: relative;
+  padding-left: 4rem;
+  padding-right: 4rem;
+  width: 16rem;
+  background: hsla(0, 0%, 100%, 0.01);
+}
+
+.remainingButton {
+  position: absolute;
+  top: 50%;
+  right: 0.8rem;
+  transform: translateY(-50%);
 }
 
 .approximately {
   position: absolute;
   top: 50%;
-  left: -15px;
+  left: -1rem;
   transform: translateY(-50%);
 }
 
 .outDateIcon {
   position: absolute;
   top: 50%;
-  right: -25px;
+  right: -2.5rem;
   color: #a61d24;
   transform: translateY(-50%);
+}
+
+.actionsColumn {
+  width: 40rem;
 }

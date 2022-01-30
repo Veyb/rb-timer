@@ -4,18 +4,18 @@ import Head from 'next/head';
 // import Image from 'next/image';
 
 import { BossListTable } from '../components/boss-list-table';
-import { Boss, BossApiResponse } from '../types';
-import { expandBossList } from '../lib/utils';
-import { get } from '../lib/api';
+import { Header } from '../components/header';
+import { Boss } from '../types';
+import { getBossList } from '../lib/api';
 
 import styles from '../styles/main.module.css';
 
 interface MainProps {
-  data: BossApiResponse[];
+  data: Boss[];
 }
 
 const Main: NextPage<MainProps> = ({ data }) => {
-  const [bossList, setBossList] = useState<Boss[]>(expandBossList(data));
+  const [bossList, setBossList] = useState<Boss[]>(data);
 
   const updateBossList = useCallback(
     (boss: Boss) => {
@@ -29,12 +29,10 @@ const Main: NextPage<MainProps> = ({ data }) => {
 
   useEffect(() => {
     const refetchTimer = setInterval(() => {
-      get('bosses').then((data) => setBossList(expandBossList(data)));
+      getBossList().then((data) => setBossList(data));
     }, 10000);
     return () => clearInterval(refetchTimer);
   }, []);
-
-  // console.log(bossList.map(({ time }) => time));
 
   return (
     <div className={styles.container}>
@@ -47,6 +45,7 @@ const Main: NextPage<MainProps> = ({ data }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <Header />
       <main>
         <BossListTable bossList={bossList} updateBossList={updateBossList} />
       </main>
@@ -59,7 +58,7 @@ const Main: NextPage<MainProps> = ({ data }) => {
 export default Main;
 
 export async function getServerSideProps() {
-  const data = await get('bosses');
+  const data = await getBossList();
 
   return { props: { data } };
 }

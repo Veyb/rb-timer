@@ -4,13 +4,41 @@ import { useEffect } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 import { Boss } from '../../types';
-import { expandBoss } from '../../lib/utils';
+import { HOUR, MINUTE } from '../../constants';
 import { updateBossTime } from '../../lib/api';
 
 import styles from './boss-list-table.module.css';
 
+function getTooltipText(boss: Boss) {
+  const timeOfDeath = moment(boss.time);
+  const hoursOfDeath = timeOfDeath.hours().toString().padStart(2, '0');
+  const minutesOfDeath = timeOfDeath.minutes().toString().padStart(2, '0');
+
+  return `Время фарма ${hoursOfDeath}:${minutesOfDeath}`;
+}
+
+function getOutputTime(boss: Boss, isRemainingTime: boolean) {
+  const date = moment(boss.respawnTime);
+  const hours = date.hours().toString().padStart(2, '0');
+  const minutes = date.minutes().toString().padStart(2, '0');
+
+  const diff = date.diff(moment());
+  const diffAbs = Math.abs(diff);
+  const diffHours = Math.floor(diffAbs / HOUR)
+    .toString()
+    .padStart(2, '0');
+  const diffMinutes = Math.floor((diffAbs / MINUTE) % 60)
+    .toString()
+    .padStart(2, '0');
+
+  return isRemainingTime
+    ? `${diff < 0 ? '-' : ''}${diffHours}:${diffMinutes}`
+    : `${hours}:${minutes}`;
+}
+
 interface RespawnTimeColumnProps {
   boss: Boss;
+  isRemainingTime: boolean;
   updateBossList: (boss: Boss) => void;
 }
 
@@ -32,18 +60,20 @@ function getTimeOfDeath(boss: Boss): string {
 export const RespawnTimeColumn = ({
   boss,
   updateBossList,
+  isRemainingTime,
 }: RespawnTimeColumnProps) => {
   useEffect(() => {
     const bossNotRespawned =
+      !boss.world &&
       moment().valueOf() >
-      moment(boss.respawnTime).add(20, 'minutes').valueOf();
+        moment(boss.respawnTime).add(20, 'minutes').valueOf();
     const shouldUpdateWorld =
       boss.world && moment().valueOf() > boss.respawnTime;
 
     if (shouldUpdateWorld) {
       const timeOfDeath = getTimeOfDeath(boss);
       updateBossTime(boss.id, timeOfDeath).then((newBossApiInfo) =>
-        updateBossList(expandBoss(newBossApiInfo))
+        updateBossList(newBossApiInfo)
       );
     }
 
@@ -52,30 +82,23 @@ export const RespawnTimeColumn = ({
         boss.id,
         moment(boss.respawnTime).toISOString(),
         true
-      ).then((newBossApiInfo) => updateBossList(expandBoss(newBossApiInfo)));
+      ).then((newBossApiInfo) => updateBossList(newBossApiInfo));
     }
   }, [boss, updateBossList]);
 
-  const date = moment(boss.respawnTime);
-  const hours = date.hours().toString().padStart(2, '0');
-  const minutes = date.minutes().toString().padStart(2, '0');
-  const outOfDate = moment().valueOf() > boss.respawnTime;
-  const timeOfDeath = moment(boss.time);
-  const hoursOfDeath = timeOfDeath.hours().toString().padStart(2, '0');
-  const minutesOfDeath = timeOfDeath.minutes().toString().padStart(2, '0');
+  const tooltipText = getTooltipText(boss);
+  const outputTime = getOutputTime(boss, isRemainingTime);
+  const isOutOfDate = moment().valueOf() > boss.respawnTime;
 
   return (
-    <Tooltip
-      placement="top"
-      title={`Время фарма ${hoursOfDeath}:${minutesOfDeath}`}
-    >
+    <Tooltip placement="top" title={tooltipText}>
       <Space size="middle">
         <span style={{ position: 'relative' }}>
           {boss.approximately && (
             <span className={styles.approximately}>~</span>
           )}
-          {`${hours}:${minutes}`}
-          {outOfDate && (
+          {outputTime}
+          {isOutOfDate && (
             <QuestionCircleOutlined className={styles.outDateIcon} />
           )}
         </span>

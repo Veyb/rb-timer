@@ -1,13 +1,15 @@
+import { expandBoss, expandBossListAndSort } from './utils';
+
 const API_URL = 'https://api.l2m-db.ru/api';
 
-export const transformBossApiResponse = ({
+export const transformApiResponse = ({
   data: { attributes, ...rest },
 }: any) => ({
   ...rest,
   ...attributes,
 });
 
-export const transformBossListApiResponse = (data: any) => {
+export const transformListApiResponse = (data: any) => {
   return data.data.map(({ attributes, ...rest }: any) => ({
     ...rest,
     ...attributes,
@@ -17,9 +19,15 @@ export const transformBossListApiResponse = (data: any) => {
 export async function get(type: string) {
   const res = await fetch(`${API_URL}/${type}`, { cache: 'no-cache' });
   const data = await res.json();
-  return transformBossListApiResponse(data);
+
+  return transformListApiResponse(data);
 }
 
+export async function getBossList() {
+  const bossList = await get('bosses');
+
+  return expandBossListAndSort(bossList);
+}
 export async function updateBossTime(
   bossId: string,
   time: string,
@@ -34,5 +42,5 @@ export async function updateBossTime(
     body: JSON.stringify({ data: { time, approximately } }), // body data type must match "Content-Type" header
   });
   const data = await response.json();
-  return transformBossApiResponse(data);
+  return expandBoss(transformApiResponse(data));
 }

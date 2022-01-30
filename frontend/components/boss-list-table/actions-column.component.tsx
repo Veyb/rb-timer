@@ -1,11 +1,10 @@
 import moment from 'moment';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Space, Button, DatePicker } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
 import { Boss } from '../../types';
 import { updateBossTime } from '../../lib/api';
-import { expandBoss } from '../../lib/utils';
 
 interface ActionsProps {
   boss: Boss;
@@ -22,23 +21,20 @@ export const ActionsColumn = ({ boss, updateBossList }: ActionsProps) => {
 
   const onKillClick = useCallback(async () => {
     const date = moment().seconds(0).toISOString();
-    const newBossApiInfo = await updateBossTime(boss.id, date, false);
-    const bossNewData = expandBoss(newBossApiInfo);
+    const updatedBoss = await updateBossTime(boss.id, date, false);
 
-    updateBossList(bossNewData);
+    updateBossList(updatedBoss);
   }, [boss.id, updateBossList]);
 
   const onConfirmClick = useCallback(async () => {
     if (!momentDate) return;
 
-    const newBossApiInfo = await updateBossTime(
+    const updatedBoss = await updateBossTime(
       boss.id,
       moment(momentDate).toISOString(),
       false
     );
-    const bossNewData = expandBoss(newBossApiInfo);
-
-    updateBossList(bossNewData);
+    updateBossList(updatedBoss);
     setMomentDate(null);
   }, [boss.id, momentDate, updateBossList]);
 

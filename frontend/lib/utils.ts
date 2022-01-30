@@ -8,6 +8,6 @@ export const expandBoss = (boss: BossApiResponse) => {
   return { ...boss, respawnTime: +date };
 };
 
-export const expandBossList = (bossList: BossApiResponse[]) => {
-  return bossList.map(expandBoss);
+export const expandBossListAndSort = (bossList: BossApiResponse[]) => {
+  return bossList.map(expandBoss).sort((a, b) => a.respawnTime - b.respawnTime);
 };
