@@ -8,7 +8,8 @@ export interface BossApiResponse {
   chance: number;
   time: string;
   approximately: boolean;
-  world?: boolean;
+  alliance: boolean;
+  world: boolean;
 }
 
 export interface Boss extends BossApiResponse {

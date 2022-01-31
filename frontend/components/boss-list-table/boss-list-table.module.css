@@ -57,6 +57,10 @@
   }
 }
 
+.allianceIcon {
+  margin-right: 0.6rem;
+}
+
 .nameColumn.nameColumn {
   text-align: left;
   font-weight: bold;

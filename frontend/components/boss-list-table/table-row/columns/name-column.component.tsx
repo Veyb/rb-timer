@@ -1,7 +1,7 @@
 // global modules
 import moment from 'moment';
 import { Tooltip } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { TeamOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 // local modules
 import { Boss, Quality } from '../../../../types';
@@ -31,6 +31,7 @@ export const NameColumn = ({ boss }: NameColumnProps) => {
 
   return (
     <>
+      {boss.alliance && <TeamOutlined className={styles.allianceIcon} />}
       <Tooltip
         placement="top"
         title={`Интервал появления ${boss.interval} часов. (${boss.chance}%)`}
