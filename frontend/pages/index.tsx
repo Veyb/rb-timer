@@ -1,14 +1,17 @@
-import { useCallback, useEffect, useState } from 'react';
-import type { NextPage } from 'next';
+// global modules
 import Head from 'next/head';
+import type { NextPage } from 'next';
+import { useCallback, useEffect, useState } from 'react';
 // import Image from 'next/image';
 
+// local modules
 import { BossListTable } from '../components/boss-list-table';
 import { Header } from '../components/header';
 import type { Boss } from '../types';
 import { getBossList } from '../lib/api';
 import { sortBossList } from '../lib/utils';
 
+// style modules
 import styles from '../styles/main.module.css';
 
 interface MainProps {

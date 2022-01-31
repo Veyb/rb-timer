@@ -1,13 +1,16 @@
-import moment from 'moment';
-import { Space, Tooltip } from 'antd';
-import { useEffect } from 'react';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+// global modules
+import moment, { Moment } from 'moment';
+import { useCallback, useEffect, useMemo } from 'react';
+import { Button, Tooltip } from 'antd';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
-import { Boss } from '../../types';
-import { HOUR, MINUTE } from '../../constants';
-import { updateBossTime } from '../../lib/api';
+// local modules
+import { Boss } from '../../../../types';
+import { HOUR, MINUTE } from '../../../../constants';
+import { updateBossTime } from '../../../../lib/api';
 
-import styles from './boss-list-table.module.css';
+// style modules
+import styles from '../../boss-list-table.module.css';
 
 function getTooltipText(boss: Boss) {
   const timeOfDeath = moment(boss.time);
@@ -17,8 +20,12 @@ function getTooltipText(boss: Boss) {
   return `Время фарма ${hoursOfDeath}:${minutesOfDeath}`;
 }
 
-function getOutputTime(boss: Boss, isRemainingTime: boolean) {
-  const date = moment(boss.respawnTime);
+function getOutputTime(
+  boss: Boss,
+  isRemainingTime: boolean,
+  editableTime: Moment | null
+) {
+  const date = moment(editableTime || boss.respawnTime);
   const hours = date.hours().toString().padStart(2, '0');
   const minutes = date.minutes().toString().padStart(2, '0');
 
@@ -31,15 +38,9 @@ function getOutputTime(boss: Boss, isRemainingTime: boolean) {
     .toString()
     .padStart(2, '0');
 
-  return isRemainingTime
+  return isRemainingTime && !editableTime
     ? `${diff < 0 ? '-' : ''}${diffHours}:${diffMinutes}`
     : `${hours}:${minutes}`;
-}
-
-interface RespawnTimeColumnProps {
-  boss: Boss;
-  isRemainingTime: boolean;
-  updateBossList: (boss: Boss) => void;
 }
 
 function getTimeOfDeath(boss: Boss): string {
@@ -57,10 +58,20 @@ function getTimeOfDeath(boss: Boss): string {
     : timeOfDeath.toISOString();
 }
 
+interface RespawnTimeColumnProps {
+  boss: Boss;
+  editableTime: Moment | null;
+  isRemainingTime: boolean;
+  updateBossList: (boss: Boss) => void;
+  handleEditableTimeChange: (value: Moment) => void;
+}
+
 export const RespawnTimeColumn = ({
   boss,
+  editableTime,
   updateBossList,
   isRemainingTime,
+  handleEditableTimeChange,
 }: RespawnTimeColumnProps) => {
   useEffect(() => {
     const bossNotRespawned =
@@ -86,23 +97,47 @@ export const RespawnTimeColumn = ({
     }
   }, [boss, updateBossList]);
 
+  const onReduceClick = useCallback(() => {
+    const newTime = moment(editableTime || boss.respawnTime).add(-1, 'minute');
+    handleEditableTimeChange(newTime);
+  }, [boss.respawnTime, editableTime, handleEditableTimeChange]);
+
+  const onIncreaseClick = useCallback(() => {
+    const newTime = moment(editableTime || boss.respawnTime).add(1, 'minute');
+    handleEditableTimeChange(newTime);
+  }, [boss.respawnTime, editableTime, handleEditableTimeChange]);
+
   const tooltipText = getTooltipText(boss);
-  const outputTime = getOutputTime(boss, isRemainingTime);
-  const isOutOfDate = moment().valueOf() > boss.respawnTime;
+  const outputTime = useMemo(
+    () => getOutputTime(boss, isRemainingTime, editableTime),
+    [boss, isRemainingTime, editableTime]
+  );
 
   return (
-    <Tooltip placement="top" title={tooltipText}>
-      <Space size="middle">
+    <>
+      <Button
+        size="small"
+        shape="circle"
+        onClick={onReduceClick}
+        className={styles.reduceButton}
+        icon={<MinusOutlined />}
+      />
+
+      <Tooltip placement="top" title={tooltipText}>
         <span style={{ position: 'relative' }}>
           {boss.approximately && (
             <span className={styles.approximately}>~</span>
           )}
           {outputTime}
-          {isOutOfDate && (
-            <QuestionCircleOutlined className={styles.outDateIcon} />
-          )}
         </span>
-      </Space>
-    </Tooltip>
+      </Tooltip>
+      <Button
+        size="small"
+        shape="circle"
+        onClick={onIncreaseClick}
+        className={styles.increaseButton}
+        icon={<PlusOutlined />}
+      />
+    </>
   );
 };

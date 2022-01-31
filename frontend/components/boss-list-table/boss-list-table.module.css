@@ -1,7 +1,41 @@
 .table {
+  width: 100%;
   margin: 0 auto;
-  max-width: 100rem;
   min-width: 47rem;
+  max-width: 100rem;
+  font-size: 1.4rem;
+  background: #141414;
+}
+
+.tableThead > tr > th {
+  position: relative;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  background: #1d1d1d;
+}
+
+.tableThead > tr > th,
+.tableTbody > tr > td {
+  position: relative;
+  padding: 1.6rem 1.6rem;
+  overflow-wrap: break-word;
+  transition: background 0.3s;
+  border-bottom: 1px solid #303030;
+}
+
+.row {
+  border-bottom: 1px solid #303030;
+}
+
+.row:hover > td {
+  background: #262626;
+}
+
+.row:hover .reduceButton,
+.row:hover .increaseButton,
+.row.editableTime .reduceButton,
+.row.editableTime .increaseButton {
+  display: block;
 }
 
 .rowAnimation {
@@ -23,15 +57,38 @@
   }
 }
 
+.nameColumn.nameColumn {
+  text-align: left;
+  font-weight: bold;
+  padding-right: 3.2rem;
+}
+
 .respawnColumn.respawnColumn {
+  width: 16rem;
+  text-align: center;
   position: relative;
   padding-left: 4rem;
   padding-right: 4rem;
-  width: 16rem;
   background: hsla(0, 0%, 100%, 0.01);
 }
 
 .remainingButton {
+  position: absolute;
+  top: 50%;
+  right: 0.8rem;
+  transform: translateY(-50%);
+}
+
+.reduceButton {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 0.8rem;
+  transform: translateY(-50%);
+}
+
+.increaseButton {
+  display: none;
   position: absolute;
   top: 50%;
   right: 0.8rem;
@@ -48,11 +105,12 @@
 .outDateIcon {
   position: absolute;
   top: 50%;
-  right: -2.5rem;
+  right: 0.8rem;
   color: #a61d24;
   transform: translateY(-50%);
 }
 
 .actionsColumn {
   width: 40rem;
+  text-align: center;
 }
