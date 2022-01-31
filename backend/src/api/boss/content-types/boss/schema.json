@@ -53,6 +53,11 @@
       "type": "boolean",
       "default": false,
       "required": true
+    },
+    "alliance": {
+      "type": "boolean",
+      "default": false,
+      "required": true
     }
   }
 }
