@@ -1,13 +1,15 @@
 // global modules
 import moment, { Moment } from 'moment';
-import { useCallback, useEffect, useMemo } from 'react';
 import { Button, Tooltip } from 'antd';
+import { useCallback, useEffect, useMemo } from 'react';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
 // local modules
 import { Boss } from '../../../../types';
 import { HOUR, MINUTE } from '../../../../constants';
 import { updateBossTime } from '../../../../lib/api';
+import { useBossContext } from '../../../../contexts/boss-context';
+import { useAuthContext } from '../../../../contexts/auth-context';
 
 // style modules
 import styles from '../../boss-list-table.module.css';
@@ -62,18 +64,21 @@ interface RespawnTimeColumnProps {
   boss: Boss;
   editableTime: Moment | null;
   isRemainingTime: boolean;
-  updateBossList: (boss: Boss) => void;
   handleEditableTimeChange: (value: Moment) => void;
 }
 
 export const RespawnTimeColumn = ({
   boss,
   editableTime,
-  updateBossList,
   isRemainingTime,
   handleEditableTimeChange,
 }: RespawnTimeColumnProps) => {
+  const { accessToken } = useAuthContext();
+  const { allowedUpdate, updateBossInList } = useBossContext();
+
   useEffect(() => {
+    if (!allowedUpdate) return;
+
     const bossNotRespawned =
       !boss.world &&
       moment().valueOf() >
@@ -83,19 +88,19 @@ export const RespawnTimeColumn = ({
 
     if (shouldUpdateWorld) {
       const timeOfDeath = getTimeOfDeath(boss);
-      updateBossTime(boss.id, timeOfDeath).then((newBossApiInfo) =>
-        updateBossList(newBossApiInfo)
+      updateBossTime(boss.id, { time: timeOfDeath }, accessToken).then(
+        (newBossApiInfo) => updateBossInList(newBossApiInfo)
       );
     }
 
     if (bossNotRespawned) {
       updateBossTime(
         boss.id,
-        moment(boss.respawnTime).toISOString(),
-        true
-      ).then((newBossApiInfo) => updateBossList(newBossApiInfo));
+        { time: moment(boss.respawnTime).toISOString(), approximately: true },
+        accessToken
+      ).then((newBossApiInfo) => updateBossInList(newBossApiInfo));
     }
-  }, [boss, updateBossList]);
+  }, [boss, allowedUpdate, updateBossInList, accessToken]);
 
   const onReduceClick = useCallback(() => {
     const newTime = moment(editableTime || boss.respawnTime).add(-1, 'minute');
@@ -115,13 +120,15 @@ export const RespawnTimeColumn = ({
 
   return (
     <>
-      <Button
-        size="small"
-        shape="circle"
-        onClick={onReduceClick}
-        className={styles.reduceButton}
-        icon={<MinusOutlined />}
-      />
+      {boss.world || !allowedUpdate ? null : (
+        <Button
+          size="small"
+          shape="circle"
+          onClick={onReduceClick}
+          className={styles.reduceButton}
+          icon={<MinusOutlined />}
+        />
+      )}
 
       <Tooltip placement="top" title={tooltipText}>
         <span style={{ position: 'relative' }}>
@@ -131,13 +138,16 @@ export const RespawnTimeColumn = ({
           {outputTime}
         </span>
       </Tooltip>
-      <Button
-        size="small"
-        shape="circle"
-        onClick={onIncreaseClick}
-        className={styles.increaseButton}
-        icon={<PlusOutlined />}
-      />
+
+      {boss.world || !allowedUpdate ? null : (
+        <Button
+          size="small"
+          shape="circle"
+          onClick={onIncreaseClick}
+          className={styles.increaseButton}
+          icon={<PlusOutlined />}
+        />
+      )}
     </>
   );
 };

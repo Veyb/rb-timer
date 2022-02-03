@@ -1,0 +1,32 @@
+.errorDivider {
+  display: flex;
+  justify-content: stretch;
+  padding: 0.4rem 0;
+  font-size: 1.2rem;
+}
+
+.errorPlaceholder {
+  width: 0;
+  user-select: none;
+}
+
+.errorHolder {
+  display: flex;
+  align-items: center;
+}
+
+.errorMessage {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #db4d4d;
+  fill: currentColor;
+  align-items: flex-start;
+}
+.errorIcon {
+  width: 1.2rem;
+  min-height: 1.1rem;
+  flex: 0 0 1.2rem;
+  margin: 0 0.8rem 0.2rem 0;
+}

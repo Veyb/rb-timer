@@ -1,11 +1,83 @@
-import type { AppProps } from 'next/app';
-import 'antd/dist/antd.dark.css';
+// global modules
 import 'normalize.css';
+import 'antd/dist/antd.dark.css';
+import Router from 'next/router';
+import { destroyCookie, parseCookies } from 'nookies';
+import type { AppContext, AppProps } from 'next/app';
 
+// local modules
+import { get } from '../lib/api';
+import { Header } from '../components/header';
+import { AuthContextProvider } from '../contexts/auth-context';
+
+// style modules
 import '../styles/globals.css';
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+function isBrowser() {
+  return typeof window !== 'undefined';
 }
+
+function redirectUser(ctx: any, location: string) {
+  if (!isBrowser() && ctx.res) {
+    ctx.res.writeHead(302, {
+      Location: location,
+      'Content-Type': 'text/html; charset=utf-8',
+    });
+    ctx.res.end();
+  } else {
+    Router.replace(location);
+  }
+}
+
+interface MyAppProps extends AppProps {
+  user: any;
+  jwt: string | undefined;
+}
+
+function MyApp({ Component, pageProps, user, jwt }: MyAppProps) {
+  return (
+    <AuthContextProvider jwt={jwt} user={user}>
+      <Header />
+      <main>
+        <Component {...pageProps} />
+      </main>
+    </AuthContextProvider>
+  );
+}
+
+MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
+  let user = null;
+  let pageProps = {};
+  const jwt = parseCookies(ctx).jwt;
+
+  if (Component.getInitialProps) {
+    pageProps = await Component.getInitialProps(ctx);
+  }
+
+  if (!jwt && ctx.pathname !== '/login' && ctx.pathname !== '/register') {
+    redirectUser(ctx, '/login');
+  }
+
+  if (jwt) {
+    try {
+      const data = await get('/users/me', {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+
+      user = data;
+    } catch (err: any) {
+      destroyCookie(ctx, 'jwt');
+      redirectUser(ctx, '/login');
+    }
+  }
+
+  return {
+    pageProps,
+    user,
+    jwt,
+  };
+};
 
 export default MyApp;

@@ -1,0 +1,105 @@
+.inputHolder {
+  position: relative;
+  padding-top: 1.9rem;
+}
+
+.input {
+  height: 3.6rem;
+  direction: initial;
+  width: 100%;
+  flex: 1 1 0%;
+  caret-color: rgb(162, 162, 173);
+  font-size: 1.6rem;
+  outline: none;
+  text-align: left;
+  background-color: transparent;
+  color: inherit;
+  -webkit-text-fill-color: currentcolor;
+  fill: currentcolor;
+  padding: 0px 3.6rem 0px 0px;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-image: initial;
+  appearance: none;
+  border-radius: 0;
+  border-bottom: 0.1rem solid rgb(162, 162, 173);
+}
+
+.input:focus {
+  border-color: #165996;
+}
+
+.input[type='password']::-ms-reveal,
+.input::-ms-clear {
+  display: none;
+}
+
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus,
+.input:-webkit-autofill:active {
+  color: white;
+  -webkit-text-fill-color: white;
+  -webkit-box-shadow: 0 0 0 5rem #3a3a42 inset;
+  background: transparent;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.input:-webkit-autofill-strong-password,
+.input:-webkit-autofill-strong-password-viewable {
+  background: #3a3a42;
+}
+
+.input:-internal-autofill-selected {
+  /* possible fix for Chrome's !important internal hacks */
+  background: #3a3a42;
+}
+
+/* Firefox don't need weird color hacks*/
+.input:autofill,
+.input:autofill:hover,
+.input:autofill:focus,
+.input:autofill:active {
+  filter: none;
+  -webkit-animation-name: none;
+  -webkit-box-shadow: none;
+}
+
+.asideHolder {
+  height: 3.6rem;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  min-width: 1.8rem;
+}
+
+.iconButton {
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.label {
+  margin: 0;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  font-size: 1.6rem;
+  color: rgb(162, 162, 173);
+  transition: font-size 300ms, top 300ms, bottom 300ms;
+}
+
+.input:-webkit-autofill ~ .label,
+.input:focus ~ .label,
+.input:not([value='']) ~ .label,
+.aside ~ .label {
+  bottom: 4rem;
+  font-size: 1.2rem;
+}
+.inputHolder:focus-within .label {
+  bottom: 4rem;
+  font-size: 1.2rem;
+}

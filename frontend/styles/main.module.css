@@ -1,4 +1,17 @@
 .container {
+  min-height: 100vh;
   font-size: 1.6rem;
-  padding: 6.5rem 2rem;
+  padding: 6.5rem 2rem 2rem;
+}
+
+.footer {
+  padding-top: 6.5rem;
+}
+
+.authHolder {
+  width: 100%;
+  min-height: calc(100vh - 8.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

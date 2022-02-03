@@ -1,0 +1,28 @@
+.form {
+  width: 37.4rem;
+  min-height: 50rem;
+  margin: 0 auto;
+  background-color: #262626;
+  padding: 2rem;
+}
+
+.wrapper {
+  width: 100%;
+}
+
+.header {
+  text-align: center;
+}
+
+.buttonHolder {
+  width: 100%;
+  text-align: center;
+}
+
+.button {
+  width: 100%;
+}
+
+.link {
+  text-decoration: underline;
+}

@@ -7,6 +7,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Boss } from '../../../types';
 import { MINUTE } from '../../../constants';
 import { updateBossTime } from '../../../lib/api';
+import { useBossContext } from '../../../contexts/boss-context';
+import { useAuthContext } from '../../../contexts/auth-context';
 import { ActionsColumn, NameColumn, RespawnTimeColumn } from './columns';
 
 // style modules
@@ -31,14 +33,11 @@ function isAnimated(boss: Boss) {
 interface RowProps {
   boss: Boss;
   isRemainingTime: boolean;
-  updateBossList: (boss: Boss) => void;
 }
 
-export const TableRow = ({
-  boss,
-  updateBossList,
-  isRemainingTime,
-}: RowProps) => {
+export const TableRow = ({ boss, isRemainingTime }: RowProps) => {
+  const { accessToken } = useAuthContext();
+  const { allowedUpdate, updateBossInList } = useBossContext();
   const [editableTime, setEditableTime] = useState<Moment | null>(null);
   const [calendarDate, setCalendarDate] = useState(null);
   const className = useMemo(
@@ -63,19 +62,29 @@ export const TableRow = ({
   }, []);
 
   const handleConfirmClick = useCallback(async () => {
-    if (!calendarDate && !editableTime) return;
+    if ((!calendarDate && !editableTime) || !allowedUpdate) return;
+
+    const time = editableTime
+      ? moment(editableTime).add(`-${boss.interval}`, 'hours').toISOString()
+      : moment(calendarDate).toISOString();
 
     const updatedBoss = await updateBossTime(
       boss.id,
-      editableTime
-        ? moment(editableTime).add(`-${boss.interval}`, 'hours').toISOString()
-        : moment(calendarDate).toISOString(),
-      false
+      { time, approximately: false },
+      accessToken
     );
-    updateBossList(updatedBoss);
+    updateBossInList(updatedBoss);
     setEditableTime(null);
     setCalendarDate(null);
-  }, [boss.id, boss.interval, calendarDate, editableTime, updateBossList]);
+  }, [
+    boss.id,
+    boss.interval,
+    accessToken,
+    calendarDate,
+    editableTime,
+    allowedUpdate,
+    updateBossInList,
+  ]);
 
   useEffect(() => {
     if (!editableTime) return () => clearTimeout(timer);
@@ -96,7 +105,6 @@ export const TableRow = ({
         <RespawnTimeColumn
           boss={boss}
           editableTime={editableTime}
-          updateBossList={updateBossList}
           isRemainingTime={isRemainingTime}
           handleEditableTimeChange={handleEditableTimeChange}
         />
@@ -106,7 +114,6 @@ export const TableRow = ({
           boss={boss}
           editableTime={editableTime}
           calendarDate={calendarDate}
-          updateBossList={updateBossList}
           handleConfirmClick={handleConfirmClick}
           handleDatePickerChange={handleDatePickerChange}
         />

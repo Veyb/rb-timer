@@ -7,12 +7,13 @@ import { UploadOutlined } from '@ant-design/icons';
 // local modules
 import { Boss } from '../../../../types';
 import { updateBossTime } from '../../../../lib/api';
+import { useBossContext } from '../../../../contexts/boss-context';
+import { useAuthContext } from '../../../../contexts/auth-context';
 
 interface ActionsColumnProps {
   boss: Boss;
   editableTime: Moment | null;
   calendarDate: Moment | null;
-  updateBossList: (boss: Boss) => void;
   handleConfirmClick: () => void;
   handleDatePickerChange: (value: any) => void;
 }
@@ -21,18 +22,25 @@ export const ActionsColumn = ({
   boss,
   editableTime,
   calendarDate,
-  updateBossList,
   handleConfirmClick,
   handleDatePickerChange,
 }: ActionsColumnProps) => {
-  const disabled = moment().valueOf() < boss.respawnTime;
+  const { accessToken } = useAuthContext();
+  const { allowedUpdate, updateBossInList } = useBossContext();
+  const disabled = moment().valueOf() < boss.respawnTime || !allowedUpdate;
 
   const onKillClick = useCallback(async () => {
-    const date = moment().seconds(0).toISOString();
-    const updatedBoss = await updateBossTime(boss.id, date, false);
+    if (!allowedUpdate) return;
 
-    updateBossList(updatedBoss);
-  }, [boss.id, updateBossList]);
+    const time = moment().seconds(0).toISOString();
+    const updatedBoss = await updateBossTime(
+      boss.id,
+      { time, approximately: false },
+      accessToken
+    );
+
+    updateBossInList(updatedBoss);
+  }, [boss.id, allowedUpdate, updateBossInList, accessToken]);
 
   return !boss.world ? (
     <Space size="middle">
@@ -42,6 +50,7 @@ export const ActionsColumn = ({
       <DatePicker
         showTime
         showSecond={false}
+        disabled={!allowedUpdate}
         value={editableTime || calendarDate}
         format="DD-MM-YYYY HH:mm"
         onChange={handleDatePickerChange}
@@ -49,7 +58,7 @@ export const ActionsColumn = ({
       />
       <Button
         shape="circle"
-        disabled={!calendarDate && !editableTime}
+        disabled={(!calendarDate && !editableTime) || !allowedUpdate}
         onClick={handleConfirmClick}
         icon={<UploadOutlined />}
       ></Button>

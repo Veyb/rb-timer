@@ -24,3 +24,18 @@
   margin: 0;
   margin-left: auto;
 }
+
+.rightBlock {
+  margin-left: auto;
+}
+
+.homeLink {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.homeIcon {
+  font-size: 3rem;
+}

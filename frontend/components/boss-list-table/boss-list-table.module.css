@@ -5,6 +5,7 @@
   max-width: 100rem;
   font-size: 1.4rem;
   background: #141414;
+  padding-bottom: 3rem;
 }
 
 .tableThead > tr > th {
@@ -117,4 +118,15 @@
 .actionsColumn {
   width: 40rem;
   text-align: center;
+}
+
+.infoHolder {
+  min-height: calc(100vh - 8.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.infoMessage {
+  margin: 0;
 }
