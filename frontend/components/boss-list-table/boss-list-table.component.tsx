@@ -1,7 +1,7 @@
 // global modules
 import { Button } from 'antd';
+import { SwapOutlined } from '@ant-design/icons';
 import { useCallback, useState } from 'react';
-import { RedoOutlined, UndoOutlined } from '@ant-design/icons';
 
 // local modules
 import { TableRow } from './table-row';
@@ -28,7 +28,7 @@ const RespawnColumnHeader = ({
         shape="circle"
         onClick={onClick}
         className={styles.remainingButton}
-        icon={isRemainingTime ? <RedoOutlined /> : <UndoOutlined />}
+        icon={<SwapOutlined />}
       />
     </>
   );
@@ -54,6 +54,7 @@ export const BossListTable = () => {
   return !allowed ? (
     <div className={styles.infoHolder}>
       <h2 className={styles.infoMessage}>Доступ ограничен</h2>
+      <div>за доступом обратитесь к Тэя</div>
     </div>
   ) : (
     <table className={styles.table}>
