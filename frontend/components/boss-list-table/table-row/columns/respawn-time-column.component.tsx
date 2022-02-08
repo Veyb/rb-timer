@@ -45,19 +45,15 @@ function getOutputTime(
     : `${hours}:${minutes}`;
 }
 
-function getTimeOfDeath(boss: Boss): string {
-  const respawnHours = moment(boss.respawnTime).hours();
-  const respawnMinute = moment(boss.respawnTime).minutes();
-  const respawnSeconds = moment(boss.respawnTime).seconds();
+function getNewRespawnTime(respawnTime: number, interval: number) {
+  const currentDate = moment();
+  const respawnDate = moment(respawnTime);
 
-  const timeOfDeath = moment()
-    .hours(respawnHours)
-    .minutes(respawnMinute)
-    .seconds(respawnSeconds);
+  while (!respawnDate.isAfter(currentDate)) {
+    respawnDate.add(interval, 'hours');
+  }
 
-  return timeOfDeath.valueOf() > moment().valueOf()
-    ? timeOfDeath.add(-1, 'day').toISOString()
-    : timeOfDeath.toISOString();
+  return respawnDate.add(-interval, 'hours').toISOString();
 }
 
 interface RespawnTimeColumnProps {
@@ -78,27 +74,24 @@ export const RespawnTimeColumn = ({
 
   useEffect(() => {
     if (!allowedUpdate) return;
-
+    const currentDateTime = moment().valueOf();
+    const shouldUpdateWorld = boss.world && currentDateTime > boss.respawnTime;
     const bossNotRespawned =
       !boss.world &&
-      moment().valueOf() >
-        moment(boss.respawnTime).add(20, 'minutes').valueOf();
-    const shouldUpdateWorld =
-      boss.world && moment().valueOf() > boss.respawnTime;
+      currentDateTime > moment(boss.respawnTime).add(20, 'minutes').valueOf();
 
     if (shouldUpdateWorld) {
-      const timeOfDeath = getTimeOfDeath(boss);
-      updateBossTime(boss.id, { time: timeOfDeath }, accessToken).then(
-        (newBossApiInfo) => updateBossInList(newBossApiInfo)
+      const time = getNewRespawnTime(boss.respawnTime, boss.interval);
+      updateBossTime(boss.id, { time }, accessToken).then((newBossApiInfo) =>
+        updateBossInList(newBossApiInfo)
       );
     }
 
     if (bossNotRespawned) {
-      updateBossTime(
-        boss.id,
-        { time: moment(boss.respawnTime).toISOString(), approximately: true },
-        accessToken
-      ).then((newBossApiInfo) => updateBossInList(newBossApiInfo));
+      const time = getNewRespawnTime(boss.respawnTime, boss.interval);
+      updateBossTime(boss.id, { time, approximately: true }, accessToken).then(
+        (newBossApiInfo) => updateBossInList(newBossApiInfo)
+      );
     }
   }, [boss, allowedUpdate, updateBossInList, accessToken]);
 
