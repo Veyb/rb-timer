@@ -1,8 +1,6 @@
 // global modules
-import Head from 'next/head';
 import { parseCookies } from 'nookies';
 import type { NextPage, NextPageContext } from 'next';
-// import Image from 'next/image';
 
 // local modules
 import type { Boss } from '../types';
@@ -20,14 +18,6 @@ interface MainProps {
 const Main: NextPage<MainProps> = ({ list }) => {
   return (
     <BossContextProvider bossList={list}>
-      <Head>
-        <title>L2m db</title>
-        <meta
-          name="description"
-          content="Timer for tracking the respawn of raid bosses"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <div className={styles.container}>
         <BossListTable />
       </div>

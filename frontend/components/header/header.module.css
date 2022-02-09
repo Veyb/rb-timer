@@ -11,7 +11,7 @@
   justify-content: center;
   background-color: #262626;
   border-bottom: 0.1rem solid #303030;
-  z-index: 999;
+  z-index: var(--zIndexRoof);
 }
 
 .holder {
@@ -34,8 +34,4 @@
   align-items: center;
   align-content: center;
   justify-content: center;
-}
-
-.homeIcon {
-  font-size: 3rem;
 }

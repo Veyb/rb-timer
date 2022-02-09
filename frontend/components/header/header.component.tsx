@@ -1,8 +1,9 @@
 // global modules
 import moment from 'moment';
 import Link from 'next/link';
-import { Button, Space } from 'antd';
-import { HomeOutlined } from '@ant-design/icons';
+import Image from 'next/image';
+import { Button, Dropdown, Menu, Space } from 'antd';
+import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 
 // local modules
@@ -22,26 +23,47 @@ export const Header = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const menu = (
+    <Menu>
+      {/* <Menu.Item key="0">
+        <Link href="/profile">
+          <a>Профиль</a>
+        </Link>
+      </Menu.Item> */}
+      {/* <Menu.Divider /> */}
+      <Menu.Item key="3">
+        <div onClick={auth.logout}>Выход</div>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <header className={styles.header}>
       <div className={styles.holder}>
         <Link href="/">
           <a className={styles.homeLink}>
-            <HomeOutlined className={styles.homeIcon} />
+            <Image
+              src="/l2m-logo-color.png"
+              alt="logo"
+              width="126"
+              height="46"
+            />
           </a>
         </Link>
         <Space size="large" className={styles.rightBlock}>
           <h2 className={styles.time}>{time}</h2>
           {auth.loggedIn ? (
-            <Button shape="round" size="large" onClick={auth.logout}>
-              Выход
-            </Button>
+            <Dropdown
+              overlay={menu}
+              trigger={['click']}
+              placement="bottomRight"
+            >
+              <Button shape="circle" size="large" icon={<UserOutlined />} />
+            </Dropdown>
           ) : (
             <Link href="/login">
               <a>
-                <Button shape="round" size="large">
-                  Вход
-                </Button>
+                <Button shape="round">Вход</Button>
               </a>
             </Link>
           )}

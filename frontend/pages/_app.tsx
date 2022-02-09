@@ -1,6 +1,7 @@
 // global modules
 import 'normalize.css';
 import 'antd/dist/antd.dark.css';
+import Head from 'next/head';
 import Router from 'next/router';
 import { destroyCookie, parseCookies } from 'nookies';
 import type { AppContext, AppProps } from 'next/app';
@@ -37,6 +38,15 @@ interface MyAppProps extends AppProps {
 function MyApp({ Component, pageProps, user, jwt }: MyAppProps) {
   return (
     <AuthContextProvider jwt={jwt} user={user}>
+      <Head>
+        <title>L2m db</title>
+        <meta
+          name="description"
+          content="Timer for tracking the respawn of raid bosses"
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
       <Header />
       <main>
         <Component {...pageProps} />

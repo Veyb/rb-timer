@@ -1,5 +1,13 @@
 :root {
   font-size: 62.5%;
+  --zIndexUnder: -1;
+  --zIndexZero: 0;
+  --zIndexBase: 1;
+  --zIndexHigh: 2;
+  --zIndexHighest: 3;
+  --zIndexHeader: 4;
+  --zIndexPopup: 5;
+  --zIndexRoof: 100;
 }
 
 /* @media only screen and (max-width: 67.5em) {
