@@ -4,7 +4,7 @@ import { BossApiResponse } from '../types';
 import { expandBoss, expandBossListAndSort } from './utils';
 
 const { env } = getConfig();
-const API_URL = process.env.API_URL || env.API_URL;
+export const API_URL = process.env.API_URL || env.API_URL;
 
 export const transformApiResponse = ({ attributes, ...rest }: any) =>
   attributes

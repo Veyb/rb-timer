@@ -1,5 +1,5 @@
 // global modules
-import { Button, Space } from 'antd';
+import { Button, Modal, Space } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
 import { useCallback, useState } from 'react';
 
@@ -10,7 +10,6 @@ import { useAuthContext } from '../../contexts/auth-context';
 
 // style modules
 import styles from './boss-list-table.module.css';
-import Modal from '../modal/modal.component';
 
 interface RespawnColumnHeaderProps {
   onClick: () => void;
@@ -37,7 +36,7 @@ const RespawnColumnHeader = ({
 
 export const BossListTable = () => {
   const { loggedIn } = useAuthContext();
-  const { bossList, allowed } = useBossContext();
+  const { bossList, allowed, allowedUpdate } = useBossContext();
   const [isRemainingTime, setRemainingTime] = useState(false);
 
   const [modal, setModal] = useState(false);
@@ -66,34 +65,49 @@ export const BossListTable = () => {
       <div>за доступом обратитесь к Тэя</div>
     </div>
   ) : (
-    <Space direction="vertical" className={styles.table}>
-      <table>
-        <thead className={styles.tableThead}>
-          <tr>
-            <th className={styles.nameColumn}>Имя</th>
-            <th className={styles.respawnColumn}>
-              <RespawnColumnHeader
-                onClick={handleTimeClick}
+    <>
+      <div className={styles.holder}>
+        <table className={styles.table}>
+          <thead className={styles.tableThead}>
+            <tr>
+              <th className={styles.nameColumn}>Имя</th>
+              <th className={styles.respawnColumn}>
+                <RespawnColumnHeader
+                  onClick={handleTimeClick}
+                  isRemainingTime={isRemainingTime}
+                />
+              </th>
+              <th className={styles.actionsColumn}>Действия</th>
+            </tr>
+          </thead>
+          <tbody className={styles.tableTbody}>
+            {bossList.map((boss) => (
+              <TableRow
+                key={boss.id}
+                boss={boss}
                 isRemainingTime={isRemainingTime}
               />
-            </th>
-            <th className={styles.actionsColumn}>Действия</th>
-          </tr>
-        </thead>
-        <tbody className={styles.tableTbody}>
-          {bossList.map((boss) => (
-            <TableRow
-              key={boss.id}
-              boss={boss}
-              isRemainingTime={isRemainingTime}
-            />
-          ))}
-        </tbody>
-      </table>
-      <Button onClick={handleModalClick}>MODAL</Button>
-      <Modal show={modal} onClose={handleModalClose}>
-        Привет!
+            ))}
+          </tbody>
+        </table>
+        {allowedUpdate && (
+          <Button className={styles.resetButton} onClick={handleModalClick}>
+            РЕСТАРТ
+          </Button>
+        )}
+      </div>
+
+      <Modal
+        centered
+        // title="Basic Modal"
+        visible={modal}
+        onOk={handleModalClose}
+        onCancel={handleModalClose}
+      >
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
       </Modal>
-    </Space>
+    </>
   );
 };

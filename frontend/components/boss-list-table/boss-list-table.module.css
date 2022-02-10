@@ -1,4 +1,4 @@
-.table {
+.holder {
   width: 100%;
   margin: 0 auto;
   min-width: 47rem;
@@ -6,6 +6,19 @@
   font-size: 1.4rem;
   background: #141414;
   padding-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.resetButton {
+  width: max-content;
+  align-self: flex-start;
+  margin-left: 1.6rem;
+}
+
+.table {
+  width: 100%;
 }
 
 .tableThead > tr > th {
