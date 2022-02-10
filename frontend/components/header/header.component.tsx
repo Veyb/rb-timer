@@ -2,7 +2,7 @@
 import moment from 'moment';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button, Dropdown, Menu, Space } from 'antd';
+import { Button, Dropdown, Menu, Modal, Space } from 'antd';
 import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 
@@ -15,6 +15,7 @@ import styles from './header.module.css';
 export const Header = () => {
   const auth = useAuthContext();
   const [time, setTime] = useState(moment().format('HH:mm'));
+  const [supportModal, setSupportModal] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -25,12 +26,10 @@ export const Header = () => {
 
   const menu = (
     <Menu>
-      {/* <Menu.Item key="0">
-        <Link href="/profile">
-          <a>Профиль</a>
-        </Link>
-      </Menu.Item> */}
-      {/* <Menu.Divider /> */}
+      <Menu.Item key="0">
+        <div onClick={() => setSupportModal(true)}>Поддержать автора</div>
+      </Menu.Item>
+      <Menu.Divider />
       <Menu.Item key="3">
         <div onClick={auth.logout}>Выход</div>
       </Menu.Item>
@@ -69,6 +68,32 @@ export const Header = () => {
           )}
         </Space>
       </div>
+
+      <Modal
+        centered
+        visible={supportModal}
+        title="Поддержать автора"
+        onCancel={() => setSupportModal(false)}
+        footer={null}
+      >
+        {
+          <>
+            <p>
+              Если у вас, вдруг, появилось желание поддержать автора, это можно
+              сделать по следующим реквизитам:
+            </p>
+            <ul className={styles.modalList}>
+              <li>+79117961515 (Сбербанк/Тинькоф)</li>
+              <li>4276 5500 3609 9714 (Сбербанк)</li>
+            </ul>
+
+            <p>
+              Или же любым другим удобным Вам способом. Для этого можете
+              напрямую обратить к персонажу Тэя в игре или дискорде :)
+            </p>
+          </>
+        }
+      </Modal>
     </header>
   );
 };

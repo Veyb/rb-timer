@@ -99,14 +99,12 @@ export const BossListTable = () => {
 
       <Modal
         centered
-        // title="Basic Modal"
+        title="Рестарт"
         visible={modal}
-        onOk={handleModalClose}
         onCancel={handleModalClose}
+        footer={null}
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        <p>Функционал в процессе разработки</p>
       </Modal>
     </>
   );

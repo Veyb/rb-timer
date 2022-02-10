@@ -35,3 +35,7 @@
   align-content: center;
   justify-content: center;
 }
+
+.modalList {
+  padding-left: 2rem;
+}
