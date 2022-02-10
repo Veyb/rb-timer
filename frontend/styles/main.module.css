@@ -15,3 +15,12 @@
   align-items: center;
   justify-content: center;
 }
+
+.notFoundHolder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: calc(100vh - 8.5rem);
+  text-align: center;
+}

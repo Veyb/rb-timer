@@ -3,7 +3,7 @@ import moment from 'moment';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button, Dropdown, Menu, Modal, Space } from 'antd';
-import { HomeOutlined, UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 
 // local modules
