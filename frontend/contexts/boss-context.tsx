@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { getBossList } from '../lib/api';
@@ -19,7 +20,7 @@ const BossContext = createContext<{
   bossList: Boss[];
   allowed: boolean;
   allowedUpdate: boolean;
-  updateBossInList: (boss: Boss) => void;
+  updateBossInList: (boss: Boss, autoUpdate?: boolean) => void;
 }>({
   bossList: [],
   allowed: false,
@@ -36,7 +37,10 @@ export const BossContextProvider = ({
   children,
   bossList: list,
 }: BossContextProviderProps) => {
+  let timer: any = useRef(null);
   const auth = useAuthContext();
+  const [bossList, setBossList] = useState<Boss[]>(list);
+  const newBossList = useMemo(() => [...bossList], [bossList]);
   const allowed = useMemo(
     () =>
       auth.user?.role.type === 'editor' || auth.user?.role.type === 'viewer',
@@ -46,16 +50,24 @@ export const BossContextProvider = ({
     () => auth.user?.role.type === 'editor',
     [auth.user]
   );
-  const [bossList, setBossList] = useState<Boss[]>(list);
 
   const updateBossInList = useCallback(
-    (boss: Boss) => {
+    (boss: Boss, autoUpdate?: boolean) => {
+      clearTimeout(timer.current);
       const index = bossList.findIndex(({ id }) => id === boss.id);
-      const newBossList = bossList.slice();
       newBossList[index] = boss;
-      setBossList(sortBossList(newBossList));
+
+      if (autoUpdate) {
+        timer.current = setTimeout(() => {
+          setBossList(sortBossList(newBossList));
+        }, 1000);
+      } else {
+        setBossList(sortBossList(newBossList));
+      }
+
+      return () => clearTimeout(timer.current);
     },
-    [bossList, setBossList]
+    [bossList, newBossList]
   );
 
   useEffect(() => {
