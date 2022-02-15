@@ -10,6 +10,8 @@ export interface BossApiResponse {
   approximately: boolean;
   alliance: boolean;
   world: boolean;
+  restarted: boolean;
+  firstInterval?: number;
 }
 
 export interface Boss extends BossApiResponse {
