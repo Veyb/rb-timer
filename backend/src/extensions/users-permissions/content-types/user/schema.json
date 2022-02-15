@@ -72,6 +72,9 @@
       "type": "string",
       "required": true,
       "minLength": 1
+    },
+    "collections": {
+      "type": "json"
     }
   }
 }

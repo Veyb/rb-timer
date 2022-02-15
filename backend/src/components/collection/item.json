@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_collection_items",
+  "info": {
+    "displayName": "Item",
+    "icon": "box",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "enhancement": {
+      "type": "integer",
+      "required": false,
+      "default": 0,
+      "min": 0
+    },
+    "item": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::item.item"
+    }
+  }
+}
