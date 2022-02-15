@@ -6,11 +6,13 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
 // local modules
-import { get, post } from '../lib/api';
+import { User } from '../types';
+import { get, getUsersMe, post } from '../lib/api';
 
 const INVALID_USERNAME_EMAIL = 'Недопустимый формат e-mail.';
 const EMAIL_IS_ALREADY_TAKEN = 'Данный e-mail уже зарегистрирован.';
@@ -31,8 +33,10 @@ function getErrorMessage(error: any) {
 }
 
 const AuthContext = createContext<{
-  user: any | null;
+  user: User | null;
   loggedIn: boolean;
+  allowed: boolean;
+  allowedUpdate: boolean;
   accessToken: string | undefined;
   login: (userData: any) => void;
   register: (userData: any) => void;
@@ -40,6 +44,8 @@ const AuthContext = createContext<{
 }>({
   user: null,
   loggedIn: false,
+  allowed: false,
+  allowedUpdate: false,
   accessToken: undefined,
   login: (userData: any) => {},
   register: (userData: any) => {},
@@ -60,6 +66,11 @@ export const AuthContextProvider = ({
   const [user, setUser] = useState(propsUser);
   const [accessToken, setAccessToken] = useState(jwt);
   const [loggedIn, setLoggedIn] = useState(!!user);
+  const allowed = useMemo(
+    () => user?.role.type === 'editor' || user?.role.type === 'viewer',
+    [user]
+  );
+  const allowedUpdate = useMemo(() => user?.role.type === 'editor', [user]);
 
   const login = useCallback(async (userData) => {
     try {
@@ -70,11 +81,7 @@ export const AuthContextProvider = ({
         path: '/',
       });
 
-      const userResponse = await get('/users/me', {
-        headers: {
-          Authorization: `Bearer ${loginResponse.jwt}`,
-        },
-      });
+      const userResponse = await getUsersMe(loginResponse.jwt);
 
       setUser(userResponse);
       setLoggedIn(!!userResponse);
@@ -121,7 +128,16 @@ export const AuthContextProvider = ({
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, logout, loggedIn, accessToken }}
+      value={{
+        user,
+        login,
+        register,
+        logout,
+        loggedIn,
+        accessToken,
+        allowed,
+        allowedUpdate,
+      }}
     >
       {children}
     </AuthContext.Provider>

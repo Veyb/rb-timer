@@ -16,11 +16,30 @@
   justify-content: center;
 }
 
-.notFoundHolder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+.notFoundHolder,
+.infoHolder {
   min-height: calc(100vh - 8.5rem);
   text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.infoMessage {
+  margin: 0;
+}
+
+.profileLayout {
+  gap: 1rem;
+  padding-bottom: 0;
+}
+
+.test {
+  overflow-y: scroll;
+}
+
+.profileTab {
+  display: none;
+  padding-left: 0;
 }

@@ -1,0 +1,44 @@
+.holder {
+  height: 9.4rem;
+  padding: 1rem;
+  background-color: #1e212b;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto auto;
+}
+
+.textHolder {
+  gap: 0.4rem;
+  height: 7.4rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.text {
+  margin: 0;
+}
+
+.imagesHolder {
+  height: 6.4rem;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.checkedCounter {
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.8rem;
+  margin-left: 1rem;
+}
+
+.icon {
+  width: 3rem;
+  height: 3rem;
+  color: #d46f1b;
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+}

@@ -27,6 +27,11 @@ export const Header = () => {
   const menu = (
     <Menu>
       <Menu.Item key="0">
+        <Link href="/profile">
+          <a>Профиль</a>
+        </Link>
+      </Menu.Item>
+      <Menu.Item key="1">
         <div onClick={() => setSupportModal(true)}>Поддержать автора</div>
       </Menu.Item>
       <Menu.Divider />

@@ -69,8 +69,8 @@ export const RespawnTimeColumn = ({
   isRemainingTime,
   handleEditableTimeChange,
 }: RespawnTimeColumnProps) => {
-  const { accessToken } = useAuthContext();
-  const { allowedUpdate, updateBossInList } = useBossContext();
+  const { accessToken, allowedUpdate } = useAuthContext();
+  const { updateBossInList } = useBossContext();
 
   useEffect(() => {
     if (!allowedUpdate) return;

@@ -18,13 +18,9 @@ import { useAuthContext } from './auth-context';
 
 const BossContext = createContext<{
   bossList: Boss[];
-  allowed: boolean;
-  allowedUpdate: boolean;
   updateBossInList: (boss: Boss, autoUpdate?: boolean) => void;
 }>({
   bossList: [],
-  allowed: false,
-  allowedUpdate: false,
   updateBossInList: () => {},
 });
 
@@ -41,15 +37,6 @@ export const BossContextProvider = ({
   const auth = useAuthContext();
   const [bossList, setBossList] = useState<Boss[]>(list);
   const newBossList = useMemo(() => [...bossList], [bossList]);
-  const allowed = useMemo(
-    () =>
-      auth.user?.role.type === 'editor' || auth.user?.role.type === 'viewer',
-    [auth.user]
-  );
-  const allowedUpdate = useMemo(
-    () => auth.user?.role.type === 'editor',
-    [auth.user]
-  );
 
   const updateBossInList = useCallback(
     (boss: Boss, autoUpdate?: boolean) => {
@@ -71,7 +58,7 @@ export const BossContextProvider = ({
   );
 
   useEffect(() => {
-    if (!allowed) return () => clearInterval(refetchTimer);
+    if (!auth.allowed) return () => clearInterval(refetchTimer);
 
     const refetchTimer = setInterval(() => {
       getBossList(auth.accessToken)
@@ -84,12 +71,10 @@ export const BossContextProvider = ({
     }, 10000);
 
     return () => clearInterval(refetchTimer);
-  }, [allowed, auth.accessToken]);
+  }, [auth.allowed, auth.accessToken]);
 
   return (
-    <BossContext.Provider
-      value={{ bossList, updateBossInList, allowed, allowedUpdate }}
-    >
+    <BossContext.Provider value={{ bossList, updateBossInList }}>
       {children}
     </BossContext.Provider>
   );

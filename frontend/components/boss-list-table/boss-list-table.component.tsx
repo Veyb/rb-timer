@@ -4,12 +4,14 @@ import { SwapOutlined } from '@ant-design/icons';
 import { useCallback, useState } from 'react';
 
 // local modules
+import { Layout } from '../layout';
 import { TableRow } from './table-row';
 import { useBossContext } from '../../contexts/boss-context';
 import { useAuthContext } from '../../contexts/auth-context';
 
 // style modules
 import styles from './boss-list-table.module.css';
+import mainStyles from '../../styles/main.module.css';
 
 interface RespawnColumnHeaderProps {
   onClick: () => void;
@@ -35,8 +37,8 @@ const RespawnColumnHeader = ({
 };
 
 export const BossListTable = () => {
-  const { loggedIn } = useAuthContext();
-  const { bossList, allowed, allowedUpdate } = useBossContext();
+  const { loggedIn, allowed, allowedUpdate } = useAuthContext();
+  const { bossList } = useBossContext();
   const [isRemainingTime, setRemainingTime] = useState(false);
 
   const [modal, setModal] = useState(false);
@@ -53,20 +55,20 @@ export const BossListTable = () => {
 
   if (!loggedIn) {
     return (
-      <div className={styles.infoHolder}>
-        <h2 className={styles.infoMessage}>Требуется авторизация</h2>
+      <div className={mainStyles.infoHolder}>
+        <h2 className={mainStyles.infoMessage}>Требуется авторизация</h2>
       </div>
     );
   }
 
   return !allowed ? (
-    <div className={styles.infoHolder}>
-      <h2 className={styles.infoMessage}>Доступ ограничен</h2>
+    <div className={mainStyles.infoHolder}>
+      <h2 className={mainStyles.infoMessage}>Доступ ограничен</h2>
       <div>за доступом обратитесь к Тэя</div>
     </div>
   ) : (
     <>
-      <div className={styles.holder}>
+      <Layout>
         <table className={styles.table}>
           <thead className={styles.tableThead}>
             <tr>
@@ -95,7 +97,7 @@ export const BossListTable = () => {
             РЕСТАРТ
           </Button>
         )}
-      </div>
+      </Layout>
 
       <Modal
         centered
