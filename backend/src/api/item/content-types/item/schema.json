@@ -18,17 +18,18 @@
       "required": true
     },
     "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     },
     "rank": {
       "type": "enumeration",
       "enum": [
-        "base",
         "common",
+        "rare",
         "unique",
         "epic",
         "legend"

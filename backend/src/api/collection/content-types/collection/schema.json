@@ -32,8 +32,8 @@
     "rank": {
       "type": "enumeration",
       "enum": [
-        "base",
         "common",
+        "rare",
         "unique",
         "epic",
         "legend"
