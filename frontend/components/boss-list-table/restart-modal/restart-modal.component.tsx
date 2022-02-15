@@ -27,23 +27,25 @@ export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
   }, []);
 
   const handleResetClick = useCallback(async () => {
-    const filteredList = bossList.filter((boss) => !boss.world);
+    if (confirm('Ты хорошо подумал? Если накосячишь, тебя вычислят ^_^')) {
+      const filteredList = bossList.filter((boss) => !boss.world);
 
-    filteredList.forEach(async (boss) => {
-      const time = moment().seconds(0);
-      const updatedBoss = await updateBossTime(
-        boss.id,
-        {
-          time: time.add(-boss.interval, 'hours').toISOString(),
-          approximately: false,
-          restarted: true,
-        },
-        accessToken
-      );
+      filteredList.forEach(async (boss) => {
+        const time = moment().seconds(0);
+        const updatedBoss = await updateBossTime(
+          boss.id,
+          {
+            time: time.add(-boss.interval, 'hours').toISOString(),
+            approximately: false,
+            restarted: true,
+          },
+          accessToken
+        );
 
-      updateBossInList(updatedBoss, true);
-      onClose();
-    });
+        updateBossInList(updatedBoss, true);
+        onClose();
+      });
+    }
   }, [accessToken, bossList, updateBossInList, onClose]);
 
   const handleConfirmClick = useCallback(async () => {
