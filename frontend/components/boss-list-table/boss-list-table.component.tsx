@@ -1,11 +1,12 @@
 // global modules
-import { Button, Modal, Space } from 'antd';
+import { Button } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
 import { useCallback, useState } from 'react';
 
 // local modules
 import { Layout } from '../layout';
 import { TableRow } from './table-row';
+import { RestartModal } from './restart-modal';
 import { useBossContext } from '../../contexts/boss-context';
 import { useAuthContext } from '../../contexts/auth-context';
 
@@ -99,15 +100,7 @@ export const BossListTable = () => {
         )}
       </Layout>
 
-      <Modal
-        centered
-        title="Рестарт"
-        visible={modal}
-        onCancel={handleModalClose}
-        footer={null}
-      >
-        <p>Функционал в процессе разработки</p>
-      </Modal>
+      <RestartModal visible={modal} onClose={handleModalClose} />
     </>
   );
 };

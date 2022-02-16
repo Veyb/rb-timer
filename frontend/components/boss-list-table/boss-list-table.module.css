@@ -59,7 +59,8 @@
   }
 }
 
-.allianceIcon {
+.allianceIcon,
+.restartedIcon {
   margin-right: 0.6rem;
 }
 

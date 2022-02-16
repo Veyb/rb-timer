@@ -32,7 +32,7 @@ interface ProfileProps {
 
 const Profile = ({ type }: ProfileProps) => {
   const router = useRouter();
-  const { loggedIn, allowed, allowedUpdate } = useAuthContext();
+  const { loggedIn, allowed } = useAuthContext();
 
   const handleTabClick = (key: string) => {
     const route = router.pathname.replace('[type]', key);

@@ -174,7 +174,9 @@ export const CollectionsBlock = () => {
     );
   }, [auth.accessToken]);
 
-  return !collections.length ? null : (
+  return !collections.length ? (
+    <p>Нет доступных коллекций</p>
+  ) : (
     <UnsafeCollectionsBlock collections={collections} />
   );
 };

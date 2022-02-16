@@ -58,6 +58,14 @@
       "type": "boolean",
       "default": false,
       "required": true
+    },
+    "restarted": {
+      "type": "boolean",
+      "default": false
+    },
+    "firstInterval": {
+      "type": "integer",
+      "min": 0
     }
   }
 }

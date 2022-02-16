@@ -73,7 +73,7 @@ export const RespawnTimeColumn = ({
   const { updateBossInList } = useBossContext();
 
   useEffect(() => {
-    if (!allowedUpdate) return;
+    if (!allowedUpdate || boss.restarted) return;
     const currentDateTime = moment().valueOf();
     const shouldUpdateWorld = boss.world && currentDateTime > boss.respawnTime;
     const bossNotRespawned =

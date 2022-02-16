@@ -1,0 +1,12 @@
+.buttonsBlock {
+  gap: 2rem;
+  display: flex;
+}
+
+.resetButton {
+  margin-right: auto;
+}
+
+.datePicker {
+  width: 17rem;
+}

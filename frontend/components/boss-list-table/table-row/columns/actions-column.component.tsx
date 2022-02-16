@@ -44,7 +44,7 @@ export const ActionsColumn = ({
 
   return !boss.world ? (
     <Space size="middle">
-      <Button disabled={disabled} onClick={onKillClick}>
+      <Button disabled={!boss.restarted && disabled} onClick={onKillClick}>
         Убили
       </Button>
       <DatePicker
@@ -61,7 +61,7 @@ export const ActionsColumn = ({
         disabled={(!calendarDate && !editableTime) || !allowedUpdate}
         onClick={handleConfirmClick}
         icon={<UploadOutlined />}
-      ></Button>
+      />
     </Space>
   ) : null;
 };

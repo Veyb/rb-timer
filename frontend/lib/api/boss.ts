@@ -34,6 +34,7 @@ export async function updateBossTime(
     `${API_URL}/bosses/${bossId}`,
     {
       data: {
+        restarted: false,
         ...params,
       },
     },
