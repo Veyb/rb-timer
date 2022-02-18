@@ -58,7 +58,8 @@
         "earring",
         "ring",
         "belt",
-        "bracelet"
+        "bracelet",
+        "skillbook"
       ],
       "required": true
     }
