@@ -8,4 +8,4 @@ export {
 } from './base';
 export { getBossList, updateBossTime } from './boss';
 export { getCollectionList } from './collection';
-export { getUsersMe, updateUser } from './user';
+export { getUsersMe, updateUser, updateUsersMe } from './user';

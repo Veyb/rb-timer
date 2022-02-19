@@ -6,7 +6,7 @@ export function getRankColor(rank: Rank) {
     case 'common':
       return '#a2a2ad';
     case 'rare':
-      return '#1a360e';
+      return '#458828';
     case 'unique':
       return '#1765ad';
     case 'epic':

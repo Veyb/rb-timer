@@ -5,29 +5,26 @@ import { CheckCircleOutlined } from '@ant-design/icons';
 import { ItemImage } from '../item-image';
 import { getRankColor } from '../collection-block.utils';
 import { Collection } from '../collections-block.types';
+import { useCollectionContext } from '../../../contexts/collection-context';
 
 // style modules
 import styles from './collection-item.module.css';
 
 interface CollectionItemComponentProps {
   collection: Collection;
-  checkedIds: Record<number, boolean>;
-  activeItemIds: [number, number] | [];
-  handleItemClick: (collectionId: number, itemId: number) => void;
 }
 
 export const CollectionItemComponent = ({
   collection,
-  checkedIds,
-  activeItemIds,
-  handleItemClick,
 }: CollectionItemComponentProps) => {
-  const checkedArray = Object.values(checkedIds);
+  const { activeIds, userCollections, handleItemClick } =
+    useCollectionContext();
+  const checkedArray = Object.values(userCollections[collection.id]);
   const isCheckedCollection = checkedArray.every(Boolean);
-  const [collectionActiveId, itemActiveId] = activeItemIds;
+  const [activeCollectionId, activeItemId] = activeIds;
 
   const effects = collection.effects
-    .map(({ name, value, unit }) => `${name} +${value}${unit}`)
+    .map(({ name, value, unit }) => `${name} +${value}${unit || ''}`)
     .join(', ');
 
   return (
@@ -44,13 +41,13 @@ export const CollectionItemComponent = ({
       <div className={styles.imagesHolder}>
         {collection.items.map((collectionItem) => (
           <ItemImage
-            checked={checkedIds[collectionItem.id]}
             key={collectionItem.id}
+            checked={userCollections[collection.id][collectionItem.id]}
             collectionItem={collectionItem}
             onClick={() => handleItemClick(collection.id, collectionItem.id)}
             active={
-              collection.id === collectionActiveId &&
-              collectionItem.id === itemActiveId
+              collection.id === activeCollectionId &&
+              collectionItem.id === activeItemId
             }
           />
         ))}

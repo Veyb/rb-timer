@@ -9,10 +9,10 @@ import {
   useRef,
   useState,
 } from 'react';
-import { getBossList } from '../lib/api';
 
 // local modules
 import { Boss } from '../types';
+import { getBossList } from '../lib/api';
 import { sortBossList } from '../lib/utils';
 import { useAuthContext } from './auth-context';
 

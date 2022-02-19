@@ -27,12 +27,12 @@ export const Header = () => {
   const menu = (
     <Menu>
       <Menu.Item key="0">
+        <div onClick={() => setSupportModal(true)}>Поддержать автора</div>
+      </Menu.Item>
+      <Menu.Item key="1">
         <Link href="/profile">
           <a>Профиль</a>
         </Link>
-      </Menu.Item>
-      <Menu.Item key="1">
-        <div onClick={() => setSupportModal(true)}>Поддержать автора</div>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="3">
@@ -96,6 +96,8 @@ export const Header = () => {
               Или же любым другим удобным Вам способом. Для этого можете
               напрямую обратить к персонажу Тэя в игре или дискорде :)
             </p>
+
+            <Image src="/requisites.jpg" alt="logo" width="200" height="200" />
           </>
         }
       </Modal>

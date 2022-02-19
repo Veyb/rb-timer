@@ -1,5 +1,5 @@
 .holder {
-  height: 9.4rem;
+  min-height: 9.4rem;
   padding: 1rem;
   background-color: #1e212b;
   display: grid;
@@ -9,7 +9,7 @@
 
 .textHolder {
   gap: 0.4rem;
-  height: 7.4rem;
+  min-height: 7.4rem;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -17,12 +17,16 @@
 
 .text {
   margin: 0;
+  line-height: 1.2;
 }
 
 .imagesHolder {
   height: 6.4rem;
   display: flex;
   gap: 0.4rem;
+  min-width: 20rem;
+  margin-left: 2rem;
+  justify-content: flex-end;
 }
 
 .checkedCounter {

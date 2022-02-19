@@ -14,9 +14,9 @@ export async function getBossList(token: string | undefined) {
         },
       }
     : undefined;
-  const bossList = await get('/bosses', params);
+  const { data, meta } = await get('/bosses', params);
 
-  return expandBossListAndSort(bossList);
+  return expandBossListAndSort(data);
 }
 
 export async function updateBossTime(

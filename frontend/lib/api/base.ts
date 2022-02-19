@@ -53,7 +53,9 @@ export const flattenListApiResponse = ({ data }: any) => {
 export async function get(type: string, params?: any) {
   const { data } = await axios.get(`${API_URL}${type}`, params);
 
-  return data.data ? flattenListApiResponse(data) : data;
+  return data.data
+    ? { data: flattenListApiResponse(data), meta: data.meta.pagination }
+    : data;
 }
 
 export async function post(type: string, params: any) {

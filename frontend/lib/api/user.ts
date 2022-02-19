@@ -35,3 +35,24 @@ export async function updateUser(
 
   return flattenApiResponse(data);
 }
+
+export async function updateUsersMe(
+  params: Partial<Pick<User, 'collections'>>,
+  token: string | undefined
+) {
+  const headers: AxiosRequestHeaders = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const { data } = await axios.put(
+    `${API_URL}/users/me`,
+    {
+      ...params,
+    },
+    { headers: { ...headers } }
+  );
+
+  return flattenApiResponse(data);
+}
