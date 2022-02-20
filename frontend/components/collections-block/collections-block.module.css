@@ -1,15 +1,14 @@
 .holder {
+  gap: 2rem;
   height: 100%;
   display: grid;
   grid-template-columns: 65% auto;
 }
 
 .leftBlock {
-  display: flex;
-  overflow-y: scroll;
-  flex-direction: column;
   gap: 1rem;
-  padding-right: 2rem;
+  display: flex;
+  flex-direction: column;
   padding-bottom: 3rem;
 }
 
@@ -19,6 +18,7 @@
 
 .title {
   color: #d46f1b;
+  font-size: 2.1rem;
   font-weight: normal;
 }
 
@@ -28,10 +28,12 @@
 
 .itemName {
   margin-top: 1rem;
+  font-size: 1.6rem;
 }
 
 .effect {
   margin: 0;
+  font-size: 1.4rem;
 }
 
 @media only screen and (max-width: 62em) {

@@ -31,7 +31,7 @@ export const CollectionItemComponent = ({
     <div className={styles.holder}>
       <div className={styles.textHolder}>
         <h3
-          className={styles.text}
+          className={styles.name}
           style={{ color: getRankColor(collection.rank) }}
         >
           {collection.name}

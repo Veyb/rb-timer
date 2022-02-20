@@ -26,16 +26,16 @@ export const Header = () => {
 
   const menu = (
     <Menu>
-      <Menu.Item key="0">
+      <Menu.Item className={styles.menuItem} key="0">
         <div onClick={() => setSupportModal(true)}>Поддержать автора</div>
       </Menu.Item>
-      <Menu.Item key="1">
+      <Menu.Item className={styles.menuItem} key="1">
         <Link href="/profile">
           <a>Профиль</a>
         </Link>
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="3">
+      <Menu.Item className={styles.menuItem} key="3">
         <div onClick={auth.logout}>Выход</div>
       </Menu.Item>
     </Menu>
@@ -43,14 +43,16 @@ export const Header = () => {
 
   return (
     <header className={styles.header}>
+      <div className={styles.background} />
       <div className={styles.holder}>
         <Link href="/">
           <a className={styles.homeLink}>
             <Image
-              src="/l2m-logo-color.png"
               alt="logo"
-              width="126"
-              height="46"
+              layout="fill"
+              src="/l2m-logo-color.png"
+              // width="126"
+              // height="46"
             />
           </a>
         </Link>

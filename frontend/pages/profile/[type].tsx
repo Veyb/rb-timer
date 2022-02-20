@@ -24,6 +24,10 @@ const Holder = styled.div`
   & .ant-tabs-content {
     height: 100%;
   }
+
+  & .ant-tabs-tab-btn {
+    font-size: 1.4rem;
+  }
 `;
 
 interface ProfileProps {
