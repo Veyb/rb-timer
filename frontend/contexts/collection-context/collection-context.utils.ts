@@ -21,12 +21,12 @@ export function getEffects(
   const effectsHash = onlyCheckedCollections.reduce(
     (acc: Record<string, Effect>, collection) => {
       collection.effects.forEach((effect) => {
-        acc[effect.id]
-          ? (acc[effect.id] = {
-              ...acc[effect.id],
-              value: acc[effect.id].value + effect.value,
+        acc[effect.name]
+          ? (acc[effect.name] = {
+              ...acc[effect.name],
+              value: acc[effect.name].value + effect.value,
             })
-          : (acc[effect.id] = effect);
+          : (acc[effect.name] = effect);
       });
 
       return acc;

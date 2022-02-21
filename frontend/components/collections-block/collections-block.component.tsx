@@ -1,6 +1,7 @@
 // global modules
 import { Divider } from 'antd';
 import { useEffect, useState } from 'react';
+import { CheckOutlined } from '@ant-design/icons';
 
 // local modules
 import { CollectionsModal } from './collections-modal';
@@ -38,11 +39,14 @@ const UnsafeCollectionsBlock = ({
         <div className={styles.rightBlock}>
           <h2 className={styles.title}>Эффект коллекции</h2>
           <Divider className={styles.divider} />
-          {effects.map((effect) => (
-            <p className={styles.effect} key={effect.id}>
-              {`${effect.name} +${effect.value}${effect.unit || ''}`}
-            </p>
-          ))}
+          <div className={styles.effectsHolder}>
+            {effects.map((effect) => (
+              <p className={styles.effect} key={effect.id}>
+                <CheckOutlined />
+                {`${effect.name} +${effect.value}${effect.unit || ''}`}
+              </p>
+            ))}
+          </div>
         </div>
       </div>
 
