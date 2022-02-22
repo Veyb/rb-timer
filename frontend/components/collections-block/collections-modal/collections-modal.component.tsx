@@ -12,6 +12,7 @@ import styles from '../collections-block.module.css';
 export const CollectionsModal = () => {
   const {
     activeItem,
+    nonInteractive,
     isActiveItemChecked,
     handleActiveReset,
     handleToggleClick,
@@ -23,9 +24,11 @@ export const CollectionsModal = () => {
       visible={!!activeItem}
       onCancel={handleActiveReset}
       footer={
-        <Button type="primary" onClick={handleToggleClick}>
-          {isActiveItemChecked ? 'Удалить' : 'Добавить'}
-        </Button>
+        nonInteractive ? null : (
+          <Button type="primary" onClick={handleToggleClick}>
+            {isActiveItemChecked ? 'Удалить' : 'Добавить'}
+          </Button>
+        )
       }
     >
       {activeItem && (

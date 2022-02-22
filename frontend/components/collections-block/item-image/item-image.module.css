@@ -11,6 +11,10 @@
   box-shadow: 0 0 0 0.2rem #d46f1b;
 }
 
+.interactive {
+  cursor: pointer;
+}
+
 .image {
   background-color: #202936;
 }

@@ -9,3 +9,10 @@ export type {
   Collection,
   CollectionItem,
 } from './collection.types';
+
+export interface Meta {
+  page: number;
+  pageCount: number;
+  pageSize: number;
+  total: number;
+}

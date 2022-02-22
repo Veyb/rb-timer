@@ -17,9 +17,13 @@ interface CollectionItemComponentProps {
 export const CollectionItemComponent = ({
   collection,
 }: CollectionItemComponentProps) => {
-  const { activeIds, userCollections, handleItemClick } =
-    useCollectionContext();
-  const checkedArray = Object.values(userCollections[collection.id]);
+  const {
+    activeIds,
+    userCollections: selfUserCollections,
+    handleItemClick,
+  } = useCollectionContext();
+  const userCollectionsHash = selfUserCollections;
+  const checkedArray = Object.values(userCollectionsHash[collection.id]);
   const isCheckedCollection = checkedArray.every(Boolean);
   const [activeCollectionId, activeItemId] = activeIds;
 
@@ -42,7 +46,7 @@ export const CollectionItemComponent = ({
         {collection.items.map((collectionItem) => (
           <ItemImage
             key={collectionItem.id}
-            checked={userCollections[collection.id][collectionItem.id]}
+            checked={userCollectionsHash[collection.id][collectionItem.id]}
             collectionItem={collectionItem}
             onClick={() => handleItemClick(collection.id, collectionItem.id)}
             active={

@@ -47,6 +47,7 @@ export const ItemImage = ({
       onClick={onClick}
       className={cn(styles.imageHolder, {
         [styles.active]: active,
+        [styles.interactive]: !!onClick,
       })}
     >
       {image}

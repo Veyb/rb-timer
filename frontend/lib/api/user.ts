@@ -5,6 +5,24 @@ import axios, { AxiosRequestHeaders } from 'axios';
 import { User } from '../../types';
 import { get, API_URL, flattenApiResponse } from './base';
 
+export async function getUser(token: string | undefined, id: string) {
+  const params = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return await get(`/users/${id}`, params);
+}
+
+export async function getUsers(token: string | undefined) {
+  const params = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return await get(`/users`, params);
+}
+
 export async function getUsersMe(token: string) {
   const params = {
     headers: {

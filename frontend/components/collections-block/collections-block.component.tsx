@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { CheckOutlined } from '@ant-design/icons';
 
 // local modules
+import { User } from '../../types';
 import { CollectionsModal } from './collections-modal';
 import type { Collection } from './collections-block.types';
 import { useAuthContext } from '../../contexts/auth-context';
@@ -55,7 +56,11 @@ const UnsafeCollectionsBlock = ({
   );
 };
 
-export const CollectionsBlock = () => {
+interface CollectionsBlockProps {
+  user?: User;
+}
+
+export const CollectionsBlock = ({ user }: CollectionsBlockProps) => {
   const auth = useAuthContext();
   const [pending, setPending] = useState(true);
   const [collections, setCollesctions] = useState<Collection[]>([]);
@@ -74,7 +79,7 @@ export const CollectionsBlock = () => {
   return !collections.length ? (
     <p>Нет доступных коллекций</p>
   ) : (
-    <CollectionContextProvider collections={collections}>
+    <CollectionContextProvider user={user} collections={collections}>
       <UnsafeCollectionsBlock collections={collections} />
     </CollectionContextProvider>
   );

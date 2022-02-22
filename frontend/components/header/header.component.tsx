@@ -34,6 +34,13 @@ export const Header = () => {
           <a>Профиль</a>
         </Link>
       </Menu.Item>
+      {auth.allowedUpdate && (
+        <Menu.Item className={styles.menuItem} key="2">
+          <Link href="/users">
+            <a>Пользователи</a>
+          </Link>
+        </Menu.Item>
+      )}
       <Menu.Divider />
       <Menu.Item className={styles.menuItem} key="3">
         <div onClick={auth.logout}>Выход</div>
@@ -48,11 +55,10 @@ export const Header = () => {
         <Link href="/">
           <a className={styles.homeLink}>
             <Image
+              priority
               alt="logo"
               layout="fill"
               src="/l2m-logo-color.png"
-              // width="126"
-              // height="46"
             />
           </a>
         </Link>

@@ -21,6 +21,7 @@ import {
   Collection,
   CollectionItem,
   UserCollections,
+  User,
 } from '../../types';
 
 const CollectionContext = createContext<{
@@ -29,6 +30,7 @@ const CollectionContext = createContext<{
   collections: Collection[];
   userCollections: UserCollections;
   activeItem: CollectionItem | undefined;
+  nonInteractive: boolean;
   isActiveItemChecked: boolean;
   handleActiveReset: () => void;
   handleToggleClick: () => void;
@@ -39,6 +41,7 @@ const CollectionContext = createContext<{
   collections: [],
   userCollections: {},
   activeItem: undefined,
+  nonInteractive: false,
   isActiveItemChecked: false,
   handleActiveReset: () => {},
   handleToggleClick: () => {},
@@ -48,21 +51,27 @@ const CollectionContext = createContext<{
 interface CollectionContextProviderProps {
   children: ReactNode;
   collections: Collection[];
+  user?: User;
 }
 
 export const CollectionContextProvider = ({
+  user,
   children,
   collections,
 }: CollectionContextProviderProps) => {
   const auth = useAuthContext();
   const defaultUserCollections = getDefaultUserCollections(collections);
   const [activeIds, setActiveIds] = useState<[number, number] | []>([]);
+  const nonInteractive = useMemo(() => !!user, [user]);
   const [activeCollectionId, activeItemId] = useMemo(
     () => [activeIds[0], activeIds[1]],
     [activeIds]
   );
   const [userCollections, setUsetCollections] = useState<UserCollections>(
-    R.mergeDeepRight(defaultUserCollections, auth.user?.collections || {})
+    R.mergeDeepRight(
+      defaultUserCollections,
+      (user ? user.collections : auth.user?.collections) || {}
+    )
   );
 
   const isActiveItemChecked = useMemo(
@@ -121,6 +130,7 @@ export const CollectionContextProvider = ({
         collections,
         activeIds,
         activeItem,
+        nonInteractive,
         userCollections,
         isActiveItemChecked,
         handleActiveReset,

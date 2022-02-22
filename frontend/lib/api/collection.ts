@@ -3,6 +3,7 @@ import qs from 'qs';
 
 // local modules
 import { get } from './base';
+import { Meta } from '../../types';
 
 function getQuery(page?: number) {
   return qs.stringify(
@@ -34,13 +35,6 @@ export async function getCollectionList(
   const collections = await get(`/collections?${query}`, params);
 
   return collections;
-}
-
-interface Meta {
-  page: number;
-  pageCount: number;
-  pageSize: number;
-  total: number;
 }
 
 export async function getAllCollectionList(token: string | undefined) {

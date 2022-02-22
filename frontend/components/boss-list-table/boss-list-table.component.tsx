@@ -12,7 +12,6 @@ import { useAuthContext } from '../../contexts/auth-context';
 
 // style modules
 import styles from './boss-list-table.module.css';
-import mainStyles from '../../styles/main.module.css';
 
 interface RespawnColumnHeaderProps {
   onClick: () => void;
@@ -38,8 +37,8 @@ const RespawnColumnHeader = ({
 };
 
 export const BossListTable = () => {
-  const { loggedIn, allowed, allowedUpdate } = useAuthContext();
   const { bossList } = useBossContext();
+  const { allowedUpdate } = useAuthContext();
   const [isRemainingTime, setRemainingTime] = useState(false);
 
   const [modal, setModal] = useState(false);
@@ -54,20 +53,7 @@ export const BossListTable = () => {
     setRemainingTime(!isRemainingTime);
   }, [isRemainingTime, setRemainingTime]);
 
-  if (!loggedIn) {
-    return (
-      <div className={mainStyles.infoHolder}>
-        <h2 className={mainStyles.infoMessage}>Требуется авторизация</h2>
-      </div>
-    );
-  }
-
-  return !allowed ? (
-    <div className={mainStyles.infoHolder}>
-      <h2 className={mainStyles.infoMessage}>Доступ ограничен</h2>
-      <div>за доступом обратитесь к Тэя</div>
-    </div>
-  ) : (
+  return (
     <>
       <Layout>
         <table className={styles.table}>
