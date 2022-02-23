@@ -32,15 +32,16 @@ interface NameColumnProps {
 
 export const NameColumn = ({ boss }: NameColumnProps) => {
   const isOutOfDate = moment().valueOf() > boss.respawnTime;
+  const baseTitle = `Интервал появления ${boss.interval} часов. (${boss.chance}%)`;
+  const title = boss.firstInterval
+    ? `Первое появление спустя ${boss.firstInterval} часов. ${baseTitle}`
+    : baseTitle;
 
   return (
     <>
       {boss.restarted && <FieldTimeOutlined className={styles.restartedIcon} />}
       {boss.alliance && <TeamOutlined className={styles.allianceIcon} />}
-      <Tooltip
-        placement="top"
-        title={`Интервал появления ${boss.interval} часов. (${boss.chance}%)`}
-      >
+      <Tooltip placement="top" title={title}>
         <span style={{ color: getColor(boss.quality) }}>{boss.name}</span>
       </Tooltip>
       {isOutOfDate && <QuestionCircleOutlined className={styles.outDateIcon} />}
