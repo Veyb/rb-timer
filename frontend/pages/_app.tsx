@@ -63,7 +63,7 @@ MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
 
       user = data;
     } catch (err: any) {
-      destroyCookie(ctx, 'jwt');
+      destroyCookie(ctx, 'jwt', { path: '/' });
       serverRedirect(ctx, '/login');
     }
   }
