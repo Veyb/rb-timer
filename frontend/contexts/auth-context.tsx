@@ -117,7 +117,7 @@ export const AuthContextProvider = ({
   }, []);
 
   const logout = useCallback(() => {
-    destroyCookie(null, 'jwt');
+    destroyCookie(null, 'jwt', { path: '/' });
     setUser(null);
     setAccessToken(undefined);
   }, []);
