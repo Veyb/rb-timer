@@ -21,21 +21,21 @@
     font-size: 87.5%;
   }
 }
-@media only screen and (min-width: 140em) {
+/* @media only screen and (min-width: 140em) {
   :root {
     font-size: 105%;
   }
-}
-@media only screen and (min-width: 200em) {
+} */
+/* @media only screen and (min-width: 200em) {
   :root {
     font-size: 130%;
   }
-}
-@media only screen and (min-width: 240em) {
+} */
+/* @media only screen and (min-width: 240em) {
   :root {
     font-size: 145%;
   }
-}
+} */
 
 html,
 body {
