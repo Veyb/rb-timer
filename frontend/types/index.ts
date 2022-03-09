@@ -4,6 +4,7 @@ export type {
   Rank,
   ItemType,
   ImageType,
+  FilterType,
   Item,
   Effect,
   Collection,

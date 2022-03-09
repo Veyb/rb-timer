@@ -10,6 +10,9 @@
   --zIndexRoof: 100;
 }
 
+#__next {
+  min-width: 58rem;
+}
 /* @media only screen and (max-width: 67.5em) {
   :root {
     font-size: 50%;

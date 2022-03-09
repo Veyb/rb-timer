@@ -54,3 +54,5 @@ export interface Collection {
   effects: Effect[];
   items: CollectionItem[];
 }
+
+export type FilterType = 'all' | 'notFinished' | 'finished';

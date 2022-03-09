@@ -3,6 +3,10 @@
   padding-top: 1.9rem;
 }
 
+.inputHolder.withouLabel {
+  padding: 0;
+}
+
 .input {
   height: 3.6rem;
   direction: initial;
@@ -23,7 +27,19 @@
   border-image: initial;
   appearance: none;
   border-radius: 0;
+  text-overflow: ellipsis;
   border-bottom: 0.1rem solid rgb(162, 162, 173);
+}
+
+.simple .input {
+  background-color: rgb(58, 58, 66);
+  padding: 0 0.8rem;
+  border-radius: 0.2rem;
+  border: 0.1rem solid rgb(58, 58, 66);
+}
+
+.input.withIcon {
+  padding-right: 3.2rem;
 }
 
 .input:focus {
@@ -82,6 +98,16 @@
   border-radius: 0;
 }
 
+.simple .iconButton {
+  color: rgb(162, 162, 173);
+}
+.simple .iconButton:hover {
+  color: #165996;
+}
+.simple .iconButton:active {
+  color: #388ed3;
+}
+
 .label {
   margin: 0;
   position: absolute;
@@ -102,4 +128,10 @@
 .inputHolder:focus-within .label {
   bottom: 4rem;
   font-size: 1.2rem;
+}
+
+.simple .label {
+  width: 100%;
+  top: -0.4rem;
+  font-size: 1.4rem !important;
 }

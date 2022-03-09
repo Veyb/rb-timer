@@ -28,6 +28,7 @@
   width: 100%;
   max-width: 100rem;
   z-index: var(--zIndexRoof);
+  justify-content: space-between;
 }
 
 .menuItem {
@@ -37,11 +38,6 @@
 
 .time {
   margin: 0;
-  margin-left: auto;
-}
-
-.rightBlock {
-  margin-left: auto;
 }
 
 .homeLink {

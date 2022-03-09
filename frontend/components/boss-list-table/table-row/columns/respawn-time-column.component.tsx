@@ -6,6 +6,7 @@ import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
 // local modules
 import { Boss } from '../../../../types';
+import { getNewRespawnTime } from './utils';
 import { HOUR, MINUTE } from '../../../../constants';
 import { updateBossTime } from '../../../../lib/api';
 import { useBossContext } from '../../../../contexts/boss-context';
@@ -43,17 +44,6 @@ function getOutputTime(
   return isRemainingTime && !editableTime
     ? `${diff < 0 ? '-' : ''}${diffHours}:${diffMinutes}`
     : `${hours}:${minutes}`;
-}
-
-function getNewRespawnTime(respawnTime: number, interval: number) {
-  const currentDate = moment();
-  const respawnDate = moment(respawnTime);
-
-  while (!respawnDate.isAfter(currentDate)) {
-    respawnDate.add(interval, 'hours');
-  }
-
-  return respawnDate.add(-interval, 'hours').toISOString();
 }
 
 interface RespawnTimeColumnProps {

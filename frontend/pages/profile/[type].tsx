@@ -21,6 +21,10 @@ const Holder = styled.div`
     margin: 0;
   }
 
+  & .ant-tabs {
+    font-size: 1.4rem;
+  }
+
   & .ant-tabs-content {
     height: 100%;
   }

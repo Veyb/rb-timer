@@ -1,10 +1,8 @@
+// local modules
 import { Collection, Effect, UserCollections } from '../../types';
 
-export function getEffects(
-  collections: Collection[],
-  userCollections: UserCollections
-) {
-  const checkedCollectionIds = Object.entries(userCollections).reduce(
+export function getCheckedCollectionIds(userCollections: UserCollections) {
+  return Object.entries(userCollections).reduce(
     (acc: number[], [collectionId, checkedIds]) => {
       const checkedArray = Object.values(checkedIds);
       const isCheckedCollection = checkedArray.every(Boolean);
@@ -13,6 +11,13 @@ export function getEffects(
     },
     []
   );
+}
+
+export function getEffects(
+  collections: Collection[],
+  userCollections: UserCollections
+) {
+  const checkedCollectionIds = getCheckedCollectionIds(userCollections);
 
   const onlyCheckedCollections = collections.filter(({ id }) =>
     checkedCollectionIds.includes(id)

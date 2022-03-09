@@ -15,6 +15,7 @@ import { useAuthContext } from '../auth-context';
 import {
   getEffects,
   getDefaultUserCollections,
+  getCheckedCollectionIds,
 } from './collection-context.utils';
 import {
   Effect,
@@ -22,9 +23,11 @@ import {
   CollectionItem,
   UserCollections,
   User,
+  FilterType,
 } from '../../types';
 
 const CollectionContext = createContext<{
+  filter: FilterType;
   effects: Effect[];
   activeIds: [number, number] | [];
   collections: Collection[];
@@ -35,7 +38,9 @@ const CollectionContext = createContext<{
   handleActiveReset: () => void;
   handleToggleClick: () => void;
   handleItemClick: (collectionId: number, itemId: number) => void;
+  setFilter: (filter: FilterType) => void;
 }>({
+  filter: 'all',
   effects: [],
   activeIds: [],
   collections: [],
@@ -46,6 +51,7 @@ const CollectionContext = createContext<{
   handleActiveReset: () => {},
   handleToggleClick: () => {},
   handleItemClick: (collectionId, itemId) => {},
+  setFilter: (filter) => {},
 });
 
 interface CollectionContextProviderProps {
@@ -62,6 +68,7 @@ export const CollectionContextProvider = ({
   const auth = useAuthContext();
   const defaultUserCollections = getDefaultUserCollections(collections);
   const [activeIds, setActiveIds] = useState<[number, number] | []>([]);
+  const [filter, setFilter] = useState<FilterType>('all');
   const nonInteractive = useMemo(() => !!user, [user]);
   const [activeCollectionId, activeItemId] = useMemo(
     () => [activeIds[0], activeIds[1]],
@@ -94,6 +101,10 @@ export const CollectionContextProvider = ({
     return getEffects(collections, userCollections);
   }, [collections, userCollections]);
 
+  const checkedCollectionIds = useMemo(() => {
+    return getCheckedCollectionIds(userCollections);
+  }, [userCollections]);
+
   const handleActiveReset = useCallback(() => {
     setActiveIds([]);
   }, []);
@@ -123,11 +134,28 @@ export const CollectionContextProvider = ({
     auth.accessToken,
   ]);
 
+  const filteredCollections = useMemo(() => {
+    switch (filter) {
+      case 'all':
+        return collections;
+      case 'notFinished':
+        return collections.filter(
+          ({ id }) => !checkedCollectionIds.includes(id)
+        );
+      case 'finished':
+        return collections.filter(({ id }) =>
+          checkedCollectionIds.includes(id)
+        );
+      default:
+        return collections;
+    }
+  }, [collections, filter, checkedCollectionIds]);
+
   return (
     <CollectionContext.Provider
       value={{
         effects,
-        collections,
+        collections: filteredCollections,
         activeIds,
         activeItem,
         nonInteractive,
@@ -136,6 +164,8 @@ export const CollectionContextProvider = ({
         handleActiveReset,
         handleToggleClick,
         handleItemClick,
+        filter,
+        setFilter,
       }}
     >
       {children}

@@ -62,7 +62,7 @@ export const Header = () => {
             />
           </a>
         </Link>
-        <Space size="large" className={styles.rightBlock}>
+        <Space size="large">
           <h2 className={styles.time}>{time}</h2>
           {auth.loggedIn ? (
             <Dropdown
