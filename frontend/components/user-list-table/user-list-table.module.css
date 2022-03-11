@@ -38,12 +38,18 @@
   background: #262626;
 }
 
-.nickname {
-  text-align: left;
-}
-
 .column {
   text-align: center;
+  width: 25%;
+}
+
+.nickname {
+  text-align: left;
+  width: 28%;
+}
+
+.role {
+  width: 22%;
 }
 
 .empty {

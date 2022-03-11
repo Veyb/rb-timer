@@ -54,6 +54,14 @@ export const Select = styled(AntSelect)`
     font-size: 1.2rem;
   }
 
+  & .ant-select-clear {
+    right: 1.1rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: -0.6rem;
+    font-size: 1.2rem;
+}
+
   &.ant-select-single.ant-select-sm:not(.ant-select-customize-input)
     .ant-select-selector {
     padding: 0 0.7rem;

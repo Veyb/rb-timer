@@ -72,10 +72,12 @@ export const FilterBlock = ({
       </form>
 
       <Select
-        mode="multiple"
+        allowClear
+        placeholder="Роль"
         onChange={handleFilter}
         className={styles.filterBlock}
-        defaultValue={roles.map((role) => role.name)}
+        dropdownMatchSelectWidth={false}
+        placement="bottomLeft"
       >
         {roles.map((role) => (
           <Select.Option key={role.id} value={role.name}>

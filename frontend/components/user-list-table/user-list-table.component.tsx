@@ -39,7 +39,7 @@ const UserRow = ({ user }: UserRowProps) => {
     <tr onClick={handleClick}>
       <td className={styles.nickname}>{user.nickname}</td>
       <td className={styles.column}>{user.realname}</td>
-      <td className={styles.column}>{user.role.name}</td>
+      <td className={cn(styles.column, styles.role)}>{user.role.name}</td>
       <td className={styles.column}>{collectionsStatus}</td>
     </tr>
   );
@@ -53,14 +53,12 @@ interface UserListTableProps {
 export const UserListTable = ({ users, roles }: UserListTableProps) => {
   const { allowedUpdate } = useAuthContext();
   const [searchValue, setSearchValue] = useState('');
-  const [filteredRoles, setFilteredRoles] = useState(
-    roles.map((role) => role.name)
-  );
+  const [filteredRoles, setFilteredRoles] = useState(undefined);
 
   const renderedUsers = useMemo(
     () =>
       users
-        .filter((user) => filteredRoles.includes(user.role.name))
+        .filter((user) => !filteredRoles || filteredRoles === user.role.name)
         .filter((user) =>
           user.nickname.toLowerCase().includes(searchValue.toLowerCase())
         ),
@@ -80,7 +78,7 @@ export const UserListTable = ({ users, roles }: UserListTableProps) => {
           <tr>
             <th className={styles.nickname}>Никнейм</th>
             <th className={styles.column}>Имя</th>
-            <th className={styles.column}>Роль</th>
+            <th className={cn(styles.column, styles.role)}>Роль</th>
             <th className={styles.column}>Статус коллекций</th>
           </tr>
         </thead>
