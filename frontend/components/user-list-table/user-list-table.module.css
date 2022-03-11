@@ -1,3 +1,7 @@
+.layout {
+  gap: 0;
+}
+
 .table {
   width: 100%;
   background: #141414;
@@ -29,7 +33,7 @@
   border-bottom: 1px solid #303030;
 }
 
-.tableTbody tr:hover > td {
+.tableTbody.interactive tr:hover > td {
   cursor: pointer;
   background: #262626;
 }
@@ -40,4 +44,9 @@
 
 .column {
   text-align: center;
+}
+
+.empty {
+  margin: 0;
+  padding: 1.6rem;
 }

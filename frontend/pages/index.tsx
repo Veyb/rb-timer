@@ -8,6 +8,7 @@ import { getBossList } from '../lib/api';
 import { useAuthContext } from '../contexts/auth-context';
 import { BossListTable } from '../components/boss-list-table';
 import { BossContextProvider } from '../contexts/boss-context';
+import { NotAllowedBlock } from '../components/not-allowed-block';
 
 // style modules
 import styles from '../styles/main.module.css';
@@ -28,10 +29,7 @@ const Main: NextPage<MainProps> = ({ list }) => {
   }
 
   if (!allowed) {
-    <div className={styles.infoHolder}>
-      <h2 className={styles.infoMessage}>Доступ ограничен</h2>
-      <div>за доступом обратитесь к Тэя</div>
-    </div>;
+    return <NotAllowedBlock />;
   }
 
   return (

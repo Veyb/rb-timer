@@ -6,11 +6,13 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
 // local modules
-import { User } from '../../../types';
-import { getUser } from '../../../lib/api';
+import { Role, User } from '../../../types';
+import { getRoles, getUser } from '../../../lib/api';
 import { Layout } from '../../../components/layout';
 import { useAuthContext } from '../../../contexts/auth-context';
 import { CollectionsBlock } from '../../../components/collections-block';
+import { ManagementBlock } from '../../../components/management-block';
+import { NotAllowedBlock } from '../../../components/not-allowed-block';
 
 // style modules
 import styles from '../../../styles/main.module.css';
@@ -22,6 +24,10 @@ const Holder = styled.div`
 
   h1 {
     margin: 0;
+  }
+
+  & .ant-tabs {
+    font-size: 1.4rem;
   }
 
   & .ant-tabs-content {
@@ -36,9 +42,10 @@ const Holder = styled.div`
 interface UserProfileByIdProps {
   type: string;
   user: User;
+  roles: Role[];
 }
 
-const UserProfileById = ({ type, user }: UserProfileByIdProps) => {
+const UserProfileById = ({ type, user, roles }: UserProfileByIdProps) => {
   const router = useRouter();
   const { loggedIn, allowedUpdate } = useAuthContext();
 
@@ -57,21 +64,15 @@ const UserProfileById = ({ type, user }: UserProfileByIdProps) => {
     );
   }
 
-  if (!allowedUpdate)
-    return (
-      <div className={styles.infoHolder}>
-        <h2 className={styles.infoMessage}>Доступ ограничен</h2>
-        <div>за доступом обратитесь к Тэя</div>
-      </div>
-    );
+  if (!allowedUpdate) return <NotAllowedBlock />;
 
   return (
     <Holder className={styles.container}>
       <Layout className={styles.profileLayout}>
         <h1>{`Профиль: ${user.nickname}`}</h1>
         <Tabs onChange={handleTabClick} activeKey={type}>
-          <TabPane tab="Характеристики" key="stats">
-            Раздел в разработке
+          <TabPane tab="Управление" key="management">
+            <ManagementBlock user={user} roles={roles} />
           </TabPane>
           <TabPane tab="Коллекции" key="collections">
             <CollectionsBlock user={user} />
@@ -84,11 +85,12 @@ const UserProfileById = ({ type, user }: UserProfileByIdProps) => {
 
 export async function getServerSideProps(ctx: NextPageContext) {
   let user = null;
+  let roles: Role[] = [];
   const { type, userId } = ctx.query;
 
   if (
     typeof userId !== 'string' ||
-    (type !== 'stats' && type !== 'collections')
+    (type !== 'management' && type !== 'collections')
   ) {
     return { notFound: true };
   }
@@ -97,12 +99,20 @@ export async function getServerSideProps(ctx: NextPageContext) {
 
   if (jwt) {
     try {
-      const data = await getUser(jwt, userId);
-      user = data;
+      const [userData, rolesData] = await Promise.all([
+        getUser(jwt, userId),
+        getRoles(jwt),
+      ]);
+      user = userData;
+      roles = rolesData;
     } catch (err: any) {}
   }
 
-  return { props: { type, user } };
+  if (!user) {
+    return { notFound: true };
+  }
+
+  return { props: { type, user, roles } };
 }
 
 export default UserProfileById;

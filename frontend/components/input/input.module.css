@@ -1,6 +1,7 @@
 .inputHolder {
   position: relative;
   padding-top: 1.9rem;
+  height: 3.6rem;
 }
 
 .inputHolder.withouLabel {
@@ -8,8 +9,8 @@
 }
 
 .input {
-  height: 3.6rem;
   direction: initial;
+  height: 100%;
   width: 100%;
   flex: 1 1 0%;
   caret-color: rgb(162, 162, 173);
@@ -83,7 +84,7 @@
 }
 
 .asideHolder {
-  height: 3.6rem;
+  height: 100%;
   display: flex;
   align-items: center;
   position: absolute;
@@ -96,6 +97,7 @@
   border: 0;
   box-shadow: none;
   border-radius: 0;
+  height: 100%;
 }
 
 .simple .iconButton {

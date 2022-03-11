@@ -1,10 +1,13 @@
 // global modules
-import { MouseEvent } from 'react';
+import cn from 'classnames';
 import { useRouter } from 'next/router';
+import { MouseEvent, useMemo, useState } from 'react';
 
 // local modules
-import { User } from '../../types';
 import { Layout } from '../layout';
+import { FilterBlock } from './filter-block';
+import { useAuthContext } from '../../contexts/auth-context';
+import { Role, User } from '../../types';
 
 // style modules
 import styles from './user-list-table.module.css';
@@ -15,6 +18,7 @@ interface UserRowProps {
 
 const UserRow = ({ user }: UserRowProps) => {
   const router = useRouter();
+  const { allowedUpdate } = useAuthContext();
   const collectionsValues = Object.values(user.collections || {});
   const checkedCollectionsCount = collectionsValues.filter((collection) =>
     Object.values(collection).every(Boolean)
@@ -26,6 +30,8 @@ const UserRow = ({ user }: UserRowProps) => {
 
   const handleClick = (e: MouseEvent<HTMLTableRowElement>) => {
     e.preventDefault();
+    if (!allowedUpdate) return;
+
     router.push(`/users/${user.id}`);
   };
 
@@ -41,11 +47,34 @@ const UserRow = ({ user }: UserRowProps) => {
 
 interface UserListTableProps {
   users: User[];
+  roles: Role[];
 }
 
-export const UserListTable = ({ users }: UserListTableProps) => {
+export const UserListTable = ({ users, roles }: UserListTableProps) => {
+  const { allowedUpdate } = useAuthContext();
+  const [searchValue, setSearchValue] = useState('');
+  const [filteredRoles, setFilteredRoles] = useState(
+    roles.map((role) => role.name)
+  );
+
+  const renderedUsers = useMemo(
+    () =>
+      users
+        .filter((user) => filteredRoles.includes(user.role.name))
+        .filter((user) =>
+          user.nickname.toLowerCase().includes(searchValue.toLowerCase())
+        ),
+    [users, searchValue, filteredRoles]
+  );
+
   return (
-    <Layout>
+    <Layout className={styles.layout}>
+      <FilterBlock
+        roles={roles}
+        handleSearch={setSearchValue}
+        handleFilter={setFilteredRoles}
+      />
+
       <table className={styles.table}>
         <thead className={styles.tableThead}>
           <tr>
@@ -55,11 +84,19 @@ export const UserListTable = ({ users }: UserListTableProps) => {
             <th className={styles.column}>Статус коллекций</th>
           </tr>
         </thead>
-        <tbody className={styles.tableTbody}>
-          {users.map((user) => (
-            <UserRow key={user.id} user={user} />
-          ))}
-        </tbody>
+        {renderedUsers.length ? (
+          <tbody
+            className={cn(styles.tableTbody, {
+              [styles.interactive]: allowedUpdate,
+            })}
+          >
+            {renderedUsers.map((user) => (
+              <UserRow key={user.id} user={user} />
+            ))}
+          </tbody>
+        ) : (
+          <p className={styles.empty}>Пользователи не найдены</p>
+        )}
       </table>
     </Layout>
   );

@@ -2,12 +2,17 @@
 import { Tabs } from 'antd';
 import { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
+import { parseCookies } from 'nookies';
 import styled from 'styled-components';
 
 // local modules
-import { CollectionsBlock } from '../../components/collections-block';
+import { Role } from '../../types';
+import { getRoles } from '../../lib/api';
 import { Layout } from '../../components/layout';
 import { useAuthContext } from '../../contexts/auth-context';
+import { ManagementBlock } from '../../components/management-block';
+import { CollectionsBlock } from '../../components/collections-block';
+import { NotAllowedBlock } from '../../components/not-allowed-block';
 
 // style modules
 import styles from '../../styles/main.module.css';
@@ -36,18 +41,19 @@ const Holder = styled.div`
 
 interface ProfileProps {
   type: string;
+  roles: Role[];
 }
 
-const Profile = ({ type }: ProfileProps) => {
+const Profile = ({ type, roles }: ProfileProps) => {
   const router = useRouter();
-  const { loggedIn, allowed } = useAuthContext();
+  const { loggedIn, allowed, user } = useAuthContext();
 
   const handleTabClick = (key: string) => {
     const route = router.pathname.replace('[type]', key);
     router.push(route);
   };
 
-  if (!loggedIn) {
+  if (!loggedIn || !user) {
     return (
       <div className={styles.infoHolder}>
         <h2 className={styles.infoMessage}>Требуется авторизация</h2>
@@ -55,21 +61,15 @@ const Profile = ({ type }: ProfileProps) => {
     );
   }
 
-  if (!allowed)
-    return (
-      <div className={styles.infoHolder}>
-        <h2 className={styles.infoMessage}>Доступ ограничен</h2>
-        <div>за доступом обратитесь к Тэя</div>
-      </div>
-    );
+  if (!allowed) return <NotAllowedBlock />;
 
   return (
     <Holder className={styles.container}>
       <Layout className={styles.profileLayout}>
         <h1>Профиль</h1>
         <Tabs onChange={handleTabClick} activeKey={type}>
-          <TabPane tab="Характеристики" key="stats">
-            Раздел в разработке
+          <TabPane tab="Управление" key="management">
+            <ManagementBlock user={user} roles={roles} />
           </TabPane>
           <TabPane tab="Коллекции" key="collections">
             <CollectionsBlock />
@@ -80,14 +80,24 @@ const Profile = ({ type }: ProfileProps) => {
   );
 };
 
-export function getServerSideProps(ctx: NextPageContext) {
+export async function getServerSideProps(ctx: NextPageContext) {
+  let roles: Role[] = [];
   const { type } = ctx.query;
 
-  if (type !== 'stats' && type !== 'collections') {
+  if (type !== 'management' && type !== 'collections') {
     return { notFound: true };
   }
 
-  return { props: { type } };
+  const jwt = parseCookies(ctx).jwt;
+
+  if (jwt) {
+    try {
+      const rolesData = await getRoles(jwt);
+      roles = rolesData;
+    } catch (err: any) {}
+  }
+
+  return { props: { type, roles } };
 }
 
 export default Profile;

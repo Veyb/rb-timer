@@ -32,9 +32,13 @@ export async function getUsersMe(token: string) {
   return await get('/users/me', params);
 }
 
+interface UpdateUserParams extends Pick<User, 'collections'> {
+  role: number;
+}
+
 export async function updateUser(
   userId: number,
-  params: Partial<Pick<User, 'collections'>>,
+  params: Partial<UpdateUserParams>,
   token: string | undefined
 ) {
   const headers: AxiosRequestHeaders = {
@@ -55,7 +59,7 @@ export async function updateUser(
 }
 
 export async function updateUsersMe(
-  params: Partial<Pick<User, 'collections'>>,
+  params: Partial<UpdateUserParams>,
   token: string | undefined
 ) {
   const headers: AxiosRequestHeaders = {

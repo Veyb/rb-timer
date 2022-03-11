@@ -34,7 +34,7 @@ export const Header = () => {
           <a>Профиль</a>
         </Link>
       </Menu.Item>
-      {auth.allowedUpdate && (
+      {auth.allowed && (
         <Menu.Item className={styles.menuItem} key="2">
           <Link href="/users">
             <a>Пользователи</a>

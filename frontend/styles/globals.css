@@ -60,3 +60,16 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.ant-select-dropdown {
+  padding: 0.4rem 0;
+  font-size: 1.4rem;
+  border-radius: 0.2rem;
+}
+
+.ant-select-item {
+  min-height: 3.2rem;
+  padding: 0.5rem 1.2rem;
+  font-size: 1.4rem;
+  line-height: 2.2rem;
+}

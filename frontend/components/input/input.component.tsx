@@ -1,6 +1,5 @@
 // global modules
 import cn from 'classnames';
-import { Button } from 'antd';
 import {
   EyeOutlined,
   EyeInvisibleOutlined,
@@ -9,6 +8,7 @@ import {
 import { InputHTMLAttributes, useEffect, useRef, useState } from 'react';
 
 // local modules
+import { Button } from '../../styled-components';
 import { generateId } from '../../lib/generate-id';
 
 // styles modules
@@ -71,7 +71,7 @@ export const Input = ({
             className={styles.iconButton}
             onClick={() => setVisible(!visible)}
             icon={visible ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-          ></Button>
+          />
         </div>
       )}
       {!!onClear && (
@@ -80,7 +80,7 @@ export const Input = ({
             className={styles.iconButton}
             onClick={() => onClear()}
             icon={<CloseCircleOutlined />}
-          ></Button>
+          />
         </div>
       )}
       {label && (

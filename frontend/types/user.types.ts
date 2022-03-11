@@ -1,11 +1,8 @@
-export interface Role {
-  id: number;
-  name: string;
-  description: string;
-  type: 'authenticated' | 'viewer' | 'editor';
-}
+import { Role } from './role.types';
 
 export type UserCollections = Record<number, Record<number, boolean>>;
+
+export type UserRole = Omit<Role, 'nb_users'>;
 
 export interface User {
   id: number;
@@ -14,5 +11,7 @@ export interface User {
   nickname: string;
   realname: string;
   collections: UserCollections;
-  role: Role;
+  role: UserRole;
+  createdAt: string;
+  updatedAt: string;
 }

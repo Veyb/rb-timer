@@ -15,3 +15,4 @@ export {
   updateUser,
   updateUsersMe,
 } from './user';
+export { getRoles } from './role';

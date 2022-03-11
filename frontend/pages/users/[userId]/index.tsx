@@ -7,7 +7,7 @@ export function getServerSideProps(ctx: NextPageContext) {
   const { userId } = ctx.query;
 
   return {
-    redirect: { permanent: false, destination: `/users/${userId}/collections` },
+    redirect: { permanent: false, destination: `/users/${userId}/management` },
     props: {},
   };
 }

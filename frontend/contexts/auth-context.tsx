@@ -37,6 +37,7 @@ const AuthContext = createContext<{
   loggedIn: boolean;
   allowed: boolean;
   allowedUpdate: boolean;
+  allowedAdminister: boolean;
   accessToken: string | undefined;
   login: (userData: any) => void;
   register: (userData: any) => void;
@@ -46,6 +47,7 @@ const AuthContext = createContext<{
   loggedIn: false,
   allowed: false,
   allowedUpdate: false,
+  allowedAdminister: false,
   accessToken: undefined,
   login: (userData: any) => {},
   register: (userData: any) => {},
@@ -67,10 +69,20 @@ export const AuthContextProvider = ({
   const [accessToken, setAccessToken] = useState(jwt);
   const [loggedIn, setLoggedIn] = useState(!!user);
   const allowed = useMemo(
-    () => user?.role.type === 'editor' || user?.role.type === 'viewer',
+    () =>
+      user?.role.type === 'editor' ||
+      user?.role.type === 'viewer' ||
+      user?.role.type === 'officer',
     [user]
   );
-  const allowedUpdate = useMemo(() => user?.role.type === 'editor', [user]);
+  const allowedUpdate = useMemo(
+    () => user?.role.type === 'editor' || user?.role.type === 'officer',
+    [user]
+  );
+  const allowedAdminister = useMemo(
+    () => user?.role.type === 'officer',
+    [user]
+  );
 
   const login = useCallback(async (userData) => {
     try {
@@ -137,6 +149,7 @@ export const AuthContextProvider = ({
         accessToken,
         allowed,
         allowedUpdate,
+        allowedAdminister,
       }}
     >
       {children}
