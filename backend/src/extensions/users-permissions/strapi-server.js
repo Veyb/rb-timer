@@ -41,6 +41,79 @@ module.exports = (plugin) => {
     ctx.body = users.map((user) => sanitizeOutput(user));
   };
 
+  plugin.controllers.user.findOne = async (ctx) => {
+    const user = await strapi.entityService.findOne(
+      "plugin::users-permissions.user",
+      ctx.params.id,
+      { ...ctx.params, populate: ["role"] }
+    );
+
+    ctx.body = sanitizeOutput(user);
+  };
+
+  plugin.controllers.user.update = async (ctx) => {
+    const advancedConfigs = await strapi
+      .store({ type: "plugin", name: "users-permissions", key: "advanced" })
+      .get();
+
+    const { id } = ctx.params;
+    const { email, username, password } = ctx.request.body;
+
+    const user = await strapi.entityService.findOne(
+      "plugin::users-permissions.user",
+      id,
+      { populate: ["role"] }
+    );
+
+    await validateUpdateUserBody(ctx.request.body);
+
+    if (
+      user.provider === "local" &&
+      _.has(ctx.request.body, "password") &&
+      !password
+    ) {
+      throw new ValidationError("password.notNull");
+    }
+
+    if (_.has(ctx.request.body, "username")) {
+      const userWithSameUsername = await strapi
+        .query("plugin::users-permissions.user")
+        .findOne({ where: { username } });
+
+      if (userWithSameUsername && userWithSameUsername.id != id) {
+        throw new ApplicationError("Username already taken");
+      }
+    }
+
+    if (_.has(ctx.request.body, "email") && advancedConfigs.unique_email) {
+      const userWithSameEmail = await strapi
+        .query("plugin::users-permissions.user")
+        .findOne({ where: { email: email.toLowerCase() } });
+
+      if (userWithSameEmail && userWithSameEmail.id != id) {
+        throw new ApplicationError("Email already taken");
+      }
+      ctx.request.body.email = ctx.request.body.email.toLowerCase();
+    }
+
+    let updateData = {
+      ...ctx.request.body,
+    };
+
+    const data = await strapi.entityService.update(
+      "plugin::users-permissions.user",
+      id,
+      {
+        data: updateData,
+        populate: ["role"],
+      }
+    );
+
+    const sanitizedData = await sanitizeOutput(data, ctx);
+
+    ctx.send(sanitizedData);
+  };
+
   // Create the new controller
   plugin.controllers.user.updateMe = async (ctx) => {
     const advancedConfigs = await strapi
