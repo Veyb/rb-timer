@@ -3,7 +3,7 @@ import axios, { AxiosRequestHeaders } from 'axios';
 
 // local modules
 import { BossApiResponse } from '../../types';
-import { get, API_URL, flattenApiResponse } from './base';
+import { apiGet, API_URL, flattenApiResponse } from './base';
 import { expandBoss, expandBossListAndSort } from '../utils';
 
 export async function getBossList(token: string | undefined) {
@@ -14,7 +14,7 @@ export async function getBossList(token: string | undefined) {
         },
       }
     : undefined;
-  const { data, meta } = await get('/bosses', params);
+  const { data, meta } = await apiGet('/bosses', params);
 
   return expandBossListAndSort(data);
 }

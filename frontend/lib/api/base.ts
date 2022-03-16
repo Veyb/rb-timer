@@ -50,7 +50,7 @@ export const flattenListApiResponse = ({ data }: any) => {
   return data.map(flattenApiResponse);
 };
 
-export async function get(type: string, params?: any) {
+export async function apiGet(type: string, params?: any) {
   const { data } = await axios.get(`${API_URL}${type}`, params);
 
   return data.data
@@ -58,8 +58,14 @@ export async function get(type: string, params?: any) {
     : data;
 }
 
-export async function post(type: string, params: any) {
+export async function apiPost(type: string, params: any) {
   const res = await axios.post(`${API_URL}${type}`, params);
+
+  return res.data;
+}
+
+export async function apiDelete(type: string, params: any) {
+  const res = await axios.delete(`${API_URL}${type}`, params);
 
   return res.data;
 }

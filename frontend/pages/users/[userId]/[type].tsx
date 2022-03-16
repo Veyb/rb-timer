@@ -100,7 +100,7 @@ export async function getServerSideProps(ctx: NextPageContext) {
   if (jwt) {
     try {
       const [userData, rolesData] = await Promise.all([
-        getUser(jwt, userId),
+        getUser(userId, jwt),
         getRoles(jwt),
       ]);
       user = userData;

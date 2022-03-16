@@ -2,7 +2,7 @@
 import qs from 'qs';
 
 // local modules
-import { get } from './base';
+import { apiGet } from './base';
 import { Meta } from '../../types';
 
 function getQuery(page?: number) {
@@ -32,7 +32,7 @@ export async function getCollectionList(
         },
       }
     : undefined;
-  const collections = await get(`/collections?${query}`, params);
+  const collections = await apiGet(`/collections?${query}`, params);
 
   return collections;
 }

@@ -6,7 +6,7 @@ import { destroyCookie, parseCookies } from 'nookies';
 import type { AppContext, AppProps } from 'next/app';
 
 // local modules
-import { get } from '../lib/api';
+import { apiGet } from '../lib/api';
 import { Header } from '../components/header';
 import { serverRedirect } from '../lib/server-redirect';
 import { AuthContextProvider } from '../contexts/auth-context';
@@ -57,7 +57,7 @@ MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
 
   if (jwt) {
     try {
-      const data = await get('/users/me', {
+      const data = await apiGet('/users/me', {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },

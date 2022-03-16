@@ -3,15 +3,15 @@ import axios, { AxiosRequestHeaders } from 'axios';
 
 // local modules
 import { User } from '../../types';
-import { get, API_URL, flattenApiResponse } from './base';
+import { apiGet, API_URL, flattenApiResponse, apiDelete } from './base';
 
-export async function getUser(token: string | undefined, id: string) {
+export async function getUser(id: string, token: string | undefined) {
   const params = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await get(`/users/${id}`, params);
+  return await apiGet(`/users/${id}`, params);
 }
 
 export async function getUsers(token: string | undefined) {
@@ -20,7 +20,7 @@ export async function getUsers(token: string | undefined) {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await get(`/users`, params);
+  return await apiGet(`/users`, params);
 }
 
 export async function getUsersMe(token: string) {
@@ -29,7 +29,7 @@ export async function getUsersMe(token: string) {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await get('/users/me', params);
+  return await apiGet('/users/me', params);
 }
 
 interface UpdateUserParams extends Pick<User, 'collections'> {
@@ -77,4 +77,13 @@ export async function updateUsersMe(
   );
 
   return flattenApiResponse(data);
+}
+
+export async function deleteUser(id: string, token: string | undefined) {
+  const params = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return await apiDelete(`/users/${id}`, params);
 }

@@ -1,5 +1,5 @@
 // local modules
-import { get } from './base';
+import { apiGet } from './base';
 import { Role } from '../../types';
 
 export async function getRoles(token: string | undefined) {
@@ -8,6 +8,6 @@ export async function getRoles(token: string | undefined) {
       Authorization: `Bearer ${token}`,
     },
   };
-  const { roles } = await get(`/users-permissions/roles`, params);
+  const { roles } = await apiGet(`/users-permissions/roles`, params);
   return (roles as Role[]).filter(({ type }) => type !== 'public');
 }

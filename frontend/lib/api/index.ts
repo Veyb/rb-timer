@@ -1,6 +1,7 @@
 export {
-  get,
-  post,
+  apiGet,
+  apiPost,
+  apiDelete,
   API_URL,
   IMAGE_URL,
   flattenApiResponse,
@@ -14,5 +15,6 @@ export {
   getUsersMe,
   updateUser,
   updateUsersMe,
+  deleteUser,
 } from './user';
 export { getRoles } from './role';

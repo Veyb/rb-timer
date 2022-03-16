@@ -13,3 +13,8 @@
   display: flex;
   gap: 1rem;
 }
+
+.deleteBtn {
+  width: max-content;
+  margin-top: 3rem;
+}

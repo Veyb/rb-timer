@@ -12,7 +12,7 @@ import {
 
 // local modules
 import { User } from '../types';
-import { get, getUsersMe, post } from '../lib/api';
+import { apiGet, getUsersMe, apiPost } from '../lib/api';
 
 const INVALID_USERNAME_EMAIL = 'Недопустимый формат e-mail.';
 const EMAIL_IS_ALREADY_TAKEN = 'Данный e-mail уже зарегистрирован.';
@@ -86,7 +86,7 @@ export const AuthContextProvider = ({
 
   const login = useCallback(async (userData) => {
     try {
-      const loginResponse = await post('/auth/local', userData);
+      const loginResponse = await apiPost('/auth/local', userData);
 
       setCookie(null, 'jwt', loginResponse.jwt, {
         maxAge: 30 * 24 * 60 * 60,
@@ -106,14 +106,14 @@ export const AuthContextProvider = ({
 
   const register = useCallback(async (userData) => {
     try {
-      const registerResponse = await post('/auth/local/register', userData);
+      const registerResponse = await apiPost('/auth/local/register', userData);
 
       setCookie(null, 'jwt', registerResponse.jwt, {
         maxAge: 30 * 24 * 60 * 60,
         path: '/',
       });
 
-      const userResponse = await get('/users/me', {
+      const userResponse = await apiGet('/users/me', {
         headers: {
           Authorization: `Bearer ${registerResponse.jwt}`,
         },
