@@ -1,6 +1,11 @@
 .inputHolder {
   position: relative;
   padding-top: 1.9rem;
+  height: 5.5rem;
+}
+
+.simple {
+  padding-top: 0;
   height: 3.6rem;
 }
 
@@ -84,13 +89,17 @@
 }
 
 .asideHolder {
-  height: 100%;
+  height: calc(100% - 1.9rem);
   display: flex;
   align-items: center;
   position: absolute;
   right: 0;
   bottom: 0;
   min-width: 1.8rem;
+}
+
+.simple .asideHolder {
+  height: 100%;
 }
 
 .iconButton {

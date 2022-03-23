@@ -1,6 +1,6 @@
 // global modules
 import moment, { Moment } from 'moment';
-import { Button, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import { useCallback, useEffect, useMemo } from 'react';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
@@ -9,6 +9,7 @@ import { Boss } from '../../../../types';
 import { getNewRespawnTime } from './utils';
 import { HOUR, MINUTE } from '../../../../constants';
 import { updateBossTime } from '../../../../lib/api';
+import { Button } from '../../../../styled-components';
 import { useBossContext } from '../../../../contexts/boss-context';
 import { useAuthContext } from '../../../../contexts/auth-context';
 

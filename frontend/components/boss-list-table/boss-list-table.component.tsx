@@ -1,5 +1,5 @@
 // global modules
-import { Button } from 'antd';
+// import { Button } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
 import { useCallback, useState } from 'react';
 
@@ -7,6 +7,7 @@ import { useCallback, useState } from 'react';
 import { Layout } from '../layout';
 import { TableRow } from './table-row';
 import { RestartModal } from './restart-modal';
+import { Button } from '../../styled-components';
 import { useBossContext } from '../../contexts/boss-context';
 import { useAuthContext } from '../../contexts/auth-context';
 

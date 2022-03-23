@@ -2,7 +2,8 @@
 import moment from 'moment';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button, Dropdown, Menu, Modal, Space } from 'antd';
+import { Button } from '../../styled-components';
+import { Dropdown, Menu, Modal, Space } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 
