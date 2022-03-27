@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "effects",
+  "info": {
+    "singularName": "effect",
+    "pluralName": "effects",
+    "displayName": "Effect",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "collections": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::collection.collection",
+      "mappedBy": "effects"
+    },
+    "value": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "unit": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": false
+    }
+  }
+}

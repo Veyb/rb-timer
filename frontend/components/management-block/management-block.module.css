@@ -1,0 +1,20 @@
+.holder {
+  display: flex;
+  justify-content: space-between;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.role {
+  display: flex;
+  gap: 1rem;
+}
+
+.deleteBtn {
+  width: max-content;
+  margin-top: 3rem;
+}

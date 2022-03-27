@@ -1,0 +1,57 @@
+.imageHolder {
+  position: relative;
+  width: fit-content;
+  font-size: 0;
+  width: 6.4rem;
+  height: 6.4rem;
+  flex: 0 1 6.4rem;
+}
+
+.imageHolder.active {
+  box-shadow: 0 0 0 0.2rem #d46f1b;
+}
+
+.interactive {
+  cursor: pointer;
+}
+
+.image {
+  background-color: #202936;
+}
+
+.imagePlaceholder {
+  padding: 0 1.5rem !important;
+}
+
+.enhancement {
+  position: absolute;
+  bottom: 0.1rem;
+  right: 0.1rem;
+  font-size: 1.2rem;
+  font-style: normal;
+  color: #ad9132;
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.3;
+  background-color: black;
+}
+
+.icon {
+  width: 1.6rem;
+  height: 1.6rem;
+  color: #d46f1b;
+  position: absolute;
+  top: 0.4rem;
+  left: 0.4rem;
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+}

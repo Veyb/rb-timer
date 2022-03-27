@@ -36,8 +36,8 @@ interface RowProps {
 }
 
 export const TableRow = ({ boss, isRemainingTime }: RowProps) => {
-  const { accessToken } = useAuthContext();
-  const { allowedUpdate, updateBossInList } = useBossContext();
+  const { accessToken, allowedUpdate } = useAuthContext();
+  const { updateBossInList } = useBossContext();
   const [editableTime, setEditableTime] = useState<Moment | null>(null);
   const [calendarDate, setCalendarDate] = useState(null);
   const className = useMemo(

@@ -25,8 +25,8 @@ export const ActionsColumn = ({
   handleConfirmClick,
   handleDatePickerChange,
 }: ActionsColumnProps) => {
-  const { accessToken } = useAuthContext();
-  const { allowedUpdate, updateBossInList } = useBossContext();
+  const { accessToken, allowedUpdate } = useAuthContext();
+  const { updateBossInList } = useBossContext();
   const disabled = moment().valueOf() < boss.respawnTime || !allowedUpdate;
 
   const onKillClick = useCallback(async () => {

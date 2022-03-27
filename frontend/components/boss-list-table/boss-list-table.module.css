@@ -1,16 +1,3 @@
-.holder {
-  width: 100%;
-  margin: 0 auto;
-  min-width: 47rem;
-  max-width: 100rem;
-  font-size: 1.4rem;
-  background: #141414;
-  padding-bottom: 3rem;
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-}
-
 .resetButton {
   width: max-content;
   align-self: flex-start;
@@ -19,6 +6,7 @@
 
 .table {
   width: 100%;
+  background: #141414;
 }
 
 .tableThead > tr > th {
@@ -132,16 +120,4 @@
 .actionsColumn {
   width: 40rem;
   text-align: center;
-}
-
-.infoHolder {
-  min-height: calc(100vh - 8.5rem);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.infoMessage {
-  margin: 0;
 }

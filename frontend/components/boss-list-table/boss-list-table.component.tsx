@@ -1,11 +1,13 @@
 // global modules
-import { Button } from 'antd';
+// import { Button } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
 import { useCallback, useState } from 'react';
 
 // local modules
+import { Layout } from '../layout';
 import { TableRow } from './table-row';
 import { RestartModal } from './restart-modal';
+import { Button } from '../../styled-components';
 import { useBossContext } from '../../contexts/boss-context';
 import { useAuthContext } from '../../contexts/auth-context';
 
@@ -36,8 +38,8 @@ const RespawnColumnHeader = ({
 };
 
 export const BossListTable = () => {
-  const { loggedIn } = useAuthContext();
-  const { bossList, allowed, allowedUpdate } = useBossContext();
+  const { bossList } = useBossContext();
+  const { allowedUpdate } = useAuthContext();
   const [isRemainingTime, setRemainingTime] = useState(false);
 
   const [modal, setModal] = useState(false);
@@ -52,22 +54,9 @@ export const BossListTable = () => {
     setRemainingTime(!isRemainingTime);
   }, [isRemainingTime, setRemainingTime]);
 
-  if (!loggedIn) {
-    return (
-      <div className={styles.infoHolder}>
-        <h2 className={styles.infoMessage}>Требуется авторизация</h2>
-      </div>
-    );
-  }
-
-  return !allowed ? (
-    <div className={styles.infoHolder}>
-      <h2 className={styles.infoMessage}>Доступ ограничен</h2>
-      <div>за доступом обратитесь к Тэя</div>
-    </div>
-  ) : (
+  return (
     <>
-      <div className={styles.holder}>
+      <Layout>
         <table className={styles.table}>
           <thead className={styles.tableThead}>
             <tr>
@@ -96,7 +85,7 @@ export const BossListTable = () => {
             РЕСТАРТ
           </Button>
         )}
-      </div>
+      </Layout>
 
       <RestartModal visible={modal} onClose={handleModalClose} />
     </>

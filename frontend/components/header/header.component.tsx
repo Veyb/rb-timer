@@ -2,7 +2,8 @@
 import moment from 'moment';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button, Dropdown, Menu, Modal, Space } from 'antd';
+import { Button } from '../../styled-components';
+import { Dropdown, Menu, Modal, Space } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 
@@ -26,11 +27,23 @@ export const Header = () => {
 
   const menu = (
     <Menu>
-      <Menu.Item key="0">
+      <Menu.Item className={styles.menuItem} key="0">
         <div onClick={() => setSupportModal(true)}>Поддержать автора</div>
       </Menu.Item>
+      <Menu.Item className={styles.menuItem} key="1">
+        <Link href="/profile">
+          <a>Профиль</a>
+        </Link>
+      </Menu.Item>
+      {auth.allowed && (
+        <Menu.Item className={styles.menuItem} key="2">
+          <Link href="/users">
+            <a>Пользователи</a>
+          </Link>
+        </Menu.Item>
+      )}
       <Menu.Divider />
-      <Menu.Item key="3">
+      <Menu.Item className={styles.menuItem} key="3">
         <div onClick={auth.logout}>Выход</div>
       </Menu.Item>
     </Menu>
@@ -38,18 +51,19 @@ export const Header = () => {
 
   return (
     <header className={styles.header}>
+      <div className={styles.background} />
       <div className={styles.holder}>
         <Link href="/">
           <a className={styles.homeLink}>
             <Image
-              src="/l2m-logo-color.png"
+              priority
               alt="logo"
-              width="126"
-              height="46"
+              layout="fill"
+              src="/l2m-logo-color.png"
             />
           </a>
         </Link>
-        <Space size="large" className={styles.rightBlock}>
+        <Space size="large">
           <h2 className={styles.time}>{time}</h2>
           {auth.loggedIn ? (
             <Dropdown
@@ -91,6 +105,8 @@ export const Header = () => {
               Или же любым другим удобным Вам способом. Для этого можете
               напрямую обратить к персонажу Тэя в игре или дискорде :)
             </p>
+
+            <Image src="/requisites.jpg" alt="logo" width="200" height="200" />
           </>
         }
       </Modal>

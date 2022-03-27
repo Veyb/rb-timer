@@ -1,12 +1,13 @@
 // global modules
 import Link from 'next/link';
-import { Button, Space } from 'antd';
+import { Space } from 'antd';
 import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, useCallback, useMemo, useState } from 'react';
 
 // local modules
 import { Input } from '../input';
 import { ErrorDivider } from '../error-divider';
+import { Button } from '../../styled-components';
 import { useAuthContext } from '../../contexts/auth-context';
 
 // style modules
@@ -51,7 +52,7 @@ const FormRegister = () => {
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <Space direction="vertical" size="middle" className={styles.wrapper}>
+      <div className={styles.wrapper}>
         <h1 className={styles.header}>Регистрация</h1>
         <Input
           type="text"
@@ -93,11 +94,11 @@ const FormRegister = () => {
           onChange={handleChange}
           label="Ваше имя"
         />
-      </Space>
+      </div>
 
       <ErrorDivider message={errorMessage} />
 
-      <Space className={styles.buttonHolder} direction="vertical" size="large">
+      <div className={styles.buttonHolder}>
         <Button
           size="large"
           htmlType="submit"
@@ -110,7 +111,7 @@ const FormRegister = () => {
         <Link href="/login">
           <a className={styles.link}>Вход</a>
         </Link>
-      </Space>
+      </div>
     </form>
   );
 };

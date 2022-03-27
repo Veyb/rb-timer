@@ -1,0 +1,30 @@
+.filterBlock {
+  width: 16rem;
+}
+
+.searchBlock {
+  gap: 2rem;
+  width: 50%;
+  display: flex;
+}
+
+.searchInput {
+  height: 3.2rem;
+  flex: 1 1 auto;
+}
+
+.searchButton {
+  height: 3.2rem;
+  font-size: 1.4rem;
+}
+
+@media only screen and (max-width: 62em) {
+  .filterBlock {
+    order: 1;
+  }
+
+  .searchBlock {
+    width: 100%;
+    order: 2;
+  }
+}

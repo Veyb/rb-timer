@@ -1,13 +1,15 @@
 // global modules
 import moment, { Moment } from 'moment';
-import { Button, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import { useCallback, useEffect, useMemo } from 'react';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
 // local modules
 import { Boss } from '../../../../types';
+import { getNewRespawnTime } from './utils';
 import { HOUR, MINUTE } from '../../../../constants';
 import { updateBossTime } from '../../../../lib/api';
+import { Button } from '../../../../styled-components';
 import { useBossContext } from '../../../../contexts/boss-context';
 import { useAuthContext } from '../../../../contexts/auth-context';
 
@@ -45,17 +47,6 @@ function getOutputTime(
     : `${hours}:${minutes}`;
 }
 
-function getNewRespawnTime(respawnTime: number, interval: number) {
-  const currentDate = moment();
-  const respawnDate = moment(respawnTime);
-
-  while (!respawnDate.isAfter(currentDate)) {
-    respawnDate.add(interval, 'hours');
-  }
-
-  return respawnDate.add(-interval, 'hours').toISOString();
-}
-
 interface RespawnTimeColumnProps {
   boss: Boss;
   editableTime: Moment | null;
@@ -69,8 +60,8 @@ export const RespawnTimeColumn = ({
   isRemainingTime,
   handleEditableTimeChange,
 }: RespawnTimeColumnProps) => {
-  const { accessToken } = useAuthContext();
-  const { allowedUpdate, updateBossInList } = useBossContext();
+  const { accessToken, allowedUpdate } = useAuthContext();
+  const { updateBossInList } = useBossContext();
 
   useEffect(() => {
     if (!allowedUpdate || boss.restarted) return;

@@ -6,11 +6,13 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
 // local modules
-import { get, post } from '../lib/api';
+import { User } from '../types';
+import { apiGet, getUsersMe, apiPost } from '../lib/api';
 
 const INVALID_USERNAME_EMAIL = 'Недопустимый формат e-mail.';
 const EMAIL_IS_ALREADY_TAKEN = 'Данный e-mail уже зарегистрирован.';
@@ -31,8 +33,11 @@ function getErrorMessage(error: any) {
 }
 
 const AuthContext = createContext<{
-  user: any | null;
+  user: User | null;
   loggedIn: boolean;
+  allowed: boolean;
+  allowedUpdate: boolean;
+  allowedAdminister: boolean;
   accessToken: string | undefined;
   login: (userData: any) => void;
   register: (userData: any) => void;
@@ -40,6 +45,9 @@ const AuthContext = createContext<{
 }>({
   user: null,
   loggedIn: false,
+  allowed: false,
+  allowedUpdate: false,
+  allowedAdminister: false,
   accessToken: undefined,
   login: (userData: any) => {},
   register: (userData: any) => {},
@@ -60,21 +68,32 @@ export const AuthContextProvider = ({
   const [user, setUser] = useState(propsUser);
   const [accessToken, setAccessToken] = useState(jwt);
   const [loggedIn, setLoggedIn] = useState(!!user);
+  const allowed = useMemo(
+    () =>
+      user?.role.type === 'editor' ||
+      user?.role.type === 'viewer' ||
+      user?.role.type === 'officer',
+    [user]
+  );
+  const allowedUpdate = useMemo(
+    () => user?.role.type === 'editor' || user?.role.type === 'officer',
+    [user]
+  );
+  const allowedAdminister = useMemo(
+    () => user?.role.type === 'officer',
+    [user]
+  );
 
   const login = useCallback(async (userData) => {
     try {
-      const loginResponse = await post('/auth/local', userData);
+      const loginResponse = await apiPost('/auth/local', userData);
 
       setCookie(null, 'jwt', loginResponse.jwt, {
         maxAge: 30 * 24 * 60 * 60,
         path: '/',
       });
 
-      const userResponse = await get('/users/me', {
-        headers: {
-          Authorization: `Bearer ${loginResponse.jwt}`,
-        },
-      });
+      const userResponse = await getUsersMe(loginResponse.jwt);
 
       setUser(userResponse);
       setLoggedIn(!!userResponse);
@@ -87,14 +106,14 @@ export const AuthContextProvider = ({
 
   const register = useCallback(async (userData) => {
     try {
-      const registerResponse = await post('/auth/local/register', userData);
+      const registerResponse = await apiPost('/auth/local/register', userData);
 
       setCookie(null, 'jwt', registerResponse.jwt, {
         maxAge: 30 * 24 * 60 * 60,
         path: '/',
       });
 
-      const userResponse = await get('/users/me', {
+      const userResponse = await apiGet('/users/me', {
         headers: {
           Authorization: `Bearer ${registerResponse.jwt}`,
         },
@@ -110,7 +129,7 @@ export const AuthContextProvider = ({
   }, []);
 
   const logout = useCallback(() => {
-    destroyCookie(null, 'jwt');
+    destroyCookie(null, 'jwt', { path: '/' });
     setUser(null);
     setAccessToken(undefined);
   }, []);
@@ -121,7 +140,17 @@ export const AuthContextProvider = ({
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, logout, loggedIn, accessToken }}
+      value={{
+        user,
+        login,
+        register,
+        logout,
+        loggedIn,
+        accessToken,
+        allowed,
+        allowedUpdate,
+        allowedAdminister,
+      }}
     >
       {children}
     </AuthContext.Provider>

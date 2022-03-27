@@ -18,8 +18,8 @@ interface RestartModalProps {
 }
 
 export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
-  const { accessToken } = useAuthContext();
-  const { bossList, allowedUpdate, updateBossInList } = useBossContext();
+  const { accessToken, allowedUpdate } = useAuthContext();
+  const { bossList, updateBossInList } = useBossContext();
   const [calendarDate, setCalendarDate] = useState(null);
 
   const handleDatePickerChange = useCallback((value) => {
@@ -62,8 +62,6 @@ export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
       const time = diff
         ? calendarTime.add(diff, 'hours').toISOString()
         : calendarTime.toISOString();
-
-      console.log(boss.name, diff, moment(time).format('DD-MM-YYYY HH:mm'));
 
       const updatedBoss = await updateBossTime(
         boss.id,
