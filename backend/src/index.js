@@ -21,7 +21,11 @@ module.exports = {
     const socketUsers = {};
     const io = require("socket.io")(strapi.server.httpServer, {
       cors: {
-        origin: "*",
+        origin: [
+          "http://localhost:3000",
+          "https://l2m-db.ru/",
+          "https://www.l2m-db.ru/",
+        ],
         methods: ["GET", "POST"],
         allowedHeaders: ["my-custom-header"],
         credentials: true,
