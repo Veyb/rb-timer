@@ -23,11 +23,10 @@ module.exports = {
       cors: {
         origin: [
           "http://localhost:3000",
-          "https://l2m-db.ru/",
-          "https://www.l2m-db.ru/",
+          "https://l2m-db.ru",
+          "https://www.l2m-db.ru",
         ],
         methods: ["GET", "POST"],
-        allowedHeaders: ["my-custom-header"],
         credentials: true,
       },
     });
@@ -46,6 +45,10 @@ module.exports = {
       socket.on("disconnect", (reason) => {
         delete socketUsers[socket.id];
         io.emit("socketUsers", { socketUsers });
+      });
+
+      socket.on("reset", () => {
+        io.disconnectSockets();
       });
     });
 
