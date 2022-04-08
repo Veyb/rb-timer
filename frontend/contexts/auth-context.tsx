@@ -11,7 +11,8 @@ import {
 } from 'react';
 
 // local modules
-import { User } from '../types';
+import { socket } from '../lib/web-sockets';
+import { SocketUser, User } from '../types';
 import { apiGet, getUsersMe, apiPost } from '../lib/api';
 
 const INVALID_USERNAME_EMAIL = 'Недопустимый формат e-mail.';
@@ -55,10 +56,13 @@ const AuthContext = createContext<{
 });
 
 interface AuthContextProviderProps {
-  user: any;
+  user: User | null;
   jwt: string | undefined;
   children: ReactNode;
 }
+
+const getSocketUser = (user: User | null): SocketUser | null =>
+  user ? { id: user.id, nickname: user.nickname } : user;
 
 export const AuthContextProvider = ({
   user: propsUser,
@@ -98,6 +102,7 @@ export const AuthContextProvider = ({
       setUser(userResponse);
       setLoggedIn(!!userResponse);
       setAccessToken(loginResponse.jwt);
+      socket.emit('auth', { user: getSocketUser(userResponse) });
     } catch (err: any) {
       const error = err.response.data.error;
       throw new Error(getErrorMessage(error));
@@ -122,6 +127,7 @@ export const AuthContextProvider = ({
       setUser(userResponse);
       setLoggedIn(!!userResponse);
       setAccessToken(registerResponse.jwt);
+      socket.emit('auth', { user: getSocketUser(userResponse) });
     } catch (err: any) {
       const error = err.response.data.error;
       throw new Error(getErrorMessage(error));
@@ -132,10 +138,29 @@ export const AuthContextProvider = ({
     destroyCookie(null, 'jwt', { path: '/' });
     setUser(null);
     setAccessToken(undefined);
+    socket.emit('auth', { user: null });
   }, []);
 
   useEffect(() => {
     setLoggedIn(!!user);
+  }, [user]);
+
+  // socket
+  useEffect(() => {
+    const socketUserJoin = () =>
+      socket.emit('join', { user: getSocketUser(user) });
+
+    const disconnect = (reason: string) => {
+      if (reason === 'io server disconnect') socket.connect();
+    };
+
+    socket.on('connect', socketUserJoin);
+    socket.on('disconnect', disconnect);
+
+    return () => {
+      socket.off('connect', socketUserJoin);
+      socket.off('disconnect', disconnect);
+    };
   }, [user]);
 
   return (

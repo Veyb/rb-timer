@@ -1,3 +1,4 @@
+import { ServerStyleSheet } from 'styled-components';
 import Document, {
   Html,
   Head,
@@ -5,7 +6,6 @@ import Document, {
   NextScript,
   DocumentContext,
 } from 'next/document';
-import { ServerStyleSheet } from 'styled-components';
 
 function MainDocument() {
   return (

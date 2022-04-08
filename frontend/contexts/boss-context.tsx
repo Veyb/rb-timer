@@ -15,6 +15,7 @@ import { Boss } from '../types';
 import { getBossList } from '../lib/api';
 import { sortBossList } from '../lib/utils';
 import { useAuthContext } from './auth-context';
+import { socket } from '../lib/web-sockets';
 
 const BossContext = createContext<{
   bossList: Boss[];
@@ -66,12 +67,26 @@ export const BossContextProvider = ({
           setBossList(data);
         })
         .catch((err: any) => {
-          console.warn(err.response.data.error);
+          console.warn(err.response?.data.error);
         });
     }, 10000);
 
     return () => clearInterval(refetchTimer);
   }, [auth.allowed, auth.accessToken]);
+
+  // socket
+  // useEffect(() => {
+  //   const connect = () => console.log('CONNECT');
+  //   const disconnect = (reason: string) => console.log('DISCONNECT', reason);
+
+  //   socket.on('connect', connect);
+  //   socket.on('disconnect', disconnect);
+
+  //   return () => {
+  //     socket.off('connect', connect);
+  //     socket.off('disconnect', disconnect);
+  //   };
+  // }, []);
 
   return (
     <BossContext.Provider value={{ bossList, updateBossInList }}>

@@ -15,3 +15,5 @@ export interface User {
   createdAt: string;
   updatedAt: string;
 }
+
+export type SocketUser = Pick<User, 'id' | 'nickname'>;

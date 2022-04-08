@@ -4,6 +4,7 @@ export {
   apiDelete,
   API_URL,
   IMAGE_URL,
+  SOCKET_URL,
   flattenApiResponse,
   flattenListApiResponse,
 } from './base';

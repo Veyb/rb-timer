@@ -2,16 +2,71 @@
 import moment from 'moment';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button } from '../../styled-components';
-import { Dropdown, Menu, Modal, Space } from 'antd';
+import styled from 'styled-components';
+import { Dropdown, Modal, Space } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 
 // local modules
+import { OnlineList } from './online-list';
+import { Button } from '../../styled-components';
 import { useAuthContext } from '../../contexts/auth-context';
+import { Menu, MenuDivider, MenuItem } from '../menu';
 
-// styles modules
-import styles from './header.module.css';
+const Holder = styled.header`
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 5.6rem;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--zIndexRoof);
+
+  & .background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 5.6rem;
+    background-color: #262626;
+    border-bottom: 0.1rem solid #303030;
+  }
+
+  & .wrapper {
+    display: flex;
+    width: 100%;
+    max-width: 100rem;
+    z-index: var(--zIndexRoof);
+    justify-content: space-between;
+  }
+
+  & .homeLink {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    width: 12.6rem;
+    height: 4.6rem;
+    position: relative;
+  }
+
+  & .donations {
+    color: darkturquoise;
+  }
+
+  & .time {
+    margin: 0;
+  }
+
+  & .modalList {
+    padding-left: 2rem;
+  }
+`;
 
 export const Header = () => {
   const auth = useAuthContext();
@@ -27,44 +82,48 @@ export const Header = () => {
 
   const menu = (
     <Menu>
-      <Menu.Item className={styles.menuItem} key="0">
+      <MenuItem>
         <div onClick={() => setSupportModal(true)}>Поддержать автора</div>
-      </Menu.Item>
-      <Menu.Item className={styles.menuItem} key="1">
+      </MenuItem>
+      <MenuItem>
         <Link href="/profile">
           <a>Профиль</a>
         </Link>
-      </Menu.Item>
+      </MenuItem>
       {auth.allowed && (
-        <Menu.Item className={styles.menuItem} key="2">
+        <MenuItem>
           <Link href="/users">
             <a>Пользователи</a>
           </Link>
-        </Menu.Item>
+        </MenuItem>
       )}
-      <Menu.Divider />
-      <Menu.Item className={styles.menuItem} key="3">
+      <MenuDivider />
+      <MenuItem>
         <div onClick={auth.logout}>Выход</div>
-      </Menu.Item>
+      </MenuItem>
     </Menu>
   );
 
   return (
-    <header className={styles.header}>
-      <div className={styles.background} />
-      <div className={styles.holder}>
-        <Link href="/">
-          <a className={styles.homeLink}>
-            <Image
-              priority
-              alt="logo"
-              layout="fill"
-              src="/l2m-logo-color.png"
-            />
-          </a>
-        </Link>
+    <Holder>
+      <div className="background" />
+      <div className="wrapper">
         <Space size="large">
-          <h2 className={styles.time}>{time}</h2>
+          <Link href="/">
+            <a className="homeLink">
+              <Image
+                priority
+                alt="logo"
+                layout="fill"
+                src="/l2m-logo-color.png"
+              />
+            </a>
+          </Link>
+          <span className="donations">Донаты: 0 &#8381;</span>
+        </Space>
+        <Space size="large">
+          <OnlineList />
+          <h2 className="time">{time}</h2>
           {auth.loggedIn ? (
             <Dropdown
               overlay={menu}
@@ -97,7 +156,7 @@ export const Header = () => {
               сделать по следующим реквизитам:
             </p>
 
-            <ul className={styles.modalList}>
+            <ul className="modalList">
               <li>+79117961515 (Сбербанк/Тинькоф)</li>
               <li>4276 5500 3609 9714 (Сбербанк) Олег Ц.</li>
             </ul>
@@ -110,6 +169,6 @@ export const Header = () => {
           </>
         }
       </Modal>
-    </header>
+    </Holder>
   );
 };

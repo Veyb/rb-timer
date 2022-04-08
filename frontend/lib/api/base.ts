@@ -5,6 +5,7 @@ import getConfig from 'next/config';
 const { env } = getConfig();
 export const API_URL = process.env.API_URL || env.API_URL;
 export const IMAGE_URL = process.env.IMAGE_URL || env.IMAGE_URL;
+export const SOCKET_URL = process.env.SOCKET_URL || env.SOCKET_URL;
 
 export const flattenApiResponse = (data: any) => {
   const isObject = (data: any) =>

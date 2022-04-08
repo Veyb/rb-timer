@@ -1,5 +1,5 @@
 export type { Role, RoleType } from './role.types';
-export type { User, UserRole, UserCollections } from './user.types';
+export type { SocketUser, User, UserRole, UserCollections } from './user.types';
 export type { Boss, BossApiResponse, Quality } from './boss.types';
 export type {
   Rank,
