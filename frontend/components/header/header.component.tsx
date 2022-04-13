@@ -8,6 +8,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 
 // local modules
+import { Donations } from './donations';
 import { OnlineList } from './online-list';
 import { Button } from '../../styled-components';
 import { useAuthContext } from '../../contexts/auth-context';
@@ -119,7 +120,7 @@ export const Header = () => {
               />
             </a>
           </Link>
-          <span className="donations">Донаты: 0 &#8381;</span>
+          <Donations />
         </Space>
         <Space size="large">
           <OnlineList />
@@ -165,6 +166,13 @@ export const Header = () => {
               напрямую обратить к персонажу Тэя в игре или дискорде :)
             </p>
 
+            <p>
+              P.S.
+              <br />
+              Указывайте пожалуйста ник или как вас подписать (например Аноним),
+              так как теперь есть возможность посмотреть список донатеров.
+            </p>
+            <p>Спасибо</p>
             <Image src="/requisites.jpg" alt="logo" width="200" height="200" />
           </>
         }

@@ -1,3 +1,4 @@
+export type { Donation } from './donation.types';
 export type { Role, RoleType } from './role.types';
 export type { SocketUser, User, UserRole, UserCollections } from './user.types';
 export type { Boss, BossApiResponse, Quality } from './boss.types';

@@ -64,7 +64,7 @@ export const OnlineList = () => {
         <Scrollable maxHeight={30}>
           {socketUsers.map((socketUser, index) =>
             socketUser.user ? (
-              <MenuItem key={socketUser.user.id} className="menuItem">
+              <MenuItem key={socketUser.user.id}>
                 <div>
                   {socketUser.count > 1
                     ? `${socketUser.user.nickname} (${socketUser.count})`
@@ -74,7 +74,7 @@ export const OnlineList = () => {
             ) : (
               <Fragment key={index}>
                 <MenuDivider />
-                <MenuItem key={index} className="menuItem">
+                <MenuItem key={index}>
                   <div>
                     {socketUser.count > 1
                       ? `Аноним (${socketUser.count})`

@@ -9,7 +9,8 @@ export {
   flattenListApiResponse,
 } from './base';
 export { getBossList, updateBossTime } from './boss';
-export { getCollectionList } from './collection';
+export { getDonationList, getAllDonationList } from './donation';
+export { getCollectionList, getAllCollectionList } from './collection';
 export {
   getUser,
   getUsers,

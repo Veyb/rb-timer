@@ -7,9 +7,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { User } from '../../types';
 import { FilterBlock } from './filter-block';
 import { CollectionsModal } from './collections-modal';
+import { getAllCollectionList } from '../../lib/api';
 import type { Collection } from './collections-block.types';
 import { useAuthContext } from '../../contexts/auth-context';
-import { getAllCollectionList } from '../../lib/api/collection';
 import { CollectionItemComponent } from './collection-item';
 import {
   CollectionContextProvider,
