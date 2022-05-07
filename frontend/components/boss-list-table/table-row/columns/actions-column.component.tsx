@@ -1,5 +1,5 @@
 // global modules
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import moment, { Moment } from 'moment';
 import { Space, Button, DatePicker } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
@@ -25,6 +25,7 @@ export const ActionsColumn = ({
   handleConfirmClick,
   handleDatePickerChange,
 }: ActionsColumnProps) => {
+  const [mounted, setMounted] = useState(false);
   const { accessToken, allowedUpdate } = useAuthContext();
   const { updateBossInList } = useBossContext();
   const disabled = moment().valueOf() < boss.respawnTime || !allowedUpdate;
@@ -42,7 +43,13 @@ export const ActionsColumn = ({
     updateBossInList(updatedBoss);
   }, [boss.id, allowedUpdate, updateBossInList, accessToken]);
 
-  return !boss.world ? (
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || boss.world) return null;
+
+  return (
     <Space size="middle">
       <Button disabled={!boss.restarted && disabled} onClick={onKillClick}>
         Убили
@@ -63,5 +70,5 @@ export const ActionsColumn = ({
         icon={<UploadOutlined />}
       />
     </Space>
-  ) : null;
+  );
 };

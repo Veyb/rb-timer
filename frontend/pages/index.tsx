@@ -28,9 +28,7 @@ const Main: NextPage<MainProps> = ({ list }) => {
     );
   }
 
-  if (!allowed) {
-    return <NotAllowedBlock />;
-  }
+  if (!allowed) return <NotAllowedBlock />;
 
   return (
     <BossContextProvider bossList={list}>

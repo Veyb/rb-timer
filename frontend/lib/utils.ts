@@ -15,3 +15,5 @@ export function sortBossList(boss: Boss[]) {
 export const expandBossListAndSort = (bossList: BossApiResponse[]) => {
   return sortBossList(bossList.map(expandBoss));
 };
+
+export const isServer = typeof window === 'undefined' ? true : false;

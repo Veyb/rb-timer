@@ -83,25 +83,23 @@ export const Header = () => {
 
   const menu = (
     <Menu>
-      <MenuItem>
-        <div onClick={() => setSupportModal(true)}>Поддержать автора</div>
+      <MenuItem onClick={() => setSupportModal(true)}>
+        Поддержать автора
       </MenuItem>
-      <MenuItem>
-        <Link href="/profile">
-          <a>Профиль</a>
-        </Link>
-      </MenuItem>
+      <Link href="/profile">
+        <a>
+          <MenuItem>Профиль</MenuItem>
+        </a>
+      </Link>
       {auth.allowed && (
-        <MenuItem>
-          <Link href="/users">
-            <a>Пользователи</a>
-          </Link>
-        </MenuItem>
+        <Link href="/users">
+          <a>
+            <MenuItem>Пользователи</MenuItem>
+          </a>
+        </Link>
       )}
       <MenuDivider />
-      <MenuItem>
-        <div onClick={auth.logout}>Выход</div>
-      </MenuItem>
+      <MenuItem onClick={auth.logout}>Выход</MenuItem>
     </Menu>
   );
 
