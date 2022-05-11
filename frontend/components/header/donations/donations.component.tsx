@@ -43,7 +43,7 @@ export const Donations = () => {
         <Scrollable maxHeight={30}>
           {dateKeys.map((date) => (
             <Fragment key={date}>
-              <DateItem>{date}</DateItem>
+              <DateItem>{`Донаты за ${date}`}</DateItem>
               <DonationList>
                 {donationsHash[date].map((donation, index) => (
                   <DonationItem key={`${date}_${index}`}>
@@ -98,7 +98,7 @@ export const Donations = () => {
 
   return !donations.length ? (
     <Button size="large" className="donations">
-      &#8381;{` / мес: ${totalSumLastMonth} `}
+      {`${totalSumLastMonth}`}&#8381; за мес.
     </Button>
   ) : (
     <Dropdown
@@ -108,7 +108,7 @@ export const Donations = () => {
       disabled={!donations.length}
     >
       <Button size="large" className="donations">
-        &#8381;{` / мес: ${totalSumLastMonth} `}
+        {`${totalSumLastMonth}`}&#8381; за мес.
       </Button>
     </Dropdown>
   );
