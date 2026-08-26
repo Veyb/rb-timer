@@ -1,6 +1,7 @@
 packages:
   - backend
   - frontend
+
 allowBuilds:
   '@fortawesome/fontawesome-common-types': true
   '@fortawesome/fontawesome-free': true
@@ -8,7 +9,20 @@ allowBuilds:
   '@fortawesome/free-brands-svg-icons': true
   '@fortawesome/free-solid-svg-icons': true
   '@strapi/strapi': true
+  '@swc/core': true
+  better-sqlite3: true
   core-js-pure: true
+  esbuild: true
   sharp: true
-  sqlite3: true
+  sqlite3: false
   styled-components: true
+
+blockExoticSubdeps: true
+
+# Fail if a package's trust level has decreased (pnpm 10.21+)
+trustPolicy: no-downgrade
+# Ignore the check for packages published more than 30 days ago (pnpm 10.27+)
+# Useful for older packages that pre-date provenance support
+trustPolicyIgnoreAfter: 43200 # minutes (30 days)
+
+minimumReleaseAge: 10080 # 7 days (in minutes)
