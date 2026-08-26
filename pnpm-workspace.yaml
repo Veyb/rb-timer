@@ -26,3 +26,7 @@ trustPolicy: no-downgrade
 trustPolicyIgnoreAfter: 43200 # minutes (30 days)
 
 minimumReleaseAge: 10080 # 7 days (in minutes)
+# First-party Strapi packages are trusted immediately after publish (official
+# framework releases, not arbitrary third-party deps) - exempt from the age gate.
+minimumReleaseAgeExclude:
+  - '@strapi/*'

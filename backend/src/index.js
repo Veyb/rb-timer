@@ -7,7 +7,33 @@ module.exports = {
    *
    * This gives you an opportunity to extend code.
    */
-  register(/*{ strapi }*/) {},
+  register({ strapi }) {
+    const DONATION_UID = "api::donation.donation";
+    const DONATION_WRITE_ACTIONS = [
+      "create",
+      "update",
+      "delete",
+      "publish",
+      "unpublish",
+      "discardDraft",
+    ];
+
+    strapi.documents.use(async (context, next) => {
+      const result = await next();
+
+      if (
+        context.uid === DONATION_UID &&
+        DONATION_WRITE_ACTIONS.includes(context.action)
+      ) {
+        const donations = await strapi.documents(DONATION_UID).findMany({
+          status: "published",
+        });
+        strapi.io.emit("newDonations", donations);
+      }
+
+      return result;
+    });
+  },
 
   /**
    * An asynchronous bootstrap function that runs before

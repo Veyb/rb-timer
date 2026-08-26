@@ -1,5 +1,9 @@
 const _ = require("lodash");
-const { yup, validateYupSchema } = require("@strapi/utils");
+const { yup, validateYupSchema, errors } = require("@strapi/utils");
+
+const { ValidationError, ApplicationError } = errors;
+
+const USER_UID = "plugin::users-permissions.user";
 
 const updateUserBodySchema = yup.object().shape({
   email: yup.string().email().min(1),
@@ -9,6 +13,8 @@ const updateUserBodySchema = yup.object().shape({
 const validateUpdateUserBody = validateYupSchema(updateUserBodySchema);
 
 module.exports = (plugin) => {
+  const getUserService = () => strapi.plugin("users-permissions").service("user");
+
   const sanitizeOutput = (user) => {
     const {
       password,
@@ -23,30 +29,28 @@ module.exports = (plugin) => {
     if (!ctx.state.user) {
       return ctx.unauthorized();
     }
-    const user = await strapi.entityService.findOne(
-      "plugin::users-permissions.user",
-      ctx.state.user.id,
-      { populate: ["role"] }
-    );
+    const user = await strapi.db.query(USER_UID).findOne({
+      where: { id: ctx.state.user.id },
+      populate: ["role"],
+    });
 
     ctx.body = sanitizeOutput(user);
   };
 
   plugin.controllers.user.find = async (ctx) => {
-    const users = await strapi.entityService.findMany(
-      "plugin::users-permissions.user",
-      { ...ctx.params, populate: ["role"] }
-    );
+    const users = await strapi.db
+      .query(USER_UID)
+      .findMany({ ...ctx.params, populate: ["role"] });
 
     ctx.body = users.map((user) => sanitizeOutput(user));
   };
 
   plugin.controllers.user.findOne = async (ctx) => {
-    const user = await strapi.entityService.findOne(
-      "plugin::users-permissions.user",
-      ctx.params.id,
-      { ...ctx.params, populate: ["role"] }
-    );
+    const user = await strapi.db.query(USER_UID).findOne({
+      where: { id: ctx.params.id },
+      ...ctx.params,
+      populate: ["role"],
+    });
 
     ctx.body = sanitizeOutput(user);
   };
@@ -59,11 +63,10 @@ module.exports = (plugin) => {
     const { id } = ctx.params;
     const { email, username, password } = ctx.request.body;
 
-    const user = await strapi.entityService.findOne(
-      "plugin::users-permissions.user",
-      id,
-      { populate: ["role"] }
-    );
+    const user = await strapi.db.query(USER_UID).findOne({
+      where: { id },
+      populate: ["role"],
+    });
 
     await validateUpdateUserBody(ctx.request.body);
 
@@ -76,8 +79,8 @@ module.exports = (plugin) => {
     }
 
     if (_.has(ctx.request.body, "username")) {
-      const userWithSameUsername = await strapi
-        .query("plugin::users-permissions.user")
+      const userWithSameUsername = await strapi.db
+        .query(USER_UID)
         .findOne({ where: { username } });
 
       if (userWithSameUsername && userWithSameUsername.id != id) {
@@ -86,8 +89,8 @@ module.exports = (plugin) => {
     }
 
     if (_.has(ctx.request.body, "email") && advancedConfigs.unique_email) {
-      const userWithSameEmail = await strapi
-        .query("plugin::users-permissions.user")
+      const userWithSameEmail = await strapi.db
+        .query(USER_UID)
         .findOne({ where: { email: email.toLowerCase() } });
 
       if (userWithSameEmail && userWithSameEmail.id != id) {
@@ -100,14 +103,9 @@ module.exports = (plugin) => {
       ...ctx.request.body,
     };
 
-    const data = await strapi.entityService.update(
-      "plugin::users-permissions.user",
-      id,
-      {
-        data: updateData,
-        populate: ["role"],
-      }
-    );
+    // getUserService().edit() resolves the numeric id to a documentId and
+    // updates via the Document Service, which hashes `password` itself.
+    const data = await getUserService().edit(id, updateData);
 
     const sanitizedData = await sanitizeOutput(data, ctx);
 
@@ -123,11 +121,10 @@ module.exports = (plugin) => {
     const { id } = ctx.state.user;
     const { email, username, password } = ctx.request.body;
 
-    const user = await strapi.entityService.findOne(
-      "plugin::users-permissions.user",
-      id,
-      { populate: ["role"] }
-    );
+    const user = await strapi.db.query(USER_UID).findOne({
+      where: { id },
+      populate: ["role"],
+    });
 
     await validateUpdateUserBody(ctx.request.body);
 
@@ -140,8 +137,8 @@ module.exports = (plugin) => {
     }
 
     if (_.has(ctx.request.body, "username")) {
-      const userWithSameUsername = await strapi
-        .query("plugin::users-permissions.user")
+      const userWithSameUsername = await strapi.db
+        .query(USER_UID)
         .findOne({ where: { username } });
 
       if (userWithSameUsername && userWithSameUsername.id != id) {
@@ -150,8 +147,8 @@ module.exports = (plugin) => {
     }
 
     if (_.has(ctx.request.body, "email") && advancedConfigs.unique_email) {
-      const userWithSameEmail = await strapi
-        .query("plugin::users-permissions.user")
+      const userWithSameEmail = await strapi.db
+        .query(USER_UID)
         .findOne({ where: { email: email.toLowerCase() } });
 
       if (userWithSameEmail && userWithSameEmail.id != id) {
@@ -164,14 +161,9 @@ module.exports = (plugin) => {
       ...ctx.request.body,
     };
 
-    const data = await strapi.entityService.update(
-      "plugin::users-permissions.user",
-      id,
-      {
-        data: updateData,
-        populate: ["role"],
-      }
-    );
+    // getUserService().edit() resolves the numeric id to a documentId and
+    // updates via the Document Service, which hashes `password` itself.
+    const data = await getUserService().edit(id, updateData);
 
     const sanitizedData = await sanitizeOutput(data, ctx);
 
