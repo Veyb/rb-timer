@@ -1,0 +1,14 @@
+packages:
+  - backend
+  - frontend
+allowBuilds:
+  '@fortawesome/fontawesome-common-types': true
+  '@fortawesome/fontawesome-free': true
+  '@fortawesome/fontawesome-svg-core': true
+  '@fortawesome/free-brands-svg-icons': true
+  '@fortawesome/free-solid-svg-icons': true
+  '@strapi/strapi': true
+  core-js-pure: true
+  sharp: true
+  sqlite3: true
+  styled-components: true
