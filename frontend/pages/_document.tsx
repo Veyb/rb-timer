@@ -44,7 +44,11 @@ MainDocument.getInitialProps = async (ctx: DocumentContext) => {
         <>
           {initialProps.styles}
           {sheet.getStyleElement()}
-          <style dangerouslySetInnerHTML={{ __html: extractStyle(cache) }} />
+          <style
+            dangerouslySetInnerHTML={{
+              __html: extractStyle(cache, { plain: true }),
+            }}
+          />
         </>
       ),
     };
