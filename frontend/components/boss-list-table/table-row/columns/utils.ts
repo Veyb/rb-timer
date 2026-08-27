@@ -1,12 +1,12 @@
 // global modules
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export function getNewRespawnTime(respawnTime: number, interval: number) {
-  const currentDate = moment();
-  const respawnDate = moment(respawnTime);
+  const currentDate = dayjs();
+  let respawnDate = dayjs(respawnTime);
 
   while (!respawnDate.isAfter(currentDate)) {
-    respawnDate.add(interval, 'hours');
+    respawnDate = respawnDate.add(interval, 'hours');
   }
 
   return respawnDate.add(-interval, 'hours').toISOString();

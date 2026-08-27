@@ -1,11 +1,10 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { Boss, BossApiResponse } from '../types';
 
 export const expandBoss = (boss: BossApiResponse) => {
-  const date = moment(boss.time);
-  date.hours(date.hours() + boss.interval);
-  return { ...boss, respawnTime: +date };
+  const date = dayjs(boss.time).add(boss.interval, 'hour');
+  return { ...boss, respawnTime: date.valueOf() };
 };
 
 export function sortBossList(boss: Boss[]) {

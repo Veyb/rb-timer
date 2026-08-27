@@ -1,7 +1,7 @@
 // global modules
 import { Modal } from 'antd';
-import moment from 'moment';
-import 'moment/locale/ru';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 
@@ -73,7 +73,7 @@ export const ManagementBlock = (props: ManagementBlockProps) => {
             )}
           </div>
           <div>
-            {`Дата регистрации: ${moment(user.createdAt)
+            {`Дата регистрации: ${dayjs(user.createdAt)
               .locale('ru')
               .format('DD MMMM YYYY в HH:mm')}`}
           </div>

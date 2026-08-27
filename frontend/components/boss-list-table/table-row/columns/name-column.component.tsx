@@ -1,5 +1,5 @@
 // global modules
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { useCallback } from 'react';
 import { Button, Tooltip } from 'antd';
 import {
@@ -40,7 +40,7 @@ export const NameColumn = ({ boss }: NameColumnProps) => {
   const { updateBossInList } = useBossContext();
   const { accessToken, allowedUpdate } = useAuthContext();
 
-  const isOutOfDate = moment().valueOf() > boss.respawnTime;
+  const isOutOfDate = dayjs().valueOf() > boss.respawnTime;
   const baseTitle = `Интервал появления ${boss.interval} часов. (${boss.chance}%)`;
   const title = boss.firstInterval
     ? `Первое появление спустя ${boss.firstInterval} часов. ${baseTitle}`

@@ -1,5 +1,5 @@
 // global modules
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Link from 'next/link';
 import Image from 'next/image';
 import styled from 'styled-components';
@@ -71,12 +71,12 @@ const Holder = styled.header`
 
 export const Header = () => {
   const auth = useAuthContext();
-  const [time, setTime] = useState(moment().format('HH:mm'));
+  const [time, setTime] = useState(dayjs().format('HH:mm'));
   const [supportModal, setSupportModal] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTime(moment().format('HH:mm'));
+      setTime(dayjs().format('HH:mm'));
     }, 1000);
     return () => clearInterval(timer);
   }, []);

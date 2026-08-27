@@ -1,6 +1,6 @@
 import { Dropdown } from 'antd';
-import moment from 'moment';
-import 'moment/locale/ru';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
 import styled from 'styled-components';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -30,12 +30,12 @@ const DonationList = styled.ul`
 const sum = (acc: number, { value }: Donation) => acc + value;
 
 const getDateKey = (donation: Donation) =>
-  moment(donation.createdAt).locale('ru').format('MMMM YYYY');
+  dayjs(donation.createdAt).locale('ru').format('MMMM YYYY');
 
 export const Donations = () => {
   const auth = useAuthContext();
   const [donations, setDonations] = useState<Donation[]>([]);
-  const currentDateKey = moment().locale('ru').format('MMMM YYYY');
+  const currentDateKey = dayjs().locale('ru').format('MMMM YYYY');
 
   const renderMenu = useCallback(
     (dateKeys: string[], donationsHash: Record<string, Donation[]>) => (
