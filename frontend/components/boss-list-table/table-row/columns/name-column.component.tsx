@@ -48,9 +48,11 @@ export const NameColumn = ({ boss }: NameColumnProps) => {
 
   const notRespawnedClick = useCallback(() => {
     const time = getNewRespawnTime(boss.respawnTime, boss.interval);
-    updateBossTime(boss.id, { time, approximately: true }, accessToken).then(
-      (newBossApiInfo) => updateBossInList(newBossApiInfo)
-    );
+    updateBossTime(
+      boss.documentId,
+      { time, approximately: true },
+      accessToken
+    ).then((newBossApiInfo) => updateBossInList(newBossApiInfo));
   }, [accessToken, boss, updateBossInList]);
 
   return (

@@ -69,7 +69,7 @@ export const TableRow = ({ boss, isRemainingTime }: RowProps) => {
       : dayjs(calendarDate).toISOString();
 
     const updatedBoss = await updateBossTime(
-      boss.id,
+      boss.documentId,
       { time, approximately: false },
       accessToken
     );
@@ -77,7 +77,7 @@ export const TableRow = ({ boss, isRemainingTime }: RowProps) => {
     setEditableTime(null);
     setCalendarDate(null);
   }, [
-    boss.id,
+    boss.documentId,
     boss.interval,
     accessToken,
     calendarDate,

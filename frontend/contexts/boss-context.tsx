@@ -40,7 +40,9 @@ export const BossContextProvider = ({
   const updateBossInList = useCallback(
     (boss: Boss, autoUpdate?: boolean) => {
       clearTimeout(timer.current);
-      const index = bossList.findIndex(({ id }) => id === boss.id);
+      const index = bossList.findIndex(
+        ({ documentId }) => documentId === boss.documentId
+      );
       const nextBossList = [...bossList];
       nextBossList[index] = boss;
 

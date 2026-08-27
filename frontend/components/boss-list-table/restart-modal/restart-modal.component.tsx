@@ -33,7 +33,7 @@ export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
       filteredList.forEach(async (boss) => {
         const time = dayjs().second(0);
         const updatedBoss = await updateBossTime(
-          boss.id,
+          boss.documentId,
           {
             time: time.add(-boss.interval, 'hour').toISOString(),
             approximately: false,
@@ -64,7 +64,7 @@ export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
         : calendarTime.toISOString();
 
       const updatedBoss = await updateBossTime(
-        boss.id,
+        boss.documentId,
         { time, approximately: true },
         accessToken
       );

@@ -73,14 +73,18 @@ export const RespawnTimeColumn = ({
 
     if (shouldUpdateWorld) {
       const time = getNewRespawnTime(boss.respawnTime, boss.interval);
-      updateBossTime(boss.id, { time }, accessToken).then((newBossApiInfo) =>
-        updateBossInList(newBossApiInfo, true)
+      updateBossTime(boss.documentId, { time }, accessToken).then(
+        (newBossApiInfo) => updateBossInList(newBossApiInfo, true)
       );
     }
 
     if (bossNotRespawned) {
       const time = getNewRespawnTime(boss.respawnTime, boss.interval);
-      updateBossTime(boss.id, { time, approximately: true }, accessToken).then(
+      updateBossTime(
+        boss.documentId,
+        { time, approximately: true },
+        accessToken
+      ).then(
         (newBossApiInfo) => updateBossInList(newBossApiInfo, true)
       );
     }

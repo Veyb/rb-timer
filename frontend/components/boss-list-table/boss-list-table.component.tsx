@@ -73,7 +73,7 @@ export const BossListTable = () => {
           <tbody className={styles.tableTbody}>
             {bossList.map((boss) => (
               <TableRow
-                key={boss.id}
+                key={boss.documentId}
                 boss={boss}
                 isRemainingTime={isRemainingTime}
               />

@@ -2,6 +2,7 @@ export type Quality = 'none' | 'blue' | 'red' | 'purple';
 
 export interface BossApiResponse {
   id: number;
+  documentId: string;
   name: string;
   quality: Quality;
   interval: number;

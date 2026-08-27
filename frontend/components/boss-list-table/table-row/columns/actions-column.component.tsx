@@ -35,13 +35,13 @@ export const ActionsColumn = ({
 
     const time = dayjs().second(0).toISOString();
     const updatedBoss = await updateBossTime(
-      boss.id,
+      boss.documentId,
       { time, approximately: false },
       accessToken
     );
 
     updateBossInList(updatedBoss);
-  }, [boss.id, allowedUpdate, updateBossInList, accessToken]);
+  }, [boss.documentId, allowedUpdate, updateBossInList, accessToken]);
 
   useEffect(() => {
     setMounted(true);

@@ -20,8 +20,8 @@ export async function getBossList(token: string | undefined) {
 }
 
 export async function updateBossTime(
-  bossId: number,
-  params: Partial<Omit<BossApiResponse, 'id' | 'name'>>,
+  documentId: string,
+  params: Partial<Omit<BossApiResponse, 'id' | 'documentId' | 'name'>>,
   token: string | undefined
 ) {
   const headers: RawAxiosRequestHeaders = {
@@ -31,7 +31,7 @@ export async function updateBossTime(
   if (token) headers.Authorization = `Bearer ${token}`;
 
   const { data } = await axios.put(
-    `${API_URL}/bosses/${bossId}`,
+    `${API_URL}/bosses/${documentId}`,
     {
       data: {
         restarted: false,
