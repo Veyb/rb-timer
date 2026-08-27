@@ -159,7 +159,7 @@ export function Scrollable({
   ]);
 
   return (
-    <ScrollableHolder maxHeight={maxHeight} offset={offset}>
+    <ScrollableHolder $maxHeight={maxHeight} $offset={offset}>
       <div
         className={cn(
           'scrollHost',

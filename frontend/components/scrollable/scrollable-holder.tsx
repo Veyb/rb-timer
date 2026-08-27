@@ -11,14 +11,9 @@ export const zeroScrollbarStyle = css`
 `;
 
 export interface ScrollableStyle {
-  maxHeight?: string | number; // in rem
-  offset?: number; // in rem
+  $maxHeight?: string | number; // in rem
+  $offset?: number; // in rem
 }
-
-const omitProps: Record<string, boolean> = {
-  maxHeight: true,
-  offset: true,
-};
 
 export const ScrollThumb = styled('div')`
   width: 0;
@@ -33,19 +28,16 @@ export const ScrollThumb = styled('div')`
   }
 `;
 
-export const ScrollableHolder = styled('div').withConfig({
-  shouldForwardProp: (prop, defaultValidator) =>
-    !omitProps[prop] && defaultValidator(prop),
-})<ScrollableStyle>`
+export const ScrollableHolder = styled.div<ScrollableStyle>`
   position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
   ${(props) =>
-    props.maxHeight
-      ? typeof props.maxHeight === 'number'
-        ? `max-height:${props.maxHeight}rem`
-        : `max-height:${props.maxHeight}`
+    props.$maxHeight
+      ? typeof props.$maxHeight === 'number'
+        ? `max-height:${props.$maxHeight}rem`
+        : `max-height:${props.$maxHeight}`
       : ''};
 
   .scrollHost {
@@ -55,13 +47,13 @@ export const ScrollableHolder = styled('div').withConfig({
 
     ${zeroScrollbarStyle};
     ${(props) =>
-      props.maxHeight && typeof props.maxHeight === 'number'
-        ? `max-height:${props.maxHeight}rem`
+      props.$maxHeight && typeof props.$maxHeight === 'number'
+        ? `max-height:${props.$maxHeight}rem`
         : ''};
-    ${({ offset }) => (offset ? `padding-right: ${offset}rem` : '')};
+    ${({ $offset }) => ($offset ? `padding-right: ${$offset}rem` : '')};
   }
   .scrollHost.scrollbarExist {
-    padding-right: ${(props) => 1.2 + (props.offset || 0)}rem;
+    padding-right: ${(props) => 1.2 + (props.$offset || 0)}rem;
   }
 
   .scrollbar {
@@ -71,7 +63,7 @@ export const ScrollableHolder = styled('div').withConfig({
     width: 1.2rem;
     display: none;
     z-index: var(--zIndexBase);
-    right: ${(props) => props.offset || 0}rem;
+    right: ${(props) => props.$offset || 0}rem;
   }
 
   .scrollbar.exist {
