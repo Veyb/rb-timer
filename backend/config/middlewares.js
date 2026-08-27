@@ -1,7 +1,13 @@
-module.exports = [
+module.exports = ({ env }) => [
   "strapi::errors",
   "strapi::security",
-  "strapi::cors",
+  {
+    name: "strapi::cors",
+    config: {
+      // Comma-separated list, e.g. "https://example.com,https://www.example.com".
+      origin: env.array("CORS_ORIGINS", ["http://localhost:3000"]),
+    },
+  },
   "strapi::poweredBy",
   "strapi::logger",
   "strapi::query",

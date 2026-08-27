@@ -45,13 +45,17 @@ module.exports = {
   // bootstrap(/*{ strapi }*/) {},
   bootstrap({ strapi }) {
     const socketUsers = {};
+    // Same env var and format as config/middlewares.js's `strapi::cors` origin
+    // (comma-separated, e.g. "https://example.com,https://www.example.com").
+    const corsOrigins = (
+      process.env.CORS_ORIGINS || "http://localhost:3000"
+    )
+      .split(",")
+      .map((origin) => origin.trim())
+      .filter(Boolean);
     const io = require("socket.io")(strapi.server.httpServer, {
       cors: {
-        origin: [
-          "http://localhost:3000",
-          "https://l2m-db.ru",
-          "https://www.l2m-db.ru",
-        ],
+        origin: corsOrigins,
         methods: ["GET", "POST"],
         credentials: true,
       },
