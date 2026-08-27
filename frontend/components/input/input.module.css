@@ -126,7 +126,10 @@
   bottom: 0;
   font-size: 1.6rem;
   color: rgb(162, 162, 173);
-  transition: font-size 300ms, top 300ms, bottom 300ms;
+  transition:
+    font-size 300ms,
+    top 300ms,
+    bottom 300ms;
 }
 
 .input:-webkit-autofill ~ .label,

@@ -5,11 +5,16 @@ import {
   EyeInvisibleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
-import { InputHTMLAttributes, useEffect, useRef, useState } from 'react';
+import {
+  InputHTMLAttributes,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 
 // local modules
 import { Button } from '../../styled-components';
-import { generateId } from '../../lib/generate-id';
 
 // styles modules
 import styles from './input.module.css';
@@ -34,7 +39,7 @@ export const Input = ({
 }: InputProps) => {
   const isPassword = propsType === 'password';
   const [visible, setVisible] = useState(propsType !== 'password');
-  const [commonId] = useState(() => generateId());
+  const commonId = useId();
   const refInput = useRef<HTMLInputElement>(null);
   const type = isPassword ? (visible ? 'text' : 'password') : propsType;
 
