@@ -29,6 +29,7 @@ function MyApp({ Component, pageProps, user, jwt }: MyAppProps) {
           <meta name="viewport" content="width=device-width" />
           <meta name="MobileOptimized" content="580" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="mobile-web-app-capable" content="yes" />
           <meta
             name="description"
             content="Timer for tracking the respawn of raid bosses"

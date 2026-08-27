@@ -110,7 +110,13 @@ export const Header = () => {
         <Space size="large">
           <Link href="/" className="homeLink">
 
-            <Image priority fill alt="logo" src="/l2m-logo-color.png" />
+            <Image
+              priority
+              fill
+              sizes="201px"
+              alt="logo"
+              src="/l2m-logo-color.png"
+            />
 
           </Link>
           <Donations />

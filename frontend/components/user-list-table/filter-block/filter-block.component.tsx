@@ -76,7 +76,7 @@ export const FilterBlock = ({
         placeholder="Роль"
         onChange={handleFilter}
         className={styles.filterBlock}
-        dropdownMatchSelectWidth={false}
+        popupMatchSelectWidth={false}
         placement="bottomLeft"
       >
         {roles.map((role) => (

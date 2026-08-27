@@ -55,11 +55,11 @@ export const ManagementBlock = (props: ManagementBlockProps) => {
           {allowedAdminister ? (
             <Select
               size="small"
-              bordered={false}
+              variant="borderless"
               onChange={handleSelectChange}
               disabled={!allowedAdminister}
               defaultValue={user.role.id}
-              dropdownMatchSelectWidth={false}
+              popupMatchSelectWidth={false}
             >
               {props.roles.map((role) => (
                 <Select.Option key={role.id} value={role.id}>

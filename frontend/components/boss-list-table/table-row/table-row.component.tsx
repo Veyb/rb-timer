@@ -87,7 +87,7 @@ export const TableRow = ({ boss, isRemainingTime }: RowProps) => {
   ]);
 
   useEffect(() => {
-    if (!editableTime) return () => clearTimeout(timer);
+    if (!editableTime) return;
 
     const timer = setTimeout(() => {
       handleDatePickerChange(null);

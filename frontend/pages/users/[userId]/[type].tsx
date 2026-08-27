@@ -1,5 +1,5 @@
 // global modules
-import { Tabs } from 'antd';
+import { Tabs, TabsProps } from 'antd';
 import { parseCookies } from 'nookies';
 import { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
@@ -16,8 +16,6 @@ import { NotAllowedBlock } from '../../../components/not-allowed-block';
 
 // style modules
 import styles from '../../../styles/main.module.css';
-
-const { TabPane } = Tabs;
 
 const Holder = styled.div`
   padding-bottom: 0;
@@ -66,18 +64,24 @@ const UserProfileById = ({ type, user, roles }: UserProfileByIdProps) => {
 
   if (!allowedUpdate) return <NotAllowedBlock />;
 
+  const items: TabsProps['items'] = [
+    {
+      key: 'management',
+      label: 'Управление',
+      children: <ManagementBlock user={user} roles={roles} />,
+    },
+    {
+      key: 'collections',
+      label: 'Коллекции',
+      children: <CollectionsBlock user={user} />,
+    },
+  ];
+
   return (
     <Holder className={styles.container}>
       <Layout className={styles.profileLayout}>
         <h1>{`Профиль: ${user.nickname}`}</h1>
-        <Tabs onChange={handleTabClick} activeKey={type}>
-          <TabPane tab="Управление" key="management">
-            <ManagementBlock user={user} roles={roles} />
-          </TabPane>
-          <TabPane tab="Коллекции" key="collections">
-            <CollectionsBlock user={user} />
-          </TabPane>
-        </Tabs>
+        <Tabs onChange={handleTabClick} activeKey={type} items={items} />
       </Layout>
     </Holder>
   );
