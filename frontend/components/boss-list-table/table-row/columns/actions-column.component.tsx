@@ -1,6 +1,6 @@
 // global modules
 import { useCallback, useEffect, useState } from 'react';
-import moment, { Moment } from 'moment';
+import dayjs, { Dayjs } from 'dayjs';
 import { Space, Button, DatePicker } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
@@ -12,10 +12,10 @@ import { useAuthContext } from '../../../../contexts/auth-context';
 
 interface ActionsColumnProps {
   boss: Boss;
-  editableTime: Moment | null;
-  calendarDate: Moment | null;
+  editableTime: Dayjs | null;
+  calendarDate: Dayjs | null;
   handleConfirmClick: () => void;
-  handleDatePickerChange: (value: any) => void;
+  handleDatePickerChange: (value: Dayjs | null) => void;
 }
 
 export const ActionsColumn = ({
@@ -28,12 +28,12 @@ export const ActionsColumn = ({
   const [mounted, setMounted] = useState(false);
   const { accessToken, allowedUpdate } = useAuthContext();
   const { updateBossInList } = useBossContext();
-  const disabled = moment().valueOf() < boss.respawnTime || !allowedUpdate;
+  const disabled = dayjs().valueOf() < boss.respawnTime || !allowedUpdate;
 
   const onKillClick = useCallback(async () => {
     if (!allowedUpdate) return;
 
-    const time = moment().seconds(0).toISOString();
+    const time = dayjs().second(0).toISOString();
     const updatedBoss = await updateBossTime(
       boss.id,
       { time, approximately: false },
@@ -61,7 +61,7 @@ export const ActionsColumn = ({
         value={editableTime || calendarDate}
         format="DD-MM-YYYY HH:mm"
         onChange={handleDatePickerChange}
-        placeholder={moment(boss.time).format('HH:mm')}
+        placeholder={dayjs(boss.time).format('HH:mm')}
       />
       <Button
         shape="circle"

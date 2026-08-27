@@ -5,7 +5,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -37,25 +36,25 @@ export const BossContextProvider = ({
   let timer: any = useRef(null);
   const auth = useAuthContext();
   const [bossList, setBossList] = useState<Boss[]>(list);
-  const newBossList = useMemo(() => [...bossList], [bossList]);
 
   const updateBossInList = useCallback(
     (boss: Boss, autoUpdate?: boolean) => {
       clearTimeout(timer.current);
       const index = bossList.findIndex(({ id }) => id === boss.id);
-      newBossList[index] = boss;
+      const nextBossList = [...bossList];
+      nextBossList[index] = boss;
 
       if (autoUpdate) {
         timer.current = setTimeout(() => {
-          setBossList(sortBossList(newBossList));
+          setBossList(sortBossList(nextBossList));
         }, 1000);
       } else {
-        setBossList(sortBossList(newBossList));
+        setBossList(sortBossList(nextBossList));
       }
 
       return () => clearTimeout(timer.current);
     },
-    [bossList, newBossList]
+    [bossList]
   );
 
   useEffect(() => {

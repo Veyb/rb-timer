@@ -104,7 +104,7 @@ export const Donations = () => {
     <Dropdown
       trigger={['click']}
       placement="bottomRight"
-      overlay={renderMenu(dateKeys, donationsHash)}
+      popupRender={() => renderMenu(dateKeys, donationsHash)}
       disabled={!donations.length}
     >
       <Button size="large" className="donations">

@@ -1,5 +1,5 @@
 // global modules
-import moment from 'moment';
+import dayjs, { Dayjs } from 'dayjs';
 import { useCallback, useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Modal } from 'antd';
@@ -20,10 +20,10 @@ interface RestartModalProps {
 export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
   const { accessToken, allowedUpdate } = useAuthContext();
   const { bossList, updateBossInList } = useBossContext();
-  const [calendarDate, setCalendarDate] = useState(null);
+  const [calendarDate, setCalendarDate] = useState<Dayjs | null>(null);
 
-  const handleDatePickerChange = useCallback((value) => {
-    setCalendarDate(value ? moment(value).seconds(0) : value);
+  const handleDatePickerChange = useCallback((value: Dayjs | null) => {
+    setCalendarDate(value ? value.second(0) : value);
   }, []);
 
   const handleResetClick = useCallback(async () => {
@@ -31,11 +31,11 @@ export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
       const filteredList = bossList.filter((boss) => !boss.world);
 
       filteredList.forEach(async (boss) => {
-        const time = moment().seconds(0);
+        const time = dayjs().second(0);
         const updatedBoss = await updateBossTime(
           boss.id,
           {
-            time: time.add(-boss.interval, 'hours').toISOString(),
+            time: time.add(-boss.interval, 'hour').toISOString(),
             approximately: false,
             restarted: true,
           },
@@ -55,12 +55,12 @@ export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
     );
 
     filteredList.forEach(async (boss) => {
-      const calendarTime = moment(calendarDate).seconds(0);
+      const calendarTime = dayjs(calendarDate).second(0);
       const diff = boss.firstInterval
         ? boss.firstInterval - boss.interval
         : undefined;
       const time = diff
-        ? calendarTime.add(diff, 'hours').toISOString()
+        ? calendarTime.add(diff, 'hour').toISOString()
         : calendarTime.toISOString();
 
       const updatedBoss = await updateBossTime(

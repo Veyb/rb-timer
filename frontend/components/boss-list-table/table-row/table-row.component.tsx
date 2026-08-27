@@ -1,6 +1,6 @@
 // global modules
 import cn from 'classnames';
-import moment, { Moment } from 'moment';
+import dayjs, { Dayjs } from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // local modules
@@ -17,9 +17,9 @@ import styles from '../boss-list-table.module.css';
 const THIRTY_SECONDS = 30 * 1000;
 
 function isAnimated(boss: Boss) {
-  const date = moment();
-  const diffFromKill = date.diff(moment(boss.time));
-  const diffFromSpawn = moment(boss.respawnTime).diff(date);
+  const date = dayjs();
+  const diffFromKill = date.diff(dayjs(boss.time));
+  const diffFromSpawn = dayjs(boss.respawnTime).diff(date);
   const getDiffMinutes = (diff: number) => Math.floor(diff / MINUTE);
 
   return (
@@ -38,8 +38,8 @@ interface RowProps {
 export const TableRow = ({ boss, isRemainingTime }: RowProps) => {
   const { accessToken, allowedUpdate } = useAuthContext();
   const { updateBossInList } = useBossContext();
-  const [editableTime, setEditableTime] = useState<Moment | null>(null);
-  const [calendarDate, setCalendarDate] = useState(null);
+  const [editableTime, setEditableTime] = useState<Dayjs | null>(null);
+  const [calendarDate, setCalendarDate] = useState<Dayjs | null>(null);
   const className = useMemo(
     () =>
       isAnimated(boss)
@@ -52,21 +52,21 @@ export const TableRow = ({ boss, isRemainingTime }: RowProps) => {
     [boss, editableTime]
   );
 
-  const handleDatePickerChange = useCallback((value) => {
+  const handleDatePickerChange = useCallback((value: Dayjs | null) => {
     if (!value) setEditableTime(value);
-    setCalendarDate(value ? moment(value).seconds(0) : value);
+    setCalendarDate(value ? value.second(0) : value);
   }, []);
 
-  const handleEditableTimeChange = useCallback((value: Moment) => {
-    setEditableTime(value ? moment(value).seconds(0) : value);
+  const handleEditableTimeChange = useCallback((value: Dayjs) => {
+    setEditableTime(value ? value.second(0) : value);
   }, []);
 
   const handleConfirmClick = useCallback(async () => {
     if ((!calendarDate && !editableTime) || !allowedUpdate) return;
 
     const time = editableTime
-      ? moment(editableTime).add(`-${boss.interval}`, 'hours').toISOString()
-      : moment(calendarDate).toISOString();
+      ? editableTime.add(-boss.interval, 'hour').toISOString()
+      : dayjs(calendarDate).toISOString();
 
     const updatedBoss = await updateBossTime(
       boss.id,

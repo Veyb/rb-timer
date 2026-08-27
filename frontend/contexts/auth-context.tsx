@@ -88,7 +88,7 @@ export const AuthContextProvider = ({
     [user]
   );
 
-  const login = useCallback(async (userData) => {
+  const login = useCallback(async (userData: any) => {
     try {
       const loginResponse = await apiPost('/auth/local', userData);
 
@@ -109,7 +109,7 @@ export const AuthContextProvider = ({
     }
   }, []);
 
-  const register = useCallback(async (userData) => {
+  const register = useCallback(async (userData: any) => {
     try {
       const registerResponse = await apiPost('/auth/local/register', userData);
 

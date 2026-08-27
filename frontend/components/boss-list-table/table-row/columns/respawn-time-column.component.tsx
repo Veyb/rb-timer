@@ -1,5 +1,5 @@
 // global modules
-import moment, { Moment } from 'moment';
+import dayjs, { Dayjs } from 'dayjs';
 import { Tooltip } from 'antd';
 import { useCallback, useEffect, useMemo } from 'react';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
@@ -17,9 +17,9 @@ import { useAuthContext } from '../../../../contexts/auth-context';
 import styles from '../../boss-list-table.module.css';
 
 function getTooltipText(boss: Boss) {
-  const timeOfDeath = moment(boss.time);
-  const hoursOfDeath = timeOfDeath.hours().toString().padStart(2, '0');
-  const minutesOfDeath = timeOfDeath.minutes().toString().padStart(2, '0');
+  const timeOfDeath = dayjs(boss.time);
+  const hoursOfDeath = timeOfDeath.hour().toString().padStart(2, '0');
+  const minutesOfDeath = timeOfDeath.minute().toString().padStart(2, '0');
 
   return `Время фарма ${hoursOfDeath}:${minutesOfDeath}`;
 }
@@ -27,13 +27,13 @@ function getTooltipText(boss: Boss) {
 function getOutputTime(
   boss: Boss,
   isRemainingTime: boolean,
-  editableTime: Moment | null
+  editableTime: Dayjs | null
 ) {
-  const date = moment(editableTime || boss.respawnTime);
-  const hours = date.hours().toString().padStart(2, '0');
-  const minutes = date.minutes().toString().padStart(2, '0');
+  const date = dayjs(editableTime || boss.respawnTime);
+  const hours = date.hour().toString().padStart(2, '0');
+  const minutes = date.minute().toString().padStart(2, '0');
 
-  const diff = date.diff(moment());
+  const diff = date.diff(dayjs());
   const diffAbs = Math.abs(diff);
   const diffHours = Math.floor(diffAbs / HOUR)
     .toString()
@@ -49,9 +49,9 @@ function getOutputTime(
 
 interface RespawnTimeColumnProps {
   boss: Boss;
-  editableTime: Moment | null;
+  editableTime: Dayjs | null;
   isRemainingTime: boolean;
-  handleEditableTimeChange: (value: Moment) => void;
+  handleEditableTimeChange: (value: Dayjs) => void;
 }
 
 export const RespawnTimeColumn = ({
@@ -65,11 +65,11 @@ export const RespawnTimeColumn = ({
 
   useEffect(() => {
     if (!allowedUpdate || boss.restarted) return;
-    const currentDateTime = moment().valueOf();
+    const currentDateTime = dayjs().valueOf();
     const shouldUpdateWorld = boss.world && currentDateTime > boss.respawnTime;
     const bossNotRespawned =
       !boss.world &&
-      currentDateTime > moment(boss.respawnTime).add(20, 'minutes').valueOf();
+      currentDateTime > dayjs(boss.respawnTime).add(20, 'minute').valueOf();
 
     if (shouldUpdateWorld) {
       const time = getNewRespawnTime(boss.respawnTime, boss.interval);
@@ -87,12 +87,12 @@ export const RespawnTimeColumn = ({
   }, [boss, allowedUpdate, updateBossInList, accessToken]);
 
   const onReduceClick = useCallback(() => {
-    const newTime = moment(editableTime || boss.respawnTime).add(-1, 'minute');
+    const newTime = dayjs(editableTime || boss.respawnTime).add(-1, 'minute');
     handleEditableTimeChange(newTime);
   }, [boss.respawnTime, editableTime, handleEditableTimeChange]);
 
   const onIncreaseClick = useCallback(() => {
-    const newTime = moment(editableTime || boss.respawnTime).add(1, 'minute');
+    const newTime = dayjs(editableTime || boss.respawnTime).add(1, 'minute');
     handleEditableTimeChange(newTime);
   }, [boss.respawnTime, editableTime, handleEditableTimeChange]);
 

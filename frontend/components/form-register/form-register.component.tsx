@@ -108,8 +108,8 @@ const FormRegister = () => {
           Регистрация
         </Button>
 
-        <Link href="/login">
-          <a className={styles.link}>Вход</a>
+        <Link href="/login" className={styles.link}>
+          Вход
         </Link>
       </div>
     </form>

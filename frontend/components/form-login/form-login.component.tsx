@@ -80,8 +80,8 @@ const FormLogin = () => {
           Вход
         </Button>
 
-        <Link href="/register">
-          <a className={styles.link}>Регистрация</a>
+        <Link href="/register" className={styles.link}>
+          Регистрация
         </Link>
       </div>
     </form>

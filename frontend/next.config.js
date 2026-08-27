@@ -1,14 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  styledComponents: true,
+  compiler: {
+    styledComponents: true,
+  },
   env: {
     API_URL: process.env.API_URL,
     IMAGE_URL: process.env.IMAGE_URL,
     SOCKET_URL: process.env.SOCKET_URL,
   },
   images: {
-    domains: [process.env.IMAGE_DOMAIN],
+    remotePatterns: [
+      { protocol: 'https', hostname: process.env.IMAGE_DOMAIN },
+      { protocol: 'http', hostname: process.env.IMAGE_DOMAIN },
+    ],
   },
   async headers() {
     return [

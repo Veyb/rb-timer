@@ -15,7 +15,7 @@ export default function Custom404() {
           разработке ;)
         </h4>
         <Link href="/">
-          <a>На главную</a>
+          На главную
         </Link>
         <Image src="/owl.png" alt="logo" width="400" height="400" />
       </div>

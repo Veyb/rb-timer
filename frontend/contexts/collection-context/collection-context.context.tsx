@@ -109,7 +109,7 @@ export const CollectionContextProvider = ({
     setActiveIds([]);
   }, []);
 
-  const handleItemClick = useCallback((collectionId, itemId) => {
+  const handleItemClick = useCallback((collectionId: number, itemId: number) => {
     setActiveIds([collectionId, itemId]);
   }, []);
 

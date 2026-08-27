@@ -87,15 +87,15 @@ export const Header = () => {
         Поддержать автора
       </MenuItem>
       <Link href="/profile">
-        <a>
-          <MenuItem>Профиль</MenuItem>
-        </a>
+
+        <MenuItem>Профиль</MenuItem>
+
       </Link>
       {auth.allowed && (
         <Link href="/users">
-          <a>
-            <MenuItem>Пользователи</MenuItem>
-          </a>
+
+          <MenuItem>Пользователи</MenuItem>
+
         </Link>
       )}
       <MenuDivider />
@@ -104,19 +104,14 @@ export const Header = () => {
   );
 
   return (
-    (<Holder>
+    <Holder>
       <div className="background" />
       <div className="wrapper">
         <Space size="large">
-          <Link href="/">
-            <a className="homeLink">
-              <Image
-                priority
-                alt="logo"
-                layout="fill"
-                src="/l2m-logo-color.png"
-              />
-            </a>
+          <Link href="/" className="homeLink">
+
+            <Image priority fill alt="logo" src="/l2m-logo-color.png" />
+
           </Link>
           <Donations />
         </Space>
@@ -125,7 +120,7 @@ export const Header = () => {
           <h2 className="time">{time}</h2>
           {auth.loggedIn ? (
             <Dropdown
-              overlay={menu}
+              popupRender={() => menu}
               trigger={['click']}
               placement="bottomRight"
             >
@@ -133,9 +128,9 @@ export const Header = () => {
             </Dropdown>
           ) : (
             <Link href="/login">
-              <a>
-                <Button shape="round">Вход</Button>
-              </a>
+
+              <Button shape="round">Вход</Button>
+
             </Link>
           )}
         </Space>
@@ -174,6 +169,6 @@ export const Header = () => {
           </>
         }
       </Modal>
-    </Holder>)
+    </Holder>
   );
 };

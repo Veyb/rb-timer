@@ -27,8 +27,8 @@ export const ManagementBlock = (props: ManagementBlockProps) => {
   const [info, setInfo] = useState({ roleId: props.user.role.id });
 
   const handleSelectChange = useCallback(
-    (value) => {
-      setInfo({ ...info, roleId: value });
+    (value: unknown) => {
+      setInfo({ ...info, roleId: value as number });
     },
     [info]
   );

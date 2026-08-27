@@ -94,7 +94,7 @@ export const OnlineList = () => {
     <Dropdown
       trigger={['click']}
       placement="bottomRight"
-      overlay={renderMenu(socketUsers)}
+      popupRender={() => renderMenu(socketUsers)}
       disabled={!socketUsers.length}
     >
       <Button size="large" icon={<TeamOutlined />}>
