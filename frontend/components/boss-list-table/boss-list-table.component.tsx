@@ -1,3 +1,5 @@
+'use client';
+
 // global modules
 // import { Button } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';

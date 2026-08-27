@@ -1,3 +1,5 @@
+'use client';
+
 // global modules
 import {
   createContext,

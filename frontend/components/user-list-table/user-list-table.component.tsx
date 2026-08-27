@@ -1,6 +1,8 @@
+'use client';
+
 // global modules
 import cn from 'classnames';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { MouseEvent, useMemo, useState } from 'react';
 
 // local modules
