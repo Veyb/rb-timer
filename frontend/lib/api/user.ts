@@ -1,5 +1,5 @@
 // global modules
-import axios, { AxiosRequestHeaders } from 'axios';
+import axios, { RawAxiosRequestHeaders } from 'axios';
 
 // local modules
 import { User } from '../../types';
@@ -41,7 +41,7 @@ export async function updateUser(
   params: Partial<UpdateUserParams>,
   token: string | undefined
 ) {
-  const headers: AxiosRequestHeaders = {
+  const headers: RawAxiosRequestHeaders = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
   };
@@ -62,7 +62,7 @@ export async function updateUsersMe(
   params: Partial<UpdateUserParams>,
   token: string | undefined
 ) {
-  const headers: AxiosRequestHeaders = {
+  const headers: RawAxiosRequestHeaders = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
   };

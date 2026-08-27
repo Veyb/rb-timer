@@ -1,5 +1,5 @@
 // global modules
-import axios, { AxiosRequestHeaders } from 'axios';
+import axios, { RawAxiosRequestHeaders } from 'axios';
 
 // local modules
 import { BossApiResponse } from '../../types';
@@ -24,7 +24,7 @@ export async function updateBossTime(
   params: Partial<Omit<BossApiResponse, 'id' | 'name'>>,
   token: string | undefined
 ) {
-  const headers: AxiosRequestHeaders = {
+  const headers: RawAxiosRequestHeaders = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
   };

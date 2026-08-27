@@ -1,0 +1,21 @@
+packages:
+  - .
+
+# antd@4 depends on its own (newer, unpinned) moment internally for its date
+# pickers; without forcing a single version, pnpm keeps two separate moment
+# instances around and TS treats their Moment types as incompatible (unlike
+# yarn's flat hoisting, which happened to collapse them into one). Can likely
+# be dropped once the app's own `moment` usage is replaced by dayjs.
+overrides:
+  moment: 2.29.1
+
+allowBuilds:
+  sharp: true
+  styled-components: true
+
+blockExoticSubdeps: true
+
+trustPolicy: no-downgrade
+trustPolicyIgnoreAfter: 43200 # minutes (30 days)
+
+minimumReleaseAge: 10080 # 7 days (in minutes)

@@ -10,31 +10,32 @@
     "test": "next lint"
   },
   "dependencies": {
-    "antd": "^4.18.5",
-    "axios": "^0.25.0",
-    "classnames": "^2.3.1",
-    "moment": "^2.29.1",
+    "@ant-design/icons": "4.7.0",
+    "antd": "4.18.5",
+    "axios": "1.19.0",
+    "classnames": "2.5.1",
+    "moment": "2.29.1",
     "next": "12.0.8",
-    "nookies": "^2.5.2",
-    "qs": "^6.10.3",
-    "ramda": "^0.28.0",
+    "nookies": "2.5.2",
+    "qs": "6.15.3",
+    "ramda": "0.32.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "sharp": "^0.30.1",
-    "socket.io-client": "^4.8.3",
-    "styled-components": "^5.3.5",
-    "styled-normalize": "^8.0.7"
+    "sharp": "0.35.3",
+    "socket.io-client": "4.8.3",
+    "styled-components": "5.3.5",
+    "styled-normalize": "8.1.1"
   },
   "devDependencies": {
     "@types/node": "17.0.10",
-    "@types/qs": "^6.9.7",
-    "@types/ramda": "^0.27.64",
+    "@types/qs": "6.15.1",
+    "@types/ramda": "0.32.0",
     "@types/react": "17.0.38",
-    "@types/react-dom": "^17.0.11",
-    "@types/styled-components": "^5.1.22",
-    "babel-plugin-styled-components": "^2.0.2",
+    "@types/react-dom": "17.0.11",
+    "@types/styled-components": "5.1.22",
+    "babel-plugin-styled-components": "2.0.2",
     "eslint": "8.7.0",
     "eslint-config-next": "12.0.8",
-    "typescript": "4.5.5"
+    "typescript": "5.9.3"
   }
 }

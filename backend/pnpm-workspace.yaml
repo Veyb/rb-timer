@@ -1,6 +1,5 @@
 packages:
-  - backend
-  - frontend
+  - .
 
 allowBuilds:
   '@fortawesome/fontawesome-common-types': true
