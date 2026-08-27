@@ -10,6 +10,9 @@ const nextConfig = {
     SOCKET_URL: process.env.SOCKET_URL,
   },
   images: {
+    // Next.js 16 blocks optimizing images from loopback/private IPs by default (SSRF guard);
+    // backend is self-hosted on localhost and remotePatterns already restricts the hostname.
+    dangerouslyAllowLocalIP: true,
     remotePatterns: [
       { protocol: 'https', hostname: process.env.IMAGE_DOMAIN },
       { protocol: 'http', hostname: process.env.IMAGE_DOMAIN },
