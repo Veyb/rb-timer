@@ -104,7 +104,7 @@ export const Header = () => {
   );
 
   return (
-    <Holder>
+    (<Holder>
       <div className="background" />
       <div className="wrapper">
         <Space size="large">
@@ -140,10 +140,9 @@ export const Header = () => {
           )}
         </Space>
       </div>
-
       <Modal
         centered
-        visible={supportModal}
+        open={supportModal}
         title="Поддержать автора"
         onCancel={() => setSupportModal(false)}
         footer={null}
@@ -175,6 +174,6 @@ export const Header = () => {
           </>
         }
       </Modal>
-    </Holder>
+    </Holder>)
   );
 };

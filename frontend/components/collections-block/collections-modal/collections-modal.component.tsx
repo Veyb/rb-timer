@@ -19,9 +19,9 @@ export const CollectionsModal = () => {
   } = useCollectionContext();
 
   return (
-    <Modal
+    (<Modal
       centered
-      visible={!!activeItem}
+      open={!!activeItem}
       onCancel={handleActiveReset}
       footer={
         nonInteractive ? null : (
@@ -42,6 +42,6 @@ export const CollectionsModal = () => {
           </p>
         </>
       )}
-    </Modal>
+    </Modal>)
   );
 };

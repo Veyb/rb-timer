@@ -76,10 +76,10 @@ export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
   }, [accessToken, calendarDate, bossList, updateBossInList, onClose]);
 
   return (
-    <Modal
+    (<Modal
       centered
       title="Рестарт"
-      visible={visible}
+      open={visible}
       onCancel={onClose}
       footer={null}
     >
@@ -116,6 +116,6 @@ export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
           icon={<UploadOutlined />}
         />
       </div>
-    </Modal>
+    </Modal>)
   );
 };

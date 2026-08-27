@@ -1,5 +1,5 @@
 // global modules
-import 'antd/dist/antd.dark.css';
+import { ConfigProvider, theme } from 'antd';
 import Head from 'next/head';
 import { Normalize } from 'styled-normalize';
 import { destroyCookie, parseCookies } from 'nookies';
@@ -20,7 +20,7 @@ interface MyAppProps extends AppProps {
 
 function MyApp({ Component, pageProps, user, jwt }: MyAppProps) {
   return (
-    <>
+    <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
       <Normalize />
       <GlobalStyle />
       <AuthContextProvider jwt={jwt} user={user}>
@@ -41,7 +41,7 @@ function MyApp({ Component, pageProps, user, jwt }: MyAppProps) {
           <Component {...pageProps} />
         </main>
       </AuthContextProvider>
-    </>
+    </ConfigProvider>
   );
 }
 

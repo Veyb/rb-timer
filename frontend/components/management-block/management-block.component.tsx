@@ -45,69 +45,66 @@ export const ManagementBlock = (props: ManagementBlockProps) => {
     });
   }, [accessToken, router, user]);
 
-  return (
-    <>
-      <div className={styles.holder}>
-        <div className={styles.wrapper}>
-          <div>{`Имя: ${user.realname}`}</div>
-          <div>{`Никнейм: ${user.nickname}`}</div>
-          <div className={styles.role}>
-            <span>Роль:</span>
-            {allowedAdminister ? (
-              <Select
-                size="small"
-                bordered={false}
-                onChange={handleSelectChange}
-                disabled={!allowedAdminister}
-                defaultValue={user.role.id}
-                dropdownMatchSelectWidth={false}
-              >
-                {props.roles.map((role) => (
-                  <Select.Option key={role.id} value={role.id}>
-                    {role.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            ) : (
-              <span>{user.role.name}</span>
-            )}
-          </div>
-          <div>
-            {`Дата регистрации: ${dayjs(user.createdAt)
-              .locale('ru')
-              .format('DD MMMM YYYY в HH:mm')}`}
-          </div>
-          {allowedAdminister && (
-            <Button
-              className={styles.deleteBtn}
-              onClick={() => setDeleteModal(true)}
+  return (<>
+    <div className={styles.holder}>
+      <div className={styles.wrapper}>
+        <div>{`Имя: ${user.realname}`}</div>
+        <div>{`Никнейм: ${user.nickname}`}</div>
+        <div className={styles.role}>
+          <span>Роль:</span>
+          {allowedAdminister ? (
+            <Select
+              size="small"
+              bordered={false}
+              onChange={handleSelectChange}
+              disabled={!allowedAdminister}
+              defaultValue={user.role.id}
+              dropdownMatchSelectWidth={false}
             >
-              Удалить
-            </Button>
+              {props.roles.map((role) => (
+                <Select.Option key={role.id} value={role.id}>
+                  {role.name}
+                </Select.Option>
+              ))}
+            </Select>
+          ) : (
+            <span>{user.role.name}</span>
           )}
         </div>
-
-        <Button
-          type="primary"
-          onClick={handleUpdateClick}
-          disabled={info.roleId === user.role.id}
-        >
-          Сохранить
-        </Button>
+        <div>
+          {`Дата регистрации: ${dayjs(user.createdAt)
+            .locale('ru')
+            .format('DD MMMM YYYY в HH:mm')}`}
+        </div>
+        {allowedAdminister && (
+          <Button
+            className={styles.deleteBtn}
+            onClick={() => setDeleteModal(true)}
+          >
+            Удалить
+          </Button>
+        )}
       </div>
 
-      <Modal
-        centered
-        title="Удаление"
-        visible={deleteModal}
-        onCancel={() => setDeleteModal(false)}
-        footer={<Button onClick={handleDelete}>Да, удалить</Button>}
+      <Button
+        type="primary"
+        onClick={handleUpdateClick}
+        disabled={info.roleId === user.role.id}
       >
-        <p>
-          {`Уверен, что хочешь удалить профиль пользователя `}
-          <strong>{user.nickname}</strong>?
-        </p>
-      </Modal>
-    </>
-  );
+        Сохранить
+      </Button>
+    </div>
+    <Modal
+      centered
+      title="Удаление"
+      open={deleteModal}
+      onCancel={() => setDeleteModal(false)}
+      footer={<Button onClick={handleDelete}>Да, удалить</Button>}
+    >
+      <p>
+        {`Уверен, что хочешь удалить профиль пользователя `}
+        <strong>{user.nickname}</strong>?
+      </p>
+    </Modal>
+  </>);
 };
