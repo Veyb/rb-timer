@@ -82,6 +82,7 @@ export const BossListTable = () => {
             ))}
           </tbody>
         </table>
+
         {allowedUpdate && (
           <Button className={styles.resetButton} onClick={handleModalClick}>
             РЕСТАРТ

@@ -1,8 +1,10 @@
+'use client';
+
 // global modules
 import { Modal } from 'antd';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
 // local modules

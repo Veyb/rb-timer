@@ -19,13 +19,14 @@
 .tableThead > tr > th,
 .tableTbody > tr > td {
   position: relative;
-  padding: 1.6rem 1.6rem;
+  padding: 1.2rem 1.6rem;
   overflow-wrap: break-word;
   transition: background 0.3s;
   border-bottom: 1px solid #303030;
 }
 
 .row {
+  height: 5.8rem;
   border-bottom: 1px solid #303030;
 }
 

@@ -1,3 +1,5 @@
+'use client';
+
 // global modules
 import { Divider } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';

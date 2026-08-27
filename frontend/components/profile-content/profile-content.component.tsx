@@ -1,18 +1,17 @@
+'use client';
+
 // global modules
 import { Tabs, TabsProps } from 'antd';
-import { NextPageContext } from 'next';
-import { useRouter } from 'next/router';
-import { parseCookies } from 'nookies';
+import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 
 // local modules
-import { Role } from '../../types';
-import { getRoles } from '../../lib/api';
-import { Layout } from '../../components/layout';
+import type { Role } from '../../types';
+import { Layout } from '../layout';
 import { useAuthContext } from '../../contexts/auth-context';
-import { ManagementBlock } from '../../components/management-block';
-import { CollectionsBlock } from '../../components/collections-block';
-import { NotAllowedBlock } from '../../components/not-allowed-block';
+import { ManagementBlock } from '../management-block';
+import { CollectionsBlock } from '../collections-block';
+import { NotAllowedBlock } from '../not-allowed-block';
 
 // style modules
 import styles from '../../styles/main.module.css';
@@ -37,18 +36,17 @@ const Holder = styled.div`
   }
 `;
 
-interface ProfileProps {
+interface ProfileContentProps {
   type: string;
   roles: Role[];
 }
 
-const Profile = ({ type, roles }: ProfileProps) => {
+export const ProfileContent = ({ type, roles }: ProfileContentProps) => {
   const router = useRouter();
   const { loggedIn, allowed, user } = useAuthContext();
 
   const handleTabClick = (key: string) => {
-    const route = router.pathname.replace('[type]', key);
-    router.push(route);
+    router.push(`/profile/${key}`);
   };
 
   if (!loggedIn || !user) {
@@ -83,25 +81,3 @@ const Profile = ({ type, roles }: ProfileProps) => {
     </Holder>
   );
 };
-
-export async function getServerSideProps(ctx: NextPageContext) {
-  let roles: Role[] = [];
-  const { type } = ctx.query;
-
-  if (type !== 'management' && type !== 'collections') {
-    return { notFound: true };
-  }
-
-  const jwt = parseCookies(ctx).jwt;
-
-  if (jwt) {
-    try {
-      const rolesData = await getRoles(jwt);
-      roles = rolesData;
-    } catch (err: any) {}
-  }
-
-  return { props: { type, roles } };
-}
-
-export default Profile;
