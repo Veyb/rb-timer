@@ -141,4 +141,78 @@ future domain is a pure env-var change — no code edits, no new deploy tooling.
 - **`frontend/.env.production`**: was hardcoded to `https://api.l2m-db.ru` throughout. Since there's no real domain to put here yet, defaulted it to `localhost` (matching `.env.development`) so a plain `pnpm run build` still produces a working build rather than one with broken/empty URLs. Also fixed both `.env.development` and `.env.production`'s formatting — they were wrapped in an `env: { ... }` block that looks like `next.config.js`'s JS object syntax pasted in by mistake; it "worked" only because dotenv parsing silently ignores any line without a bare `KEY=VALUE` shape (the wrapper lines), but it's misleading. Rewrote both as plain `.env` files.
 - **Confirmed real build-time parameterization works exactly as Next.js's own docs describe**: ran `pnpm run build` once with the checked-in `.env.production` (localhost values baked into `.next/`), then again with `API_URL`/`SOCKET_URL`/`IMAGE_URL`/`IMAGE_DOMAIN` exported as real shell env vars pointing at a fake `override-test` host — the override values, not `.env.production`'s, ended up in the compiled `.next/server/chunks/...` output. This is the actual mechanism for "pass the API/domain as a build parameter": real env vars (or a git-ignored `.env.production.local`, which Next.js loads automatically and which already had `.gitignore` coverage from the original `create-next-app` scaffold) take precedence over `.env.production`, no custom tooling needed.
 - **Decision (asked the user directly)**: whether to add a script/root `package.json` to start both apps with one command was **declined** — README-only, two-terminal instructions. Keeps the Stage 4 decision (fully independent backend/frontend pnpm projects, no shared root) intact; adding a root `package.json` even just for orchestration would have partially reversed that.
+
+## Stage 10 — Production deploy runbook (prepared only — no target server exists yet)
+
+`l2m-db.ru` is retired and there's no replacement server/domain decided yet, so this
+stage **could not be executed** (no infra to deploy to, no access to any server from
+this environment). What follows is a checklist to work through once real hosting
+exists — asked the user directly, and this is what they wanted prepared. Everything
+in Stages 0–9.5 that this runbook depends on (env-var-driven config, no hardcoded
+domain, the two data-integrity fixes below) is already done and verified locally.
+
+### 0. Decisions to make before starting (not this project's call)
+
+- Hosting target (VPS, PaaS, container host — whatever it ends up being).
+- Real domain(s) for the API and the frontend.
+- Whether the **same** `.tmp/data.db` gets carried over (production history preserved) or the app starts with a fresh/empty database. The two data-integrity fixes below (§2) only matter if carrying over existing data.
+- Process manager for keeping `strapi start` and `next start` alive across reboots/crashes (`pm2` and `systemd` are both standard choices; neither is currently set up anywhere in this repo — nothing to reuse, pick either).
+- Reverse proxy / TLS termination in front of both Node processes (nginx, Caddy, or the platform's own — Strapi/Next don't terminate TLS themselves; the old setup on `l2m-db.ru` clearly had *something* doing this, since the API was served over `https://api.l2m-db.ru`, but that config isn't in this repo).
+
+### 1. Server prerequisites
+
+- [ ] Node.js **22 LTS** (`.nvmrc` in both `backend/` and `frontend/` already pins this).
+- [ ] `pnpm` via `corepack enable pnpm` (both projects declare `packageManager: pnpm@11.24.0`).
+- [ ] Get the code onto the server (`git clone`/`git pull`, or whatever deploy mechanism gets chosen) — `backend/` and `frontend/` are independent pnpm projects, no shared root, install/build/run each separately (see README).
+
+### 2. Backend — data, before first v5 boot on the real prod file
+
+**Only relevant if carrying over an existing `data.db`** — skip entirely for a fresh database (a fresh Strapi 5 database satisfies its own schema from the start, neither issue below can occur).
+
+- [ ] **Back up `.tmp/data.db` and `public/uploads/` first.** Non-negotiable, both fixes below write to the database.
+- [ ] If this `data.db` has not been continuously running through every intermediate Strapi version (i.e. it's a snapshot/backup being restored fresh, not the same live process that's been up since Strapi 4.1.3) — check every `*_lnk` join table has an `id` column before starting Strapi 5. Found in Stage 3: tables missing `id` make the built-in `core::5.0.0-discard-drafts` migration crash on first v5 boot. Either run one throwaway boot on Strapi `4.26.2` against this copy first (lets it self-heal the schema), or manually add the missing `id INTEGER PRIMARY KEY AUTOINCREMENT` (and `*_ord` columns for the one many-to-many, `collections_effects_lnk`) — see Stage 3 above for the exact procedure used on the dev copy.
+- [ ] Run `UPDATE bosses SET world = 0 WHERE world IS NULL;` before the first update-boss request against v5. Found in Stage 9: `world` is `required: true` in the schema but 69/71 real rows had it `NULL` — a years-old gap Strapi 4 never enforced. Without this, the app's core "kill boss" / edit-time feature returns `400 ValidationError` for almost every boss. Confirm first with `SELECT world, count(*) FROM bosses GROUP BY world;` — if it comes back clean (no `NULL`), skip.
+
+### 3. Backend — secrets and config (real values, not the repo's `localhost` defaults)
+
+All of these are read from `backend/.env` (see `backend/.env.example` for the full list) — nothing here requires a code change, per Stage 9.5:
+
+- [ ] `APP_KEYS` — comma-separated random values (currently defaults to the placeholder `testKey1,testKey2` if unset — must be replaced for any non-local deploy).
+- [ ] `ADMIN_JWT_SECRET` — random value (currently falls back to a hardcoded placeholder in `config/admin.js` if unset — same issue, flagged since Stage 0).
+- [ ] `JWT_SECRET`, `API_TOKEN_SALT`, `TRANSFER_TOKEN_SALT` — random values.
+- [ ] `PUBLIC_URL` — the real API domain (e.g. `https://api.<newdomain>`).
+- [ ] `CORS_ORIGINS` — the real frontend domain(s), comma-separated (e.g. `https://<newdomain>,https://www.<newdomain>`) — drives both the REST API's CORS middleware and the socket.io server, one variable for both (Stage 9.5).
+- [ ] `HOST`/`PORT` if the defaults (`0.0.0.0:1337`) don't fit the target infra.
+- Generating random values: `openssl rand -base64 32` (or equivalent) per secret — no tooling for this exists in the repo, it's a manual step each deploy.
+
+### 4. Backend — build & run
+
+- [ ] `NODE_ENV=production pnpm install --frozen-lockfile`
+- [ ] `NODE_ENV=production pnpm run build` (builds the admin panel — required after any `.env`/config change per Strapi's own docs, not just after a dependency bump)
+- [ ] `NODE_ENV=production pnpm run start` under whatever process manager was chosen in §0 (keeps it alive across crashes/reboots — `strapi start` alone doesn't).
+
+### 5. Frontend — build & run
+
+- [ ] Build-time env vars must be set *before* the build (they're inlined into the compiled output, not read at request time — Stage 9.5 confirmed this by actually testing an override build):
+  ```bash
+  API_URL=https://<api-domain>/api \
+  SOCKET_URL=https://<api-domain> \
+  IMAGE_URL=https://<api-domain> \
+  IMAGE_DOMAIN=<api-domain> \
+  NODE_ENV=production pnpm install --frozen-lockfile && pnpm run build
+  ```
+  (or drop these into a git-ignored `frontend/.env.production.local` instead of exporting them each time)
+- [ ] `pnpm run start` under the same process manager as the backend.
+
+### 6. Reverse proxy / TLS
+
+- [ ] Route the real domain(s) to the two Node processes (Strapi on its port, Next.js on its port) with TLS termination — nginx/Caddy/platform-native, whichever was chosen in §0. Nothing in this repo currently does this; it's entirely new infra to stand up, not a migration of anything that exists here.
+
+### 7. Post-deploy smoke test
+
+- [ ] Admin panel loads and logs in (`https://<api-domain>/admin`).
+- [ ] Public site loads (`https://<newdomain>`), boss list renders with correct times.
+- [ ] Login → kill a boss / edit its time → list updates immediately (this is exactly the `documentId`/`world` fix path from Stage 9 — the single most likely thing to silently regress if any of the above env vars are wrong).
+- [ ] Socket features: online list updates across two browser sessions, donations list updates live.
+- [ ] Browser devtools network tab: no CORS errors, `Access-Control-Allow-Origin` matches the real frontend domain (not `*`, not `localhost`).
 - Full integration-tested via `curl` against the real backend (SSR-fetched the authenticated boss-list page with a real JWT cookie, confirmed dayjs-formatted respawn times like `~06:11` render correctly from real data; separately `PUT` a boss's `time` with a dayjs-generated ISO string directly against `/api/bosses/:documentId` and confirmed Strapi accepts and persists it) rather than relying on typecheck/build success alone — this is what caught that the boss-context mutation bug and the moment→dayjs gap were real, not just theoretical.
