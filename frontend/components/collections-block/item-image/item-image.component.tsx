@@ -28,6 +28,7 @@ export const ItemImage = ({
   const image = item.image ? (
     <Image
       fill
+      sizes="102px"
       alt={item.name}
       className={styles.image}
       src={`${IMAGE_URL}${item.image.url}`}
@@ -35,6 +36,7 @@ export const ItemImage = ({
   ) : (
     <Image
       fill
+      sizes="102px"
       alt={item.name}
       className={cn(styles.image, styles.imagePlaceholder)}
       src={'/placeholder.svg'}
