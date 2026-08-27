@@ -1,3 +1,5 @@
+'use client';
+
 // global modules
 import { destroyCookie, setCookie } from 'nookies';
 import {
@@ -71,7 +73,7 @@ export const AuthContextProvider = ({
 }: AuthContextProviderProps) => {
   const [user, setUser] = useState(propsUser);
   const [accessToken, setAccessToken] = useState(jwt);
-  const [loggedIn, setLoggedIn] = useState(!!user);
+  const loggedIn = !!user;
   const allowed = useMemo(
     () =>
       user?.role.type === 'editor' ||
@@ -100,7 +102,6 @@ export const AuthContextProvider = ({
       const userResponse = await getUsersMe(loginResponse.jwt);
 
       setUser(userResponse);
-      setLoggedIn(!!userResponse);
       setAccessToken(loginResponse.jwt);
       socket.emit('auth', { user: getSocketUser(userResponse) });
     } catch (err: any) {
@@ -125,7 +126,6 @@ export const AuthContextProvider = ({
       });
 
       setUser(userResponse);
-      setLoggedIn(!!userResponse);
       setAccessToken(registerResponse.jwt);
       socket.emit('auth', { user: getSocketUser(userResponse) });
     } catch (err: any) {
@@ -140,10 +140,6 @@ export const AuthContextProvider = ({
     setAccessToken(undefined);
     socket.emit('auth', { user: null });
   }, []);
-
-  useEffect(() => {
-    setLoggedIn(!!user);
-  }, [user]);
 
   // socket
   useEffect(() => {

@@ -1,3 +1,5 @@
+'use client';
+
 // global modules
 import dayjs from 'dayjs';
 import Link from 'next/link';

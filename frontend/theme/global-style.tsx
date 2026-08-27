@@ -1,3 +1,5 @@
+'use client';
+
 import { createGlobalStyle, css } from 'styled-components';
 
 export const GlobalStyle = createGlobalStyle`
@@ -13,10 +15,6 @@ export const GlobalStyle = createGlobalStyle`
     --zIndexRoof: 100;
   }
 
-  #__next {
-    min-width: 58rem;
-  }
-
   @media only screen and (min-width: 120em) {
     :root {
       font-size: 87.5%;
@@ -27,6 +25,7 @@ export const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
     padding: 0;
+    min-width: 58rem;
     font-size: 1.6rem;
     line-height: 1.3;
     background: #111113;
