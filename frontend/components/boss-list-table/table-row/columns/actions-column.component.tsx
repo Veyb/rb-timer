@@ -1,5 +1,5 @@
 // global modules
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { Space, Button, DatePicker } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
@@ -7,6 +7,7 @@ import { UploadOutlined } from '@ant-design/icons';
 // local modules
 import { Boss } from '../../../../types';
 import { updateBossTime } from '../../../../lib/api';
+import { useIsClient } from '../../../../lib/hooks/use-is-client';
 import { useBossContext } from '../../../../contexts/boss-context';
 import { useAuthContext } from '../../../../contexts/auth-context';
 
@@ -25,7 +26,7 @@ export const ActionsColumn = ({
   handleConfirmClick,
   handleDatePickerChange,
 }: ActionsColumnProps) => {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const { accessToken, allowedUpdate } = useAuthContext();
   const { updateBossInList } = useBossContext();
   const disabled = dayjs().valueOf() < boss.respawnTime || !allowedUpdate;
@@ -42,10 +43,6 @@ export const ActionsColumn = ({
 
     updateBossInList(updatedBoss);
   }, [boss.documentId, allowedUpdate, updateBossInList, accessToken]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!mounted || boss.world) return null;
 

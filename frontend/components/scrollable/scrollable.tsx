@@ -1,7 +1,13 @@
 // global modules
 import cn from 'classnames';
 import type { HTMLAttributes, MouseEventHandler } from 'react';
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 // local modules
 import { ScrollableHolder, ScrollThumb } from './scrollable-holder';
@@ -87,8 +93,7 @@ export function Scrollable({
     setStateDragging(false);
 
     window.removeEventListener('mousemove', handlerMouseMove, false);
-    window.removeEventListener('mouseup', handlerMouseUp, false);
-  }, [dragging, handlerMouseMove]);
+  }, [handlerMouseMove]);
 
   const handlerOnMouseDownThumb = useCallback<
     MouseEventHandler<HTMLDivElement>
@@ -107,7 +112,7 @@ export function Scrollable({
       }
 
       window.addEventListener('mousemove', handlerMouseMove, false);
-      window.addEventListener('mouseup', handlerMouseUp, false);
+      window.addEventListener('mouseup', handlerMouseUp, { once: true });
     },
     [handlerMouseMove, handlerMouseUp]
   );
@@ -136,27 +141,33 @@ export function Scrollable({
     [setTopForScroll]
   );
 
-  useLayoutEffect(() => {
-    if (scrollHostRef.current) {
-      const newHeight =
-        100 *
-        Number(
-          (
-            scrollHostRef.current.clientHeight /
-            scrollHostRef.current.scrollHeight
-          ).toFixed(2)
-        );
+  const recalculateThumbHeight = useCallback(() => {
+    const host = scrollHostRef.current;
+    if (!host) return;
 
-      if (newHeight !== thumbHeight) {
-        setThumbHeight(newHeight === 100 ? 0 : newHeight);
-      }
-    }
-  }, [
-    thumbHeight,
-    scrollHostRef.current?.clientHeight,
-    scrollHostRef.current?.scrollHeight,
-    maxHeight,
-  ]);
+    const newHeight = Number(
+      ((100 * host.clientHeight) / host.scrollHeight).toFixed(2)
+    );
+
+    setThumbHeight((prev) => {
+      const next = newHeight === 100 ? 0 : newHeight;
+      return prev === next ? prev : next;
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    recalculateThumbHeight();
+  }, [recalculateThumbHeight, maxHeight, children]);
+
+  useEffect(() => {
+    const host = scrollHostRef.current;
+    if (!host) return;
+
+    const observer = new ResizeObserver(() => recalculateThumbHeight());
+    observer.observe(host);
+
+    return () => observer.disconnect();
+  }, [recalculateThumbHeight]);
 
   return (
     <ScrollableHolder $maxHeight={maxHeight} $offset={offset}>

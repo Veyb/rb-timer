@@ -107,11 +107,14 @@ export const CollectionContextProvider = ({
 
   const handleActiveReset = useCallback(() => {
     setActiveIds([]);
-  }, []);
+  }, [setActiveIds]);
 
-  const handleItemClick = useCallback((collectionId: number, itemId: number) => {
-    setActiveIds([collectionId, itemId]);
-  }, []);
+  const handleItemClick = useCallback(
+    (collectionId: number, itemId: number) => {
+      setActiveIds([collectionId, itemId]);
+    },
+    [setActiveIds]
+  );
 
   const handleToggleClick = useCallback(async () => {
     if (!auth.user || !activeCollectionId || !activeItemId) return;
@@ -132,6 +135,8 @@ export const CollectionContextProvider = ({
     activeCollectionId,
     auth.user,
     auth.accessToken,
+    setActiveIds,
+    setUsetCollections,
   ]);
 
   const filteredCollections = useMemo(() => {
