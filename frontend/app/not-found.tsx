@@ -5,7 +5,7 @@ import Link from 'next/link';
 // style modules
 import styles from '../styles/main.module.css';
 
-export default function Custom404() {
+export default function NotFound() {
   return (
     <div className={styles.container}>
       <div className={styles.notFoundHolder}>
@@ -14,9 +14,7 @@ export default function Custom404() {
           По загадочным причинам такой страницы не существует или она в
           разработке ;)
         </h4>
-        <Link href="/">
-          На главную
-        </Link>
+        <Link href="/">На главную</Link>
         <Image src="/owl.png" alt="logo" width="400" height="400" />
       </div>
     </div>

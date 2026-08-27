@@ -1,11 +1,13 @@
+'use client';
+
 // global modules
-import { FormRegister } from '../components/form-register';
-import { useAuthContext } from '../contexts/auth-context';
+import { FormLogin } from '../../components/form-login';
+import { useAuthContext } from '../../contexts/auth-context';
 
 // style modules
-import styles from '../styles/main.module.css';
+import styles from '../../styles/main.module.css';
 
-const Register = () => {
+export default function LoginPage() {
   const { loggedIn } = useAuthContext();
 
   return loggedIn ? (
@@ -17,10 +19,8 @@ const Register = () => {
   ) : (
     <div className={styles.container}>
       <div className={styles.authHolder}>
-        <FormRegister />
+        <FormLogin />
       </div>
     </div>
   );
-};
-
-export default Register;
+}

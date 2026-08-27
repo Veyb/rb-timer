@@ -79,14 +79,14 @@
   background: hsla(0, 0%, 100%, 0.01);
 }
 
-.remainingButton {
+.remainingButton.remainingButton {
   position: absolute;
   top: 50%;
   right: 0.8rem;
   transform: translateY(-50%);
 }
 
-.reduceButton {
+.reduceButton.reduceButton {
   display: none;
   position: absolute;
   top: 50%;
@@ -94,7 +94,7 @@
   transform: translateY(-50%);
 }
 
-.increaseButton {
+.increaseButton.increaseButton {
   display: none;
   position: absolute;
   top: 50%;
@@ -109,7 +109,7 @@
   transform: translateY(-50%);
 }
 
-.outDateIcon {
+.outDateIcon.outDateIcon {
   position: absolute;
   top: 50%;
   right: 0.8rem;

@@ -1,5 +1,1 @@
-import dynamic from 'next/dynamic';
-
-export const FormLogin = dynamic(() => import('./form-login.component'), {
-  ssr: false,
-});
+export { default as FormLogin } from './form-login.component';

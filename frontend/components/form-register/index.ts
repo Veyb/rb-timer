@@ -1,5 +1,1 @@
-import dynamic from 'next/dynamic';
-
-export const FormRegister = dynamic(() => import('./form-register.component'), {
-  ssr: false,
-});
+export { default as FormRegister } from './form-register.component';
