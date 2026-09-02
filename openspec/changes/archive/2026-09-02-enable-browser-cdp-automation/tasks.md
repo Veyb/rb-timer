@@ -1,0 +1,15 @@
+## 1. VS Code launch config
+
+- [x] 1.1 Add `"port": 9222` to the "Launch Chrome against localhost" configuration in `.vscode/launch.json` and verify the file is still valid JSON — verified with a comment-aware JSONC parse (the file uses `//` comments, so plain `JSON.parse` doesn't apply directly)
+
+## 2. MCP server configuration
+
+- [x] 2.1 Create `.mcp.json` at the repo root registering a `playwright` MCP server with `npx @playwright/mcp@latest --cdp-endpoint http://localhost:9222` and verify the file is valid JSON — **corrected from the design's `ws://localhost:9222`**: tested directly against a real Chrome instance and confirmed the bare `ws://` form (no browser UUID path) fails with a 404, since Chrome's actual `webSocketDebuggerUrl` always includes a per-launch random UUID (`ws://localhost:9222/devtools/browser/<uuid>`); the `http://` form works because Playwright's `connectOverCDP` auto-discovers the current UUID via `/json/version` on each connect, which also makes the config resilient across Chrome relaunches
+- [x] 2.2 Create `.cursor/mcp.json` with the same `playwright` MCP server entry and verify the file is valid JSON — matches the corrected `http://localhost:9222` endpoint
+
+## 3. Verification
+
+- [x] 3.1 Launch Chrome via the "Launch Chrome against localhost" VS Code debug config and verify `http://localhost:9222/json/version` responds with a `webSocketDebuggerUrl` — confirmed, user launched via VS Code, endpoint responds correctly
+- [x] 3.2 Confirm an MCP client can start the `playwright` server against that endpoint and successfully drive the already-open browser (navigate or read page content from `http://localhost:3000`) without spawning a separate browser window — verified end-to-end: spawned the real `@playwright/mcp` process, performed the actual MCP stdio handshake (`initialize` → `tools/list` → `tools/call`), called `browser_tabs` (showed exactly one tab, the user's already-open, already-authenticated `http://localhost:3000/profile/collections`, no new tab created) and `browser_snapshot` (returned real page content — the Collections screen from the `modernize-frontend-tsconfig` change)
+- [x] 3.3 Document the required order of operations (launch Chrome via the debug config first, then use the agent's browser tools) somewhere a future session will see it — e.g. a short note in `AGENTS.md` or `README.md` — added an "AI-driven browser automation" subsection to `README.md`'s Development section
+- [x] 3.4 Gitignore the `.playwright-mcp/` working directory (console-log dumps `@playwright/mcp` writes into the process's cwd, i.e. the repo root) — discovered during 3.2's verification run; added to `.gitignore` and removed the test-run artifact from disk. Also confirmed no local `playwright`/browser install is needed: `--cdp-endpoint` mode never downloads its own browser binary (only a 460-byte metadata file appeared under `~/Library/Caches/ms-playwright`, not an actual Chromium install), since the real browser process is always supplied externally by the VS Code launch config

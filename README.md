@@ -23,6 +23,20 @@ Both apps default to `localhost` out of the box (`frontend/.env.development`,
 `backend/config/server.js`'s `PUBLIC_URL` default, `backend/config/middlewares.js`'s
 `CORS_ORIGINS` default) — nothing to configure for local development.
 
+### AI-driven browser automation
+
+Claude Code and Cursor can drive a real, already-authenticated browser against
+the running frontend, via the Playwright MCP server (`.mcp.json` / `.cursor/mcp.json`)
+attaching over the Chrome DevTools Protocol to the Chrome instance started by the
+"Launch Chrome against localhost" VS Code debug config.
+
+**Order of operations matters**: launch that debug config (F5, or the Run and
+Debug panel) *before* asking the agent to use its browser tools. The MCP server
+only attaches to an already-running Chrome on `localhost:9222` — it does not (and
+cannot) launch one itself. This debug-launched Chrome uses an isolated profile,
+separate from your regular daily browser, but the profile persists across
+relaunches, so logging into the app once is enough for future sessions.
+
 ## Production build
 
 There is currently no fixed production domain — `frontend/.env.production` and
