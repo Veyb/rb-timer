@@ -12,6 +12,7 @@ import { RestartModal } from './restart-modal';
 import { Button } from '../../styled-components';
 import { useBossContext } from '../../contexts/boss-context';
 import { useAuthContext } from '../../contexts/auth-context';
+import { TEST_IDS } from '../../constants/test-ids';
 
 // style modules
 import styles from './boss-list-table.module.css';
@@ -59,7 +60,7 @@ export const BossListTable = () => {
   return (
     <>
       <Layout>
-        <table className={styles.table}>
+        <table className={styles.table} data-testid={TEST_IDS.bossList.table}>
           <thead className={styles.tableThead}>
             <tr>
               <th className={styles.nameColumn}>Имя</th>

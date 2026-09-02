@@ -10,6 +10,7 @@ import { Input } from '../input';
 import { ErrorDivider } from '../error-divider';
 import { Button } from '../../styled-components';
 import { useAuthContext } from '../../contexts/auth-context';
+import { TEST_IDS } from '../../constants/test-ids';
 
 // style modules
 import styles from './form-login.module.css';
@@ -59,6 +60,7 @@ const FormLogin = () => {
           onChange={handleChange}
           label="Username или e-mail"
           isFocused
+          data-testid={TEST_IDS.loginForm.identifier}
         />
 
         <Input
@@ -67,6 +69,7 @@ const FormLogin = () => {
           value={userData.password}
           onChange={handleChange}
           label="Пароль"
+          data-testid={TEST_IDS.loginForm.password}
         />
       </div>
 
@@ -77,6 +80,7 @@ const FormLogin = () => {
           htmlType="submit"
           disabled={disabled}
           className={styles.button}
+          data-testid={TEST_IDS.loginForm.submit}
         >
           Вход
         </Button>

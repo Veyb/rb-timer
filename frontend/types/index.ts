@@ -12,6 +12,7 @@ export type {
   Collection,
   CollectionItem,
 } from './collection.types';
+export type { MayHaveTestId } from './test-id.types';
 
 export interface Meta {
   page: number;

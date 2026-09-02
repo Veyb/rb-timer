@@ -15,11 +15,12 @@ import {
 
 // local modules
 import { Button } from '../../styled-components';
+import { type MayHaveTestId } from '../../types';
 
 // styles modules
 import styles from './input.module.css';
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement>, MayHaveTestId {
   label?: string;
   simple?: boolean;
   isFocused?: boolean;
@@ -36,6 +37,7 @@ export const Input = ({
   isFocused,
   placeholder,
   className,
+  'data-testid': testId,
 }: InputProps) => {
   const isPassword = propsType === 'password';
   const [visible, setVisible] = useState(propsType !== 'password');
@@ -69,6 +71,7 @@ export const Input = ({
           [styles.withIcon]: isPassword || !!onClear,
         })}
         placeholder={placeholder}
+        data-testid={testId}
       />
       {isPassword && (
         <div className={styles.asideHolder}>

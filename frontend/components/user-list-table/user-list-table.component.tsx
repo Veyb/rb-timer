@@ -10,6 +10,7 @@ import { Layout } from '../layout';
 import { FilterBlock } from './filter-block';
 import { useAuthContext } from '../../contexts/auth-context';
 import { type Role, type User } from '../../types';
+import { TEST_IDS } from '../../constants/test-ids';
 
 // style modules
 import styles from './user-list-table.module.css';
@@ -75,7 +76,7 @@ export const UserListTable = ({ users, roles }: UserListTableProps) => {
         handleFilter={setFilteredRoles}
       />
 
-      <table className={styles.table}>
+      <table className={styles.table} data-testid={TEST_IDS.usersList.table}>
         <thead className={styles.tableThead}>
           <tr>
             <th className={styles.nickname}>Никнейм</th>

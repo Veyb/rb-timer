@@ -17,6 +17,7 @@ import {
   CollectionContextProvider,
   useCollectionContext,
 } from '../../contexts/collection-context';
+import { TEST_IDS } from '../../constants/test-ids';
 
 // style modules
 import styles from './collections-block.module.css';
@@ -51,7 +52,10 @@ const UnsafeCollectionsBlock = () => {
             <p>Нет доступных коллекций</p>
           )}
         </div>
-        <div className={styles.rightBlock}>
+        <div
+          className={styles.rightBlock}
+          data-testid={TEST_IDS.profileCollections.effectsBlock}
+        >
           <h2 className={styles.title}>Эффект коллекции</h2>
           <Divider className={styles.divider} />
           <div className={styles.effectsHolder}>

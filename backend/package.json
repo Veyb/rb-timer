@@ -8,7 +8,8 @@
     "dev": "strapi develop",
     "start": "strapi start",
     "build": "strapi build",
-    "strapi": "strapi"
+    "strapi": "strapi",
+    "e2e:fixture-role": "node scripts/e2e-fixture-role.js"
   },
   "devDependencies": {},
   "dependencies": {

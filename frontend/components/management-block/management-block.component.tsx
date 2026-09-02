@@ -12,6 +12,7 @@ import { useAuthContext } from '../../contexts/auth-context';
 import { deleteUser, updateUser } from '../../lib/api';
 import { Button, Select } from '../../styled-components';
 import { type Role, type User } from '../../types';
+import { TEST_IDS } from '../../constants/test-ids';
 
 // style modules
 import styles from './management-block.module.css';
@@ -82,6 +83,7 @@ export const ManagementBlock = (props: ManagementBlockProps) => {
           <Button
             className={styles.deleteBtn}
             onClick={() => setDeleteModal(true)}
+            data-testid={TEST_IDS.profileManagement.deleteButton}
           >
             Удалить
           </Button>

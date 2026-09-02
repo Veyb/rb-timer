@@ -10,6 +10,7 @@ import { Input } from '../input';
 import { ErrorDivider } from '../error-divider';
 import { Button } from '../../styled-components';
 import { useAuthContext } from '../../contexts/auth-context';
+import { TEST_IDS } from '../../constants/test-ids';
 
 // style modules
 import styles from './form-register.module.css';
@@ -62,6 +63,7 @@ const FormRegister = () => {
           onChange={handleChange}
           label="Username авторизации"
           isFocused
+          data-testid={TEST_IDS.registerForm.username}
         />
 
         <Input
@@ -70,6 +72,7 @@ const FormRegister = () => {
           value={userData.email}
           onChange={handleChange}
           label="E-mail авторизации"
+          data-testid={TEST_IDS.registerForm.email}
         />
 
         <Input
@@ -78,6 +81,7 @@ const FormRegister = () => {
           value={userData.password}
           onChange={handleChange}
           label="Пароль"
+          data-testid={TEST_IDS.registerForm.password}
         />
 
         <Input
@@ -86,6 +90,7 @@ const FormRegister = () => {
           value={userData.nickname}
           onChange={handleChange}
           label="Имя персонажа"
+          data-testid={TEST_IDS.registerForm.nickname}
         />
 
         <Input
@@ -94,6 +99,7 @@ const FormRegister = () => {
           value={userData.realname}
           onChange={handleChange}
           label="Ваше имя"
+          data-testid={TEST_IDS.registerForm.realname}
         />
       </div>
 
@@ -105,6 +111,7 @@ const FormRegister = () => {
           htmlType="submit"
           disabled={disabled}
           className={styles.button}
+          data-testid={TEST_IDS.registerForm.submit}
         >
           Регистрация
         </Button>
