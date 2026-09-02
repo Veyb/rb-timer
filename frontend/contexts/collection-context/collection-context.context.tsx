@@ -18,12 +18,12 @@ import {
   getCheckedCollectionIds,
 } from './collection-context.utils';
 import {
-  Effect,
-  Collection,
-  CollectionItem,
-  UserCollections,
-  User,
-  FilterType,
+  type Effect,
+  type Collection,
+  type CollectionItem,
+  type UserCollections,
+  type User,
+  type FilterType,
 } from '../../types';
 
 const CollectionContext = createContext<{
@@ -50,8 +50,8 @@ const CollectionContext = createContext<{
   isActiveItemChecked: false,
   handleActiveReset: () => {},
   handleToggleClick: () => {},
-  handleItemClick: (collectionId, itemId) => {},
-  setFilter: (filter) => {},
+  handleItemClick: () => {},
+  setFilter: () => {},
 });
 
 interface CollectionContextProviderProps {
@@ -85,7 +85,7 @@ export const CollectionContextProvider = ({
     () =>
       !activeCollectionId || !activeItemId
         ? false
-        : userCollections[activeCollectionId][activeItemId],
+        : (userCollections[activeCollectionId]?.[activeItemId] ?? false),
     [userCollections, activeCollectionId, activeItemId]
   );
 
@@ -119,20 +119,24 @@ export const CollectionContextProvider = ({
   const handleToggleClick = useCallback(async () => {
     if (!auth.user || !activeCollectionId || !activeItemId) return;
 
-    const currentValue = userCollections[activeCollectionId][activeItemId];
+    const currentValue =
+      userCollections[activeCollectionId]?.[activeItemId] ?? false;
     const activeCollection = {
       [activeCollectionId]: { [activeItemId]: !currentValue },
     };
     const collections = R.mergeDeepRight(userCollections, activeCollection);
 
     await updateUsersMe({ collections }, auth.accessToken).then((response) => {
-      setUsetCollections(response.collections);
+      setUsetCollections(
+        R.mergeDeepRight(defaultUserCollections, response.collections)
+      );
       setActiveIds([]);
     });
   }, [
     activeItemId,
     userCollections,
     activeCollectionId,
+    defaultUserCollections,
     auth.user,
     auth.accessToken,
     setActiveIds,

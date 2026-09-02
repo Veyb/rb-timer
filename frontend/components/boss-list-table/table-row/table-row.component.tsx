@@ -4,7 +4,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // local modules
-import { Boss } from '../../../types';
+import { type Boss } from '../../../types';
 import { MINUTE } from '../../../constants';
 import { updateBossTime } from '../../../lib/api';
 import { useBossContext } from '../../../contexts/boss-context';

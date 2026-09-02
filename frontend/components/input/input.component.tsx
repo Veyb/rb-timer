@@ -6,7 +6,7 @@ import {
   CloseCircleOutlined,
 } from '@ant-design/icons';
 import {
-  InputHTMLAttributes,
+  type InputHTMLAttributes,
   useEffect,
   useId,
   useRef,

@@ -1,8 +1,8 @@
 // global modules
-import axios, { RawAxiosRequestHeaders } from 'axios';
+import axios, { type RawAxiosRequestHeaders } from 'axios';
 
 // local modules
-import { User } from '../../types';
+import { type User } from '../../types';
 import { apiGet, API_URL, flattenApiResponse, apiDelete } from './base';
 
 export async function getUser(id: string, token: string | undefined) {

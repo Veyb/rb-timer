@@ -1,5 +1,5 @@
 // local modules
-import { Collection, Effect, UserCollections } from '../../types';
+import { type Collection, type Effect, type UserCollections } from '../../types';
 
 export function getCheckedCollectionIds(userCollections: UserCollections) {
   return Object.entries(userCollections).reduce(
@@ -26,12 +26,11 @@ export function getEffects(
   const effectsHash = onlyCheckedCollections.reduce(
     (acc: Record<string, Effect>, collection) => {
       collection.effects.forEach((effect) => {
-        acc[effect.name]
-          ? (acc[effect.name] = {
-              ...acc[effect.name],
-              value: acc[effect.name].value + effect.value,
-            })
-          : (acc[effect.name] = effect);
+        const existing = acc[effect.name];
+
+        acc[effect.name] = existing
+          ? { ...existing, value: existing.value + effect.value }
+          : effect;
       });
 
       return acc;

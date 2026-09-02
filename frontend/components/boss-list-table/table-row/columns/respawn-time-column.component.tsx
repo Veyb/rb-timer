@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
 // local modules
-import { Boss } from '../../../../types';
+import { type Boss } from '../../../../types';
 import { getNewRespawnTime } from './utils';
 import { HOUR, MINUTE } from '../../../../constants';
 import { updateBossTime } from '../../../../lib/api';

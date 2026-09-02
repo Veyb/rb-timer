@@ -1,5 +1,5 @@
 // local modules
-import { Rank } from './collections-block.types';
+import { type Rank } from './collections-block.types';
 
 export function getRankColor(rank: Rank) {
   switch (rank) {

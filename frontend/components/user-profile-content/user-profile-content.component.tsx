@@ -1,7 +1,7 @@
 'use client';
 
 // global modules
-import { Tabs, TabsProps } from 'antd';
+import { Tabs, type TabsProps } from 'antd';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 

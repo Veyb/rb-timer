@@ -3,7 +3,7 @@ import qs from 'qs';
 
 // local modules
 import { apiGet } from './base';
-import { Meta } from '../../types';
+import { type Meta } from '../../types';
 
 function getQuery(page?: number) {
   return qs.stringify(

@@ -11,7 +11,7 @@ import { useCallback, useState } from 'react';
 import { useAuthContext } from '../../contexts/auth-context';
 import { deleteUser, updateUser } from '../../lib/api';
 import { Button, Select } from '../../styled-components';
-import { Role, User } from '../../types';
+import { type Role, type User } from '../../types';
 
 // style modules
 import styles from './management-block.module.css';
@@ -42,7 +42,7 @@ export const ManagementBlock = (props: ManagementBlockProps) => {
   }, [accessToken, info, user]);
 
   const handleDelete = useCallback(async () => {
-    await deleteUser(`${user.id}`, accessToken).then((res) => {
+    await deleteUser(`${user.id}`, accessToken).then(() => {
       router.replace('/users');
     });
   }, [accessToken, router, user]);

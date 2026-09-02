@@ -11,7 +11,7 @@ import {
 
 // local modules
 import { getNewRespawnTime } from './utils';
-import { Boss, Quality } from '../../../../types';
+import { type Boss, type Quality } from '../../../../types';
 import { updateBossTime } from '../../../../lib/api';
 import { useAuthContext } from '../../../../contexts/auth-context';
 import { useBossContext } from '../../../../contexts/boss-context';

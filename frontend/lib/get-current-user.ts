@@ -2,7 +2,7 @@
 import { cookies } from 'next/headers';
 
 // local modules
-import { User } from '../types';
+import { type User } from '../types';
 import { apiGet } from './api';
 
 interface CurrentUser {

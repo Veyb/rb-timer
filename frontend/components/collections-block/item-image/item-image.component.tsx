@@ -5,7 +5,7 @@ import { CheckCircleOutlined } from '@ant-design/icons';
 
 // local modules
 import { IMAGE_URL } from '../../../lib/api';
-import { CollectionItem } from '../collections-block.types';
+import { type CollectionItem } from '../collections-block.types';
 
 // style modules
 import styles from './item-image.module.css';

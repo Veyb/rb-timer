@@ -1,6 +1,6 @@
 // local modules
 import { apiGet } from './base';
-import { Role } from '../../types';
+import { type Role } from '../../types';
 
 export async function getRoles(token: string | undefined) {
   const params = {

@@ -5,7 +5,7 @@ import { Space, Button, DatePicker } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
 // local modules
-import { Boss } from '../../../../types';
+import { type Boss } from '../../../../types';
 import { updateBossTime } from '../../../../lib/api';
 import { useIsClient } from '../../../../lib/hooks/use-is-client';
 import { useBossContext } from '../../../../contexts/boss-context';

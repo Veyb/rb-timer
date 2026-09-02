@@ -10,6 +10,8 @@ export function proxy(request: NextRequest) {
   if (!jwt && !PUBLIC_PATHS.includes(pathname)) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
+
+  return NextResponse.next();
 }
 
 export const config = {

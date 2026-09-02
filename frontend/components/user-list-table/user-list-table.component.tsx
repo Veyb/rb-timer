@@ -3,13 +3,13 @@
 // global modules
 import cn from 'classnames';
 import { useRouter } from 'next/navigation';
-import { MouseEvent, useMemo, useState } from 'react';
+import { type MouseEvent, useMemo, useState } from 'react';
 
 // local modules
 import { Layout } from '../layout';
 import { FilterBlock } from './filter-block';
 import { useAuthContext } from '../../contexts/auth-context';
-import { Role, User } from '../../types';
+import { type Role, type User } from '../../types';
 
 // style modules
 import styles from './user-list-table.module.css';

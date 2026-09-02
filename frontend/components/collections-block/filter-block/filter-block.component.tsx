@@ -1,11 +1,11 @@
 // global modules
 import cn from 'classnames';
 import { Button } from 'antd';
-import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
+import { type ChangeEvent, type SubmitEvent, useCallback, useState } from 'react';
 
 // local modules
 import { Input } from '../../input';
-import { FilterType } from '../../../types';
+import { type FilterType } from '../../../types';
 import { useCollectionContext } from '../../../contexts/collection-context';
 
 // style modules
@@ -35,7 +35,7 @@ export const FilterBlock = ({ handleSearch }: FilterBlockProps) => {
   };
 
   const onSearchClick = useCallback(
-    (e: FormEvent<HTMLFormElement>) => {
+    (e: SubmitEvent<HTMLFormElement>) => {
       e.preventDefault();
       const trimedValue = value.trim();
       setValue(trimedValue);

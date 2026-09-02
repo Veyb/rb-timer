@@ -7,7 +7,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import { socket } from '../../../lib/web-sockets';
 import { Button } from '../../../styled-components';
 import { Scrollable } from '../../scrollable';
-import { SocketUser } from '../../../types';
+import { type SocketUser } from '../../../types';
 import { Menu, MenuDivider, MenuItem } from '../../menu';
 
 type ServerSocketUsers = Record<string, SocketUser | null>;

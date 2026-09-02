@@ -4,7 +4,7 @@ import { CheckCircleOutlined } from '@ant-design/icons';
 // local modules
 import { ItemImage } from '../item-image';
 import { getRankColor } from '../collection-block.utils';
-import { Collection } from '../collections-block.types';
+import { type Collection } from '../collections-block.types';
 import { useCollectionContext } from '../../../contexts/collection-context';
 
 // style modules
@@ -23,7 +23,7 @@ export const CollectionItemComponent = ({
     handleItemClick,
   } = useCollectionContext();
   const userCollectionsHash = selfUserCollections;
-  const checkedArray = Object.values(userCollectionsHash[collection.id]);
+  const checkedArray = Object.values(userCollectionsHash[collection.id] ?? {});
   const isCheckedCollection = checkedArray.every(Boolean);
   const [activeCollectionId, activeItemId] = activeIds;
 
@@ -46,7 +46,7 @@ export const CollectionItemComponent = ({
         {collection.items.map((collectionItem) => (
           <ItemImage
             key={collectionItem.id}
-            checked={userCollectionsHash[collection.id][collectionItem.id]}
+            checked={userCollectionsHash[collection.id]?.[collectionItem.id] ?? false}
             collectionItem={collectionItem}
             onClick={() => handleItemClick(collection.id, collectionItem.id)}
             active={

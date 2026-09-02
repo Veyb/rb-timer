@@ -4,7 +4,7 @@
 import { destroyCookie, setCookie } from 'nookies';
 import {
   createContext,
-  ReactNode,
+  type ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -14,7 +14,7 @@ import {
 
 // local modules
 import { socket } from '../lib/web-sockets';
-import { SocketUser, User } from '../types';
+import { type SocketUser, type User } from '../types';
 import { apiGet, getUsersMe, apiPost } from '../lib/api';
 
 const INVALID_USERNAME_EMAIL = 'Недопустимый формат e-mail.';
@@ -52,8 +52,8 @@ const AuthContext = createContext<{
   allowedUpdate: false,
   allowedAdminister: false,
   accessToken: undefined,
-  login: (userData: any) => {},
-  register: (userData: any) => {},
+  login: () => {},
+  register: () => {},
   logout: () => {},
 });
 

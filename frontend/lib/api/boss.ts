@@ -1,8 +1,8 @@
 // global modules
-import axios, { RawAxiosRequestHeaders } from 'axios';
+import axios, { type RawAxiosRequestHeaders } from 'axios';
 
 // local modules
-import { BossApiResponse } from '../../types';
+import { type BossApiResponse } from '../../types';
 import { apiGet, API_URL, flattenApiResponse } from './base';
 import { expandBoss, expandBossListAndSort } from '../utils';
 
@@ -14,7 +14,7 @@ export async function getBossList(token: string | undefined) {
         },
       }
     : undefined;
-  const { data, meta } = await apiGet('/bosses', params);
+  const { data } = await apiGet('/bosses', params);
 
   return expandBossListAndSort(data);
 }

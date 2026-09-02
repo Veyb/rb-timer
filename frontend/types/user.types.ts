@@ -1,4 +1,4 @@
-import { Role } from './role.types';
+import { type Role } from './role.types';
 
 export type UserCollections = Record<number, Record<number, boolean>>;
 

@@ -1,11 +1,11 @@
 // global modules
 import { Button } from 'antd';
 import styled from 'styled-components';
-import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
+import { type ChangeEvent, type SubmitEvent, useCallback, useState } from 'react';
 
 // local modules
 import { Input } from '../../input';
-import { Role } from '../../../types';
+import { type Role } from '../../../types';
 import { Select } from '../../../styled-components';
 
 // style modules
@@ -40,7 +40,7 @@ export const FilterBlock = ({
   };
 
   const onSearchClick = useCallback(
-    (e: FormEvent<HTMLFormElement>) => {
+    (e: SubmitEvent<HTMLFormElement>) => {
       e.preventDefault();
       const trimedValue = value.trim();
       setValue(trimedValue);

@@ -6,7 +6,7 @@ import { CheckOutlined } from '@ant-design/icons';
 import { useEffect, useMemo, useState } from 'react';
 
 // local modules
-import { User } from '../../types';
+import { type User } from '../../types';
 import { FilterBlock } from './filter-block';
 import { CollectionsModal } from './collections-modal';
 import { getAllCollectionList } from '../../lib/api';
@@ -80,7 +80,7 @@ export const CollectionsBlock = ({ user }: CollectionsBlockProps) => {
   const [collections, setCollections] = useState<Collection[]>([]);
 
   useEffect(() => {
-    getAllCollectionList(auth.accessToken).then(({ data, meta }) => {
+    getAllCollectionList(auth.accessToken).then(({ data }) => {
       setCollections(data);
       setPending(false);
     });

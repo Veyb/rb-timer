@@ -2,9 +2,8 @@
 
 // global modules
 import Link from 'next/link';
-import { Space } from 'antd';
 import { useRouter } from 'next/navigation';
-import { ChangeEvent, FormEvent, useCallback, useMemo, useState } from 'react';
+import { type ChangeEvent, type SubmitEvent, useCallback, useMemo, useState } from 'react';
 
 // local modules
 import { Input } from '../input';
@@ -25,7 +24,7 @@ const FormLogin = () => {
   });
 
   const handleSubmit = useCallback(
-    async (e: FormEvent<HTMLFormElement>) => {
+    async (e: SubmitEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       try {

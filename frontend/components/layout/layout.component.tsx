@@ -1,6 +1,6 @@
 // global modules
 import cn from 'classnames';
-import { HTMLAttributes } from 'react';
+import { type HTMLAttributes } from 'react';
 
 // style modules
 import styles from './layout.module.css';

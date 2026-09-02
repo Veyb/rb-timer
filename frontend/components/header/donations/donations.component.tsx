@@ -4,7 +4,7 @@ import 'dayjs/locale/ru';
 import styled from 'styled-components';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Donation } from '../../../types';
+import { type Donation } from '../../../types';
 import { Scrollable } from '../../scrollable';
 import { Button } from '../../../styled-components';
 import { Menu, MenuItem } from '../../menu';
@@ -45,7 +45,7 @@ export const Donations = () => {
             <Fragment key={date}>
               <DateItem>{`Донаты за ${date}`}</DateItem>
               <DonationList>
-                {donationsHash[date].map((donation, index) => (
+                {(donationsHash[date] ?? []).map((donation, index) => (
                   <DonationItem key={`${date}_${index}`}>
                     <span>{donation.name}</span>
                     <span>{donation.value} &#8381;</span>
@@ -83,7 +83,7 @@ export const Donations = () => {
   );
 
   useEffect(() => {
-    getAllDonationList(auth.accessToken).then(({ data, meta }) => {
+    getAllDonationList(auth.accessToken).then(({ data }) => {
       setDonations(data);
     });
   }, [auth.accessToken]);

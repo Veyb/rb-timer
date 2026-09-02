@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import { Boss, BossApiResponse } from '../types';
+import { type Boss, type BossApiResponse } from '../types';
 
 export const expandBoss = (boss: BossApiResponse) => {
   const date = dayjs(boss.time).add(boss.interval, 'hour');

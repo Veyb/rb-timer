@@ -3,7 +3,7 @@
 // global modules
 import {
   createContext,
-  ReactNode,
+  type ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -12,11 +12,10 @@ import {
 } from 'react';
 
 // local modules
-import { Boss } from '../types';
+import { type Boss } from '../types';
 import { getBossList } from '../lib/api';
 import { sortBossList } from '../lib/utils';
 import { useAuthContext } from './auth-context';
-import { socket } from '../lib/web-sockets';
 
 const BossContext = createContext<{
   bossList: Boss[];
