@@ -163,9 +163,9 @@ domain, the two data-integrity fixes below) is already done and verified locally
 
 ### 1. Server prerequisites
 
-- [ ] Node.js **22 LTS** (`.nvmrc` in both `backend/` and `frontend/` already pins this).
-- [ ] `pnpm` via `corepack enable pnpm` (both projects declare `packageManager: pnpm@11.24.0`).
-- [ ] Get the code onto the server (`git clone`/`git pull`, or whatever deploy mechanism gets chosen) — `backend/` and `frontend/` are independent pnpm projects, no shared root, install/build/run each separately (see README).
+- [ ] Node.js **22 LTS** (`.nvmrc` in both `apps/backend/` and `apps/frontend/` already pins this).
+- [ ] `pnpm` via `corepack enable pnpm` (root `package.json` declares `packageManager: pnpm@12.3.4`; `apps/*` no longer declare their own `packageManager` — see the `adopt-pnpm-monorepo` change).
+- [ ] Get the code onto the server (`git clone`/`git pull`, or whatever deploy mechanism gets chosen) — `apps/frontend/` and `apps/backend/` are members of one root pnpm workspace as of `adopt-pnpm-monorepo`; a single `pnpm install` from the repo root installs both, then build/run each separately (see README).
 
 ### 2. Backend — data, before first v5 boot on the real prod file
 
