@@ -1,5 +1,6 @@
 packages:
-  - .
+  - apps/frontend
+  - apps/backend
 
 allowBuilds:
   '@fortawesome/fontawesome-common-types': true
@@ -15,6 +16,7 @@ allowBuilds:
   sharp: true
   sqlite3: false
   styled-components: true
+  unrs-resolver: true
 
 blockExoticSubdeps: true
 
@@ -29,3 +31,10 @@ minimumReleaseAge: 10080 # 7 days (in minutes)
 # framework releases, not arbitrary third-party deps) - exempt from the age gate.
 minimumReleaseAgeExclude:
   - '@strapi/*'
+
+# Defensive documentation: already pnpm 11.x's defaults, but pinned explicitly
+# so a future pnpm major or a contributor's global ~/.npmrc can't silently
+# change install behavior. Must be camelCase - the kebab-case .npmrc-style
+# spelling is silently ignored here.
+autoInstallPeers: true
+strictPeerDependencies: false

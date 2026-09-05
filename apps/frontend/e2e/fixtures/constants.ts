@@ -1,5 +1,5 @@
 // Dedicated e2e-only account. Never touches or resembles any of the real
-// migrated user accounts in backend/.tmp/data.db. The password must stay
+// migrated user accounts in apps/backend/.tmp/data.db. The password must stay
 // constant across runs: Strapi returns the same generic "Invalid identifier
 // or password" error for both "no such user" and "wrong password", so a
 // changed password here would make the setup step try to register an

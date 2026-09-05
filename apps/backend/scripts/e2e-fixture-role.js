@@ -1,5 +1,5 @@
 // Upgrades a single e2e-fixture user to the "officer" role directly in
-// backend/.tmp/data.db, so the Playwright suite (frontend/e2e/) can reach
+// apps/backend/.tmp/data.db, so the Playwright suite (apps/frontend/e2e/) can reach
 // every role-gated screen without a public self-service "change my role" API.
 // Scoped strictly to the email passed on the command line — never touches
 // any other row. Idempotent: a no-op if the user is already an officer.

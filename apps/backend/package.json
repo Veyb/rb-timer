@@ -3,7 +3,6 @@
   "private": true,
   "version": "0.1.0",
   "description": "A Strapi application",
-  "packageManager": "pnpm@11.24.0",
   "scripts": {
     "dev": "strapi develop",
     "start": "strapi start",
@@ -23,7 +22,7 @@
     "styled-components": "^6.0.0"
   },
   "author": {
-    "name": "A Strapi developer"
+    "name": "Oleg Tsyro"
   },
   "strapi": {
     "uuid": "7ab7659f-8f00-44d7-9fc3-3d2b7b1c1b8e"
