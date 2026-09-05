@@ -52,8 +52,8 @@ const Holder = styled.header`
     display: flex;
     align-items: center;
     align-content: center;
-    justify-content: center;
-    width: 12.6rem;
+    justify-content: left;
+    width: 4.6rem;
     height: 4.6rem;
     position: relative;
   }
@@ -115,9 +115,9 @@ export const Header = () => {
             <Image
               priority
               fill
-              sizes="201px"
+              sizes="100%"
               alt="logo"
-              src="/l2m-logo-color.png"
+              src="/logo_lu4.webp"
             />
 
           </Link>
