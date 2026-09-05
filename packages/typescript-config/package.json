@@ -1,0 +1,13 @@
+{
+  "name": "@rb-timer/typescript-config",
+  "private": true,
+  "version": "0.0.0",
+  "files": [
+    "base.json",
+    "nextjs.json",
+    "strapi-server.json"
+  ],
+  "dependencies": {
+    "@strapi/typescript-utils": "catalog:"
+  }
+}

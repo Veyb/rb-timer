@@ -111,6 +111,8 @@ license.txt
 exports
 *.cache
 build
+dist
+.tsbuildinfo
 .strapi-updater.json
 .strapi
 types/generated

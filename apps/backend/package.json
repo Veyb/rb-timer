@@ -10,10 +10,16 @@
     "strapi": "strapi",
     "e2e:fixture-role": "node scripts/e2e-fixture-role.js"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@rb-timer/typescript-config": "workspace:*",
+    "@strapi/typescript-utils": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  },
   "dependencies": {
     "@strapi/plugin-users-permissions": "5.52.2",
     "@strapi/strapi": "5.52.2",
+    "@strapi/utils": "5.52.2",
     "better-sqlite3": "^13.0.3",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",

@@ -1,6 +1,4 @@
-"use strict";
-
-module.exports = {
+export default {
   /**
    * An asynchronous register function that runs before
    * your application is initialized.
@@ -42,10 +40,9 @@ module.exports = {
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
    */
-  // bootstrap(/*{ strapi }*/) {},
   bootstrap({ strapi }) {
-    const socketUsers = {};
-    // Same env var and format as config/middlewares.js's `strapi::cors` origin
+    const socketUsers: Record<string, unknown> = {};
+    // Same env var and format as config/middlewares.ts's `strapi::cors` origin
     // (comma-separated, e.g. "https://example.com,https://www.example.com").
     const corsOrigins = (
       process.env.CORS_ORIGINS || "http://localhost:3000"

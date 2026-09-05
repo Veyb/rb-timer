@@ -1,6 +1,17 @@
 packages:
   - apps/frontend
   - apps/backend
+  - packages/typescript-config
+
+# Single source of truth for dependency versions genuinely shared across
+# workspace packages at the exact same version - not for deps that are
+# intentionally different per app (e.g. react/styled-components run
+# different major/pinning per app on purpose; see docs/MIGRATION.md and
+# openspec/changes/adopt-typescript-backend/design.md for why).
+catalog:
+  typescript: 5.9.3
+  '@types/node': 22.20.1
+  '@strapi/typescript-utils': 5.52.2
 
 allowBuilds:
   '@fortawesome/fontawesome-common-types': true

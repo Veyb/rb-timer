@@ -1,4 +1,4 @@
-module.exports = () => ({
+export default () => ({
   "users-permissions": {
     config: {
       register: {

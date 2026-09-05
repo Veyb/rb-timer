@@ -1,9 +1,10 @@
-const _ = require("lodash");
-const { yup, validateYupSchema, errors } = require("@strapi/utils");
+import { yup, validateYupSchema, errors } from "@strapi/utils";
 
 const { ValidationError, ApplicationError } = errors;
 
 const USER_UID = "plugin::users-permissions.user";
+
+const hasOwn = (object: object, key: string) => Object.prototype.hasOwnProperty.call(object, key);
 
 const updateUserBodySchema = yup.object().shape({
   email: yup.string().email().min(1),
@@ -12,7 +13,7 @@ const updateUserBodySchema = yup.object().shape({
 });
 const validateUpdateUserBody = validateYupSchema(updateUserBodySchema);
 
-module.exports = (plugin) => {
+export default (plugin) => {
   const getUserService = () => strapi.plugin("users-permissions").service("user");
 
   const sanitizeOutput = (user) => {
@@ -72,13 +73,13 @@ module.exports = (plugin) => {
 
     if (
       user.provider === "local" &&
-      _.has(ctx.request.body, "password") &&
+      hasOwn(ctx.request.body, "password") &&
       !password
     ) {
       throw new ValidationError("password.notNull");
     }
 
-    if (_.has(ctx.request.body, "username")) {
+    if (hasOwn(ctx.request.body, "username")) {
       const userWithSameUsername = await strapi.db
         .query(USER_UID)
         .findOne({ where: { username } });
@@ -88,7 +89,7 @@ module.exports = (plugin) => {
       }
     }
 
-    if (_.has(ctx.request.body, "email") && advancedConfigs.unique_email) {
+    if (hasOwn(ctx.request.body, "email") && (advancedConfigs as any).unique_email) {
       const userWithSameEmail = await strapi.db
         .query(USER_UID)
         .findOne({ where: { email: email.toLowerCase() } });
@@ -107,7 +108,7 @@ module.exports = (plugin) => {
     // updates via the Document Service, which hashes `password` itself.
     const data = await getUserService().edit(id, updateData);
 
-    const sanitizedData = await sanitizeOutput(data, ctx);
+    const sanitizedData = await sanitizeOutput(data);
 
     ctx.send(sanitizedData);
   };
@@ -130,13 +131,13 @@ module.exports = (plugin) => {
 
     if (
       user.provider === "local" &&
-      _.has(ctx.request.body, "password") &&
+      hasOwn(ctx.request.body, "password") &&
       !password
     ) {
       throw new ValidationError("password.notNull");
     }
 
-    if (_.has(ctx.request.body, "username")) {
+    if (hasOwn(ctx.request.body, "username")) {
       const userWithSameUsername = await strapi.db
         .query(USER_UID)
         .findOne({ where: { username } });
@@ -146,7 +147,7 @@ module.exports = (plugin) => {
       }
     }
 
-    if (_.has(ctx.request.body, "email") && advancedConfigs.unique_email) {
+    if (hasOwn(ctx.request.body, "email") && (advancedConfigs as any).unique_email) {
       const userWithSameEmail = await strapi.db
         .query(USER_UID)
         .findOne({ where: { email: email.toLowerCase() } });
@@ -165,7 +166,7 @@ module.exports = (plugin) => {
     // updates via the Document Service, which hashes `password` itself.
     const data = await getUserService().edit(id, updateData);
 
-    const sanitizedData = await sanitizeOutput(data, ctx);
+    const sanitizedData = await sanitizeOutput(data);
 
     ctx.send(sanitizedData);
   };
