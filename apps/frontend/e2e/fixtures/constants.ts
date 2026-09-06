@@ -14,5 +14,4 @@ export const FIXTURE_USER = {
 
 export const STORAGE_STATE_PATH = 'e2e/.auth/fixture-user.json';
 
-export const INVALID_CREDENTIALS_TEXT =
-  'Указан неправильный username или пароль';
+export const INVALID_CREDENTIALS_TEXT = 'Указан неправильный username или пароль';

@@ -8,9 +8,18 @@
     "start": "strapi start",
     "build": "strapi build",
     "strapi": "strapi",
-    "e2e:fixture-role": "node scripts/e2e-fixture-role.js"
+    "e2e:fixture-role": "node scripts/e2e-fixture-role.js",
+    "clean": "rm -rf dist",
+    "check-types": "tsc --noEmit",
+    "lint": "biome lint --error-on-warnings .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --error-on-warnings .",
+    "format:fix": "biome format --write .",
+    "check": "biome check --error-on-warnings .",
+    "check:fix": "biome check --write ."
   },
   "devDependencies": {
+    "@biomejs/biome": "catalog:",
     "@rb-timer/typescript-config": "workspace:*",
     "@strapi/typescript-utils": "catalog:",
     "@types/node": "catalog:",

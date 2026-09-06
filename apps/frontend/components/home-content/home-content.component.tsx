@@ -1,14 +1,13 @@
 'use client';
 
-// global modules
-import type { Boss } from '../../types';
 import { useAuthContext } from '../../contexts/auth-context';
-import { BossListTable } from '../boss-list-table';
 import { BossContextProvider } from '../../contexts/boss-context';
-import { NotAllowedBlock } from '../not-allowed-block';
-
 // style modules
 import styles from '../../styles/main.module.css';
+// global modules
+import type { Boss } from '../../types';
+import { BossListTable } from '../boss-list-table';
+import { NotAllowedBlock } from '../not-allowed-block';
 
 interface HomeContentProps {
   list: Boss[];

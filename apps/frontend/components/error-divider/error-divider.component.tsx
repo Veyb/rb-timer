@@ -1,6 +1,7 @@
 // global modules
-import * as R from 'ramda';
+
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import * as R from 'ramda';
 
 // style modules
 import styles from './error-divider.module.css';

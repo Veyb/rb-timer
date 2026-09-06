@@ -2,14 +2,14 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import type { Metadata, Viewport } from 'next';
 
 import { Header } from '../components/header';
-import { getCurrentUser } from '../lib/get-current-user';
 import { AuthContextProvider } from '../contexts/auth-context';
+import { getCurrentUser } from '../lib/get-current-user';
 import { AntdThemeProvider } from './antd-theme-provider';
 import { GlobalStyles } from './global-styles';
 import { StyledComponentsRegistry } from './styled-components-registry';
 
 export const metadata: Metadata = {
-  title: 'L2m db',
+  title: 'Lu4 help',
   description: 'Timer for tracking the respawn of raid bosses',
   icons: { icon: '/favicon.ico' },
   appleWebApp: { capable: true },
@@ -23,15 +23,11 @@ export const viewport: Viewport = {
   width: 'device-width',
 };
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { user, jwt } = await getCurrentUser();
 
   return (
-    <html>
+    <html lang="ru">
       <body>
         <StyledComponentsRegistry>
           <AntdRegistry>

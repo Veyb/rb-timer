@@ -1,12 +1,12 @@
 // global modules
-import cn from 'classnames';
-import { Button } from 'antd';
-import { type ChangeEvent, type SubmitEvent, useCallback, useState } from 'react';
 
+import { Button } from 'antd';
+import cn from 'classnames';
+import { type ChangeEvent, type SubmitEvent, useCallback, useState } from 'react';
+import { useCollectionContext } from '../../../contexts/collection-context';
+import type { FilterType } from '../../../types';
 // local modules
 import { Input } from '../../input';
-import { type FilterType } from '../../../types';
-import { useCollectionContext } from '../../../contexts/collection-context';
 
 // style modules
 import styles from './filter-block.module.css';
@@ -41,7 +41,7 @@ export const FilterBlock = ({ handleSearch }: FilterBlockProps) => {
       setValue(trimedValue);
       handleSearch(trimedValue);
     },
-    [handleSearch, value]
+    [handleSearch, value],
   );
 
   const onClear = useCallback(() => {
@@ -68,13 +68,14 @@ export const FilterBlock = ({ handleSearch }: FilterBlockProps) => {
 
       <div className={styles.filterBlock}>
         {filters.map(({ name, type }) => (
-          <span
+          <button
             key={type}
+            type="button"
             onClick={() => setFilter(type)}
-            className={cn({ [styles.active]: type === filter })}
+            className={cn(styles.filterButton, { [styles.active]: type === filter })}
           >
             {name}
-          </span>
+          </button>
         ))}
       </div>
     </div>

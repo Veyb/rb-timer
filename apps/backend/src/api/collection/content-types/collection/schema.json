@@ -31,13 +31,7 @@
     },
     "rank": {
       "type": "enumeration",
-      "enum": [
-        "common",
-        "rare",
-        "unique",
-        "epic",
-        "legend"
-      ],
+      "enum": ["common", "rare", "unique", "epic", "legend"],
       "required": true,
       "default": "unique"
     }

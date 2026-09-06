@@ -1,30 +1,24 @@
 // global modules
 import * as R from 'ramda';
 import type { ReactNode } from 'react';
-import {
-  useMemo,
-  useState,
-  useContext,
-  useCallback,
-  createContext,
-} from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 // local modules
 import { updateUsersMe } from '../../lib/api';
+import type {
+  Collection,
+  CollectionItem,
+  Effect,
+  FilterType,
+  User,
+  UserCollections,
+} from '../../types';
 import { useAuthContext } from '../auth-context';
 import {
-  getEffects,
-  getDefaultUserCollections,
   getCheckedCollectionIds,
+  getDefaultUserCollections,
+  getEffects,
 } from './collection-context.utils';
-import {
-  type Effect,
-  type Collection,
-  type CollectionItem,
-  type UserCollections,
-  type User,
-  type FilterType,
-} from '../../types';
 
 const CollectionContext = createContext<{
   filter: FilterType;
@@ -72,13 +66,13 @@ export const CollectionContextProvider = ({
   const nonInteractive = useMemo(() => !!user, [user]);
   const [activeCollectionId, activeItemId] = useMemo(
     () => [activeIds[0], activeIds[1]],
-    [activeIds]
+    [activeIds],
   );
   const [userCollections, setUsetCollections] = useState<UserCollections>(
     R.mergeDeepRight(
       defaultUserCollections,
-      (user ? user.collections : auth.user?.collections) || {}
-    )
+      (user ? user.collections : auth.user?.collections) || {},
+    ),
   );
 
   const isActiveItemChecked = useMemo(
@@ -86,7 +80,7 @@ export const CollectionContextProvider = ({
       !activeCollectionId || !activeItemId
         ? false
         : (userCollections[activeCollectionId]?.[activeItemId] ?? false),
-    [userCollections, activeCollectionId, activeItemId]
+    [userCollections, activeCollectionId, activeItemId],
   );
 
   const activeItem = useMemo(() => {
@@ -107,29 +101,23 @@ export const CollectionContextProvider = ({
 
   const handleActiveReset = useCallback(() => {
     setActiveIds([]);
-  }, [setActiveIds]);
+  }, []);
 
-  const handleItemClick = useCallback(
-    (collectionId: number, itemId: number) => {
-      setActiveIds([collectionId, itemId]);
-    },
-    [setActiveIds]
-  );
+  const handleItemClick = useCallback((collectionId: number, itemId: number) => {
+    setActiveIds([collectionId, itemId]);
+  }, []);
 
   const handleToggleClick = useCallback(async () => {
     if (!auth.user || !activeCollectionId || !activeItemId) return;
 
-    const currentValue =
-      userCollections[activeCollectionId]?.[activeItemId] ?? false;
+    const currentValue = userCollections[activeCollectionId]?.[activeItemId] ?? false;
     const activeCollection = {
       [activeCollectionId]: { [activeItemId]: !currentValue },
     };
     const collections = R.mergeDeepRight(userCollections, activeCollection);
 
     await updateUsersMe({ collections }, auth.accessToken).then((response) => {
-      setUsetCollections(
-        R.mergeDeepRight(defaultUserCollections, response.collections)
-      );
+      setUsetCollections(R.mergeDeepRight(defaultUserCollections, response.collections));
       setActiveIds([]);
     });
   }, [
@@ -139,8 +127,6 @@ export const CollectionContextProvider = ({
     defaultUserCollections,
     auth.user,
     auth.accessToken,
-    setActiveIds,
-    setUsetCollections,
   ]);
 
   const filteredCollections = useMemo(() => {
@@ -148,13 +134,9 @@ export const CollectionContextProvider = ({
       case 'all':
         return collections;
       case 'notFinished':
-        return collections.filter(
-          ({ id }) => !checkedCollectionIds.includes(id)
-        );
+        return collections.filter(({ id }) => !checkedCollectionIds.includes(id));
       case 'finished':
-        return collections.filter(({ id }) =>
-          checkedCollectionIds.includes(id)
-        );
+        return collections.filter(({ id }) => checkedCollectionIds.includes(id));
       default:
         return collections;
     }

@@ -1,21 +1,12 @@
 // global modules
+
+import { CloseCircleOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
 import cn from 'classnames';
-import {
-  EyeOutlined,
-  EyeInvisibleOutlined,
-  CloseCircleOutlined,
-} from '@ant-design/icons';
-import {
-  type InputHTMLAttributes,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from 'react';
+import { type InputHTMLAttributes, useEffect, useId, useRef, useState } from 'react';
 
 // local modules
 import { Button } from '../../styled-components';
-import { type MayHaveTestId } from '../../types';
+import type { MayHaveTestId } from '../../types';
 
 // styles modules
 import styles from './input.module.css';
@@ -57,7 +48,7 @@ export const Input = ({
         styles.inputHolder,
         { [styles.simple]: simple },
         { [styles.withouLabel]: !label },
-        className
+        className,
       )}
     >
       <input

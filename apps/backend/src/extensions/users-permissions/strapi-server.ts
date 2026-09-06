@@ -1,10 +1,12 @@
-import { yup, validateYupSchema, errors } from "@strapi/utils";
+import { errors, validateYupSchema, yup } from '@strapi/utils';
 
 const { ValidationError, ApplicationError } = errors;
 
-const USER_UID = "plugin::users-permissions.user";
+const USER_UID = 'plugin::users-permissions.user';
 
-const hasOwn = (object: object, key: string) => Object.prototype.hasOwnProperty.call(object, key);
+const hasOwn = (object: object, key: string) => Object.hasOwn(object, key);
+
+type AdvancedSettings = { unique_email?: boolean };
 
 const updateUserBodySchema = yup.object().shape({
   email: yup.string().email().min(1),
@@ -14,15 +16,10 @@ const updateUserBodySchema = yup.object().shape({
 const validateUpdateUserBody = validateYupSchema(updateUserBodySchema);
 
 export default (plugin) => {
-  const getUserService = () => strapi.plugin("users-permissions").service("user");
+  const getUserService = () => strapi.plugin('users-permissions').service('user');
 
   const sanitizeOutput = (user) => {
-    const {
-      password,
-      resetPasswordToken,
-      confirmationToken,
-      ...sanitizedUser
-    } = user; // be careful, you need to omit other private attributes yourself
+    const { password, resetPasswordToken, confirmationToken, ...sanitizedUser } = user; // be careful, you need to omit other private attributes yourself
     return sanitizedUser;
   };
 
@@ -32,16 +29,14 @@ export default (plugin) => {
     }
     const user = await strapi.db.query(USER_UID).findOne({
       where: { id: ctx.state.user.id },
-      populate: ["role"],
+      populate: ['role'],
     });
 
     ctx.body = sanitizeOutput(user);
   };
 
   plugin.controllers.user.find = async (ctx) => {
-    const users = await strapi.db
-      .query(USER_UID)
-      .findMany({ ...ctx.params, populate: ["role"] });
+    const users = await strapi.db.query(USER_UID).findMany({ ...ctx.params, populate: ['role'] });
 
     ctx.body = users.map((user) => sanitizeOutput(user));
   };
@@ -50,7 +45,7 @@ export default (plugin) => {
     const user = await strapi.db.query(USER_UID).findOne({
       where: { id: ctx.params.id },
       ...ctx.params,
-      populate: ["role"],
+      populate: ['role'],
     });
 
     ctx.body = sanitizeOutput(user);
@@ -58,7 +53,7 @@ export default (plugin) => {
 
   plugin.controllers.user.update = async (ctx) => {
     const advancedConfigs = await strapi
-      .store({ type: "plugin", name: "users-permissions", key: "advanced" })
+      .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
       .get();
 
     const { id } = ctx.params;
@@ -66,41 +61,35 @@ export default (plugin) => {
 
     const user = await strapi.db.query(USER_UID).findOne({
       where: { id },
-      populate: ["role"],
+      populate: ['role'],
     });
 
     await validateUpdateUserBody(ctx.request.body);
 
-    if (
-      user.provider === "local" &&
-      hasOwn(ctx.request.body, "password") &&
-      !password
-    ) {
-      throw new ValidationError("password.notNull");
+    if (user.provider === 'local' && hasOwn(ctx.request.body, 'password') && !password) {
+      throw new ValidationError('password.notNull');
     }
 
-    if (hasOwn(ctx.request.body, "username")) {
-      const userWithSameUsername = await strapi.db
-        .query(USER_UID)
-        .findOne({ where: { username } });
+    if (hasOwn(ctx.request.body, 'username')) {
+      const userWithSameUsername = await strapi.db.query(USER_UID).findOne({ where: { username } });
 
-      if (userWithSameUsername && userWithSameUsername.id != id) {
-        throw new ApplicationError("Username already taken");
+      if (userWithSameUsername && Number(userWithSameUsername.id) !== Number(id)) {
+        throw new ApplicationError('Username already taken');
       }
     }
 
-    if (hasOwn(ctx.request.body, "email") && (advancedConfigs as any).unique_email) {
+    if (hasOwn(ctx.request.body, 'email') && (advancedConfigs as AdvancedSettings).unique_email) {
       const userWithSameEmail = await strapi.db
         .query(USER_UID)
         .findOne({ where: { email: email.toLowerCase() } });
 
-      if (userWithSameEmail && userWithSameEmail.id != id) {
-        throw new ApplicationError("Email already taken");
+      if (userWithSameEmail && Number(userWithSameEmail.id) !== Number(id)) {
+        throw new ApplicationError('Email already taken');
       }
       ctx.request.body.email = ctx.request.body.email.toLowerCase();
     }
 
-    let updateData = {
+    const updateData = {
       ...ctx.request.body,
     };
 
@@ -116,7 +105,7 @@ export default (plugin) => {
   // Create the new controller
   plugin.controllers.user.updateMe = async (ctx) => {
     const advancedConfigs = await strapi
-      .store({ type: "plugin", name: "users-permissions", key: "advanced" })
+      .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
       .get();
 
     const { id } = ctx.state.user;
@@ -124,41 +113,35 @@ export default (plugin) => {
 
     const user = await strapi.db.query(USER_UID).findOne({
       where: { id },
-      populate: ["role"],
+      populate: ['role'],
     });
 
     await validateUpdateUserBody(ctx.request.body);
 
-    if (
-      user.provider === "local" &&
-      hasOwn(ctx.request.body, "password") &&
-      !password
-    ) {
-      throw new ValidationError("password.notNull");
+    if (user.provider === 'local' && hasOwn(ctx.request.body, 'password') && !password) {
+      throw new ValidationError('password.notNull');
     }
 
-    if (hasOwn(ctx.request.body, "username")) {
-      const userWithSameUsername = await strapi.db
-        .query(USER_UID)
-        .findOne({ where: { username } });
+    if (hasOwn(ctx.request.body, 'username')) {
+      const userWithSameUsername = await strapi.db.query(USER_UID).findOne({ where: { username } });
 
-      if (userWithSameUsername && userWithSameUsername.id != id) {
-        throw new ApplicationError("Username already taken");
+      if (userWithSameUsername && Number(userWithSameUsername.id) !== Number(id)) {
+        throw new ApplicationError('Username already taken');
       }
     }
 
-    if (hasOwn(ctx.request.body, "email") && (advancedConfigs as any).unique_email) {
+    if (hasOwn(ctx.request.body, 'email') && (advancedConfigs as AdvancedSettings).unique_email) {
       const userWithSameEmail = await strapi.db
         .query(USER_UID)
         .findOne({ where: { email: email.toLowerCase() } });
 
-      if (userWithSameEmail && userWithSameEmail.id != id) {
-        throw new ApplicationError("Email already taken");
+      if (userWithSameEmail && Number(userWithSameEmail.id) !== Number(id)) {
+        throw new ApplicationError('Email already taken');
       }
       ctx.request.body.email = ctx.request.body.email.toLowerCase();
     }
 
-    let updateData = {
+    const updateData = {
       ...ctx.request.body,
     };
 
@@ -172,12 +155,12 @@ export default (plugin) => {
   };
 
   // Add the custom route
-  plugin.routes["content-api"].routes.unshift({
-    method: "PUT",
-    path: "/users/me",
-    handler: "user.updateMe",
+  plugin.routes['content-api'].routes.unshift({
+    method: 'PUT',
+    path: '/users/me',
+    handler: 'user.updateMe',
     config: {
-      prefix: "",
+      prefix: '',
     },
   });
 

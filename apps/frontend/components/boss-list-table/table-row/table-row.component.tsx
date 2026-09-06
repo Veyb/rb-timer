@@ -1,18 +1,16 @@
 // global modules
 import cn from 'classnames';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs, { type Dayjs } from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
-// local modules
-import { type Boss } from '../../../types';
 import { MINUTE } from '../../../constants';
-import { updateBossTime } from '../../../lib/api';
-import { useBossContext } from '../../../contexts/boss-context';
 import { useAuthContext } from '../../../contexts/auth-context';
-import { ActionsColumn, NameColumn, RespawnTimeColumn } from './columns';
-
+import { useBossContext } from '../../../contexts/boss-context';
+import { updateBossTime } from '../../../lib/api';
+// local modules
+import type { Boss } from '../../../types';
 // style modules
 import styles from '../boss-list-table.module.css';
+import { ActionsColumn, NameColumn, RespawnTimeColumn } from './columns';
 
 const THIRTY_SECONDS = 30 * 1000;
 
@@ -23,9 +21,7 @@ function isAnimated(boss: Boss) {
   const getDiffMinutes = (diff: number) => Math.floor(diff / MINUTE);
 
   return (
-    (!boss.world &&
-      (getDiffMinutes(diffFromKill) <= 5 ||
-        getDiffMinutes(diffFromSpawn) <= 5)) ||
+    (!boss.world && (getDiffMinutes(diffFromKill) <= 5 || getDiffMinutes(diffFromSpawn) <= 5)) ||
     (boss.world && getDiffMinutes(diffFromSpawn) <= 5)
   );
 }
@@ -43,13 +39,9 @@ export const TableRow = ({ boss, isRemainingTime }: RowProps) => {
   const className = useMemo(
     () =>
       isAnimated(boss)
-        ? cn(
-            styles.row,
-            styles.rowAnimation,
-            !!editableTime && styles.editableTime
-          )
+        ? cn(styles.row, styles.rowAnimation, !!editableTime && styles.editableTime)
         : cn(styles.row, !!editableTime && styles.editableTime),
-    [boss, editableTime]
+    [boss, editableTime],
   );
 
   const handleDatePickerChange = useCallback((value: Dayjs | null) => {
@@ -71,7 +63,7 @@ export const TableRow = ({ boss, isRemainingTime }: RowProps) => {
     const updatedBoss = await updateBossTime(
       boss.documentId,
       { time, approximately: false },
-      accessToken
+      accessToken,
     );
     updateBossInList(updatedBoss);
     setEditableTime(null);

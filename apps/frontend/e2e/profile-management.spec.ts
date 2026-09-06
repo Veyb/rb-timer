@@ -1,5 +1,5 @@
 import { TEST_IDS } from '../constants/test-ids';
-import { test, expect } from './fixtures/test';
+import { expect, test } from './fixtures/test';
 
 // Smoke check only: confirms the management screen renders, and that the
 // officer-only "Удалить" button is visible (proving the fixture's role

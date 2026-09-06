@@ -1,9 +1,4 @@
-export type RoleType =
-  | 'authenticated'
-  | 'public'
-  | 'viewer'
-  | 'editor'
-  | 'officer';
+export type RoleType = 'authenticated' | 'public' | 'viewer' | 'editor' | 'officer';
 
 export interface Role {
   id: number;

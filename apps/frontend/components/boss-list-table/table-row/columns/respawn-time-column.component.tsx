@@ -1,20 +1,19 @@
 // global modules
-import dayjs, { Dayjs } from 'dayjs';
-import { Tooltip } from 'antd';
-import { useCallback, useEffect, useMemo } from 'react';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
-// local modules
-import { type Boss } from '../../../../types';
-import { getNewRespawnTime } from './utils';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
+import dayjs, { type Dayjs } from 'dayjs';
+import { useCallback, useEffect, useMemo } from 'react';
 import { HOUR, MINUTE } from '../../../../constants';
+import { useAuthContext } from '../../../../contexts/auth-context';
+import { useBossContext } from '../../../../contexts/boss-context';
 import { updateBossTime } from '../../../../lib/api';
 import { Button } from '../../../../styled-components';
-import { useBossContext } from '../../../../contexts/boss-context';
-import { useAuthContext } from '../../../../contexts/auth-context';
-
+// local modules
+import type { Boss } from '../../../../types';
 // style modules
 import styles from '../../boss-list-table.module.css';
+import { getNewRespawnTime } from './utils';
 
 function getTooltipText(boss: Boss) {
   const timeOfDeath = dayjs(boss.time);
@@ -24,11 +23,7 @@ function getTooltipText(boss: Boss) {
   return `Время фарма ${hoursOfDeath}:${minutesOfDeath}`;
 }
 
-function getOutputTime(
-  boss: Boss,
-  isRemainingTime: boolean,
-  editableTime: Dayjs | null
-) {
+function getOutputTime(boss: Boss, isRemainingTime: boolean, editableTime: Dayjs | null) {
   const date = dayjs(editableTime || boss.respawnTime);
   const hours = date.hour().toString().padStart(2, '0');
   const minutes = date.minute().toString().padStart(2, '0');
@@ -68,24 +63,19 @@ export const RespawnTimeColumn = ({
     const currentDateTime = dayjs().valueOf();
     const shouldUpdateWorld = boss.world && currentDateTime > boss.respawnTime;
     const bossNotRespawned =
-      !boss.world &&
-      currentDateTime > dayjs(boss.respawnTime).add(20, 'minute').valueOf();
+      !boss.world && currentDateTime > dayjs(boss.respawnTime).add(20, 'minute').valueOf();
 
     if (shouldUpdateWorld) {
       const time = getNewRespawnTime(boss.respawnTime, boss.interval);
-      updateBossTime(boss.documentId, { time }, accessToken).then(
-        (newBossApiInfo) => updateBossInList(newBossApiInfo, true)
+      updateBossTime(boss.documentId, { time }, accessToken).then((newBossApiInfo) =>
+        updateBossInList(newBossApiInfo, true),
       );
     }
 
     if (bossNotRespawned) {
       const time = getNewRespawnTime(boss.respawnTime, boss.interval);
-      updateBossTime(
-        boss.documentId,
-        { time, approximately: true },
-        accessToken
-      ).then(
-        (newBossApiInfo) => updateBossInList(newBossApiInfo, true)
+      updateBossTime(boss.documentId, { time, approximately: true }, accessToken).then(
+        (newBossApiInfo) => updateBossInList(newBossApiInfo, true),
       );
     }
   }, [boss, allowedUpdate, updateBossInList, accessToken]);
@@ -103,7 +93,7 @@ export const RespawnTimeColumn = ({
   const tooltipText = getTooltipText(boss);
   const outputTime = useMemo(
     () => getOutputTime(boss, isRemainingTime, editableTime),
-    [boss, isRemainingTime, editableTime]
+    [boss, isRemainingTime, editableTime],
   );
 
   return (
@@ -120,9 +110,7 @@ export const RespawnTimeColumn = ({
 
       <Tooltip placement="top" title={tooltipText}>
         <span style={{ position: 'relative' }}>
-          {boss.approximately && (
-            <span className={styles.approximately}>~</span>
-          )}
+          {boss.approximately && <span className={styles.approximately}>~</span>}
           {outputTime}
         </span>
       </Tooltip>

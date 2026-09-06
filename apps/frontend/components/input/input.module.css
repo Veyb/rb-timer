@@ -52,7 +52,7 @@
   border-color: #165996;
 }
 
-.input[type='password']::-ms-reveal,
+.input[type="password"]::-ms-reveal,
 .input::-ms-clear {
   display: none;
 }
@@ -70,11 +70,6 @@
 
 .input:-webkit-autofill-strong-password,
 .input:-webkit-autofill-strong-password-viewable {
-  background: #3a3a42;
-}
-
-.input:-internal-autofill-selected {
-  /* possible fix for Chrome's !important internal hacks */
   background: #3a3a42;
 }
 
@@ -134,7 +129,7 @@
 
 .input:-webkit-autofill ~ .label,
 .input:focus ~ .label,
-.input:not([value='']) ~ .label,
+.input:not([value=""]) ~ .label,
 .aside ~ .label {
   bottom: 4rem;
   font-size: 1.2rem;
@@ -144,8 +139,13 @@
   font-size: 1.2rem;
 }
 
-.simple .label {
+/* `.simple.simple` doubles the class on purpose: it raises specificity to
+   (0,3,0), tying the focus/value/autofill ".label" rules above (also 3
+   classes) instead of losing to them at (0,2,0). The tie then resolves by
+   source order - this rule is last - keeping the "simple" variant's
+   font-size constant regardless of focus state, with no !important needed. */
+.simple.simple .label {
   width: 100%;
   top: -0.4rem;
-  font-size: 1.4rem !important;
+  font-size: 1.4rem;
 }

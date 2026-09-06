@@ -1,4 +1,4 @@
 export {
-  useCollectionContext,
   CollectionContextProvider,
+  useCollectionContext,
 } from './collection-context.context';

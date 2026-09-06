@@ -7,9 +7,5 @@ interface AntdThemeProviderProps {
 }
 
 export function AntdThemeProvider({ children }: AntdThemeProviderProps) {
-  return (
-    <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
-      {children}
-    </ConfigProvider>
-  );
+  return <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>{children}</ConfigProvider>;
 }

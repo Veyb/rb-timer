@@ -1,12 +1,11 @@
 // global modules
 import { Button } from 'antd';
-import styled from 'styled-components';
 import { type ChangeEvent, type SubmitEvent, useCallback, useState } from 'react';
-
+import styled from 'styled-components';
+import { Select } from '../../../styled-components';
+import type { Role } from '../../../types';
 // local modules
 import { Input } from '../../input';
-import { type Role } from '../../../types';
-import { Select } from '../../../styled-components';
 
 // style modules
 import styles from './filter-block.module.css';
@@ -25,14 +24,10 @@ const Holder = styled.div`
 interface FilterBlockProps {
   roles: Role[];
   handleSearch: (value: string) => void;
-  handleFilter: (value: any) => void;
+  handleFilter: (value: string | undefined) => void;
 }
 
-export const FilterBlock = ({
-  roles,
-  handleSearch,
-  handleFilter,
-}: FilterBlockProps) => {
+export const FilterBlock = ({ roles, handleSearch, handleFilter }: FilterBlockProps) => {
   const [value, setValue] = useState('');
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +41,7 @@ export const FilterBlock = ({
       setValue(trimedValue);
       handleSearch(trimedValue);
     },
-    [handleSearch, value]
+    [handleSearch, value],
   );
 
   const onClear = useCallback(() => {
@@ -74,7 +69,7 @@ export const FilterBlock = ({
       <Select
         allowClear
         placeholder="Роль"
-        onChange={handleFilter}
+        onChange={(value) => handleFilter(value as string | undefined)}
         className={styles.filterBlock}
         popupMatchSelectWidth={false}
         placement="bottomLeft"

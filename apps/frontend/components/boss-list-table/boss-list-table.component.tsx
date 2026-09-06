@@ -4,28 +4,23 @@
 // import { Button } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
 import { useCallback, useState } from 'react';
-
+import { TEST_IDS } from '../../constants/test-ids';
+import { useAuthContext } from '../../contexts/auth-context';
+import { useBossContext } from '../../contexts/boss-context';
+import { Button } from '../../styled-components';
 // local modules
 import { Layout } from '../layout';
-import { TableRow } from './table-row';
-import { RestartModal } from './restart-modal';
-import { Button } from '../../styled-components';
-import { useBossContext } from '../../contexts/boss-context';
-import { useAuthContext } from '../../contexts/auth-context';
-import { TEST_IDS } from '../../constants/test-ids';
-
 // style modules
 import styles from './boss-list-table.module.css';
+import { RestartModal } from './restart-modal';
+import { TableRow } from './table-row';
 
 interface RespawnColumnHeaderProps {
   onClick: () => void;
   isRemainingTime: boolean;
 }
 
-const RespawnColumnHeader = ({
-  onClick,
-  isRemainingTime,
-}: RespawnColumnHeaderProps) => {
+const RespawnColumnHeader = ({ onClick, isRemainingTime }: RespawnColumnHeaderProps) => {
   return (
     <>
       {isRemainingTime ? 'Время до' : 'Время'}
@@ -55,7 +50,7 @@ export const BossListTable = () => {
 
   const handleTimeClick = useCallback(() => {
     setRemainingTime(!isRemainingTime);
-  }, [isRemainingTime, setRemainingTime]);
+  }, [isRemainingTime]);
 
   return (
     <>
@@ -65,21 +60,14 @@ export const BossListTable = () => {
             <tr>
               <th className={styles.nameColumn}>Имя</th>
               <th className={styles.respawnColumn}>
-                <RespawnColumnHeader
-                  onClick={handleTimeClick}
-                  isRemainingTime={isRemainingTime}
-                />
+                <RespawnColumnHeader onClick={handleTimeClick} isRemainingTime={isRemainingTime} />
               </th>
               <th className={styles.actionsColumn}>Действия</th>
             </tr>
           </thead>
           <tbody className={styles.tableTbody}>
             {bossList.map((boss) => (
-              <TableRow
-                key={boss.documentId}
-                boss={boss}
-                isRemainingTime={isRemainingTime}
-              />
+              <TableRow key={boss.documentId} boss={boss} isRemainingTime={isRemainingTime} />
             ))}
           </tbody>
         </table>

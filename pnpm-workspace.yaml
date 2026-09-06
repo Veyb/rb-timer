@@ -12,8 +12,11 @@ catalog:
   typescript: 5.9.3
   '@types/node': 22.20.1
   '@strapi/typescript-utils': 5.52.2
+  '@biomejs/biome': 2.5.11
+  lefthook: 2.1.12
 
 allowBuilds:
+  '@biomejs/biome': true
   '@fortawesome/fontawesome-common-types': true
   '@fortawesome/fontawesome-free': true
   '@fortawesome/fontawesome-svg-core': true
@@ -24,6 +27,7 @@ allowBuilds:
   better-sqlite3: true
   core-js-pure: true
   esbuild: true
+  lefthook: true
   sharp: true
   sqlite3: false
   styled-components: true

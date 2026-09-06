@@ -1,6 +1,7 @@
 'use client';
 
 // global modules
+import axios from 'axios';
 import { destroyCookie, setCookie } from 'nookies';
 import {
   createContext,
@@ -11,18 +12,39 @@ import {
   useMemo,
   useState,
 } from 'react';
-
+import { apiGet, apiPost, getUsersMe } from '../lib/api';
 // local modules
 import { socket } from '../lib/web-sockets';
-import { type SocketUser, type User } from '../types';
-import { apiGet, getUsersMe, apiPost } from '../lib/api';
+import type { SocketUser, User } from '../types';
 
 const INVALID_USERNAME_EMAIL = 'Недопустимый формат e-mail.';
 const EMAIL_IS_ALREADY_TAKEN = 'Данный e-mail уже зарегистрирован.';
 const INVALID_CREDENTIALS_EMAIL =
   'Указан неправильный username или пароль. Проверьте правильность введенных данных.';
 
-function getErrorMessage(error: any) {
+interface StrapiErrorResponse {
+  error: {
+    status: number;
+    name: string;
+    message: string;
+    details?: unknown;
+  };
+}
+
+interface LoginCredentials {
+  identifier: string;
+  password: string;
+}
+
+interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+  nickname: string;
+  realname: string;
+}
+
+function getErrorMessage(error: { message: string }) {
   switch (error.message) {
     case 'Invalid identifier or password':
       return INVALID_CREDENTIALS_EMAIL;
@@ -42,8 +64,8 @@ const AuthContext = createContext<{
   allowedUpdate: boolean;
   allowedAdminister: boolean;
   accessToken: string | undefined;
-  login: (userData: any) => void;
-  register: (userData: any) => void;
+  login: (userData: LoginCredentials) => void;
+  register: (userData: RegisterData) => void;
   logout: () => void;
 }>({
   user: null,
@@ -76,21 +98,16 @@ export const AuthContextProvider = ({
   const loggedIn = !!user;
   const allowed = useMemo(
     () =>
-      user?.role.type === 'editor' ||
-      user?.role.type === 'viewer' ||
-      user?.role.type === 'officer',
-    [user]
+      user?.role.type === 'editor' || user?.role.type === 'viewer' || user?.role.type === 'officer',
+    [user],
   );
   const allowedUpdate = useMemo(
     () => user?.role.type === 'editor' || user?.role.type === 'officer',
-    [user]
+    [user],
   );
-  const allowedAdminister = useMemo(
-    () => user?.role.type === 'officer',
-    [user]
-  );
+  const allowedAdminister = useMemo(() => user?.role.type === 'officer', [user]);
 
-  const login = useCallback(async (userData: any) => {
+  const login = useCallback(async (userData: LoginCredentials) => {
     try {
       const loginResponse = await apiPost('/auth/local', userData);
 
@@ -104,13 +121,13 @@ export const AuthContextProvider = ({
       setUser(userResponse);
       setAccessToken(loginResponse.jwt);
       socket.emit('auth', { user: getSocketUser(userResponse) });
-    } catch (err: any) {
-      const error = err.response.data.error;
-      throw new Error(getErrorMessage(error));
+    } catch (err) {
+      if (!axios.isAxiosError<StrapiErrorResponse>(err) || !err.response) throw err;
+      throw new Error(getErrorMessage(err.response.data.error));
     }
   }, []);
 
-  const register = useCallback(async (userData: any) => {
+  const register = useCallback(async (userData: RegisterData) => {
     try {
       const registerResponse = await apiPost('/auth/local/register', userData);
 
@@ -128,7 +145,8 @@ export const AuthContextProvider = ({
       setUser(userResponse);
       setAccessToken(registerResponse.jwt);
       socket.emit('auth', { user: getSocketUser(userResponse) });
-    } catch (err: any) {
+    } catch (err) {
+      if (!axios.isAxiosError<StrapiErrorResponse>(err) || !err.response) throw err;
       const error = err.response.data.error;
       throw new Error(getErrorMessage(error));
     }
@@ -143,8 +161,7 @@ export const AuthContextProvider = ({
 
   // socket
   useEffect(() => {
-    const socketUserJoin = () =>
-      socket.emit('join', { user: getSocketUser(user) });
+    const socketUserJoin = () => socket.emit('join', { user: getSocketUser(user) });
 
     const disconnect = (reason: string) => {
       if (reason === 'io server disconnect') socket.connect();

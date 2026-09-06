@@ -4,17 +4,15 @@
 import { Tabs, type TabsProps } from 'antd';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
-
-// local modules
-import type { Role } from '../../types';
-import { Layout } from '../layout';
 import { useAuthContext } from '../../contexts/auth-context';
-import { ManagementBlock } from '../management-block';
-import { CollectionsBlock } from '../collections-block';
-import { NotAllowedBlock } from '../not-allowed-block';
-
 // style modules
 import styles from '../../styles/main.module.css';
+// local modules
+import type { Role } from '../../types';
+import { CollectionsBlock } from '../collections-block';
+import { Layout } from '../layout';
+import { ManagementBlock } from '../management-block';
+import { NotAllowedBlock } from '../not-allowed-block';
 
 const Holder = styled.div`
   padding-bottom: 0;

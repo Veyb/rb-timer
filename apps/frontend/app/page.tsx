@@ -1,10 +1,9 @@
 // global modules
 import { cookies } from 'next/headers';
-
+import { HomeContent } from '../components/home-content';
+import { getBossList } from '../lib/api';
 // local modules
 import type { Boss } from '../types';
-import { getBossList } from '../lib/api';
-import { HomeContent } from '../components/home-content';
 
 export default async function HomePage() {
   const jwt = (await cookies()).get('jwt')?.value;
@@ -12,7 +11,7 @@ export default async function HomePage() {
   let list: Boss[] = [];
   try {
     list = await getBossList(jwt);
-  } catch (error: any) {}
+  } catch {}
 
   return <HomeContent list={list} />;
 }

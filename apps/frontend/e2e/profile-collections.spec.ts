@@ -1,5 +1,5 @@
 import { TEST_IDS } from '../constants/test-ids';
-import { test, expect } from './fixtures/test';
+import { expect, test } from './fixtures/test';
 
 // Smoke check only: confirms the collections screen renders for an
 // authenticated (officer) user. Deliberately does not interact with any

@@ -4,13 +4,12 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { type ChangeEvent, type SubmitEvent, useCallback, useMemo, useState } from 'react';
-
+import { TEST_IDS } from '../../constants/test-ids';
+import { useAuthContext } from '../../contexts/auth-context';
+import { Button } from '../../styled-components';
+import { ErrorDivider } from '../error-divider';
 // local modules
 import { Input } from '../input';
-import { ErrorDivider } from '../error-divider';
-import { Button } from '../../styled-components';
-import { useAuthContext } from '../../contexts/auth-context';
-import { TEST_IDS } from '../../constants/test-ids';
 
 // style modules
 import styles from './form-register.module.css';
@@ -18,7 +17,7 @@ import styles from './form-register.module.css';
 const FormRegister = () => {
   const router = useRouter();
   const { register } = useAuthContext();
-  const [errorMessage, setErrorMessage] = useState(undefined);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const [userData, setUserData] = useState({
     username: '',
     email: '',
@@ -34,11 +33,11 @@ const FormRegister = () => {
       try {
         await register(userData);
         router.replace('/');
-      } catch (error: any) {
-        setErrorMessage(error.message);
+      } catch (error) {
+        setErrorMessage(error instanceof Error ? error.message : String(error));
       }
     },
-    [register, router, userData]
+    [register, router, userData],
   );
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -47,10 +46,7 @@ const FormRegister = () => {
     setUserData({ ...userData, [name]: value });
   };
 
-  const disabled = useMemo(
-    () => !Object.values(userData).every((x) => x !== ''),
-    [userData]
-  );
+  const disabled = useMemo(() => !Object.values(userData).every((x) => x !== ''), [userData]);
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>

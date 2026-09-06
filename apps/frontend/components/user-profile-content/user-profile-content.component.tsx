@@ -4,17 +4,15 @@
 import { Tabs, type TabsProps } from 'antd';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
-
-// local modules
-import type { Role, User } from '../../types';
-import { Layout } from '../layout';
 import { useAuthContext } from '../../contexts/auth-context';
-import { CollectionsBlock } from '../collections-block';
-import { ManagementBlock } from '../management-block';
-import { NotAllowedBlock } from '../not-allowed-block';
-
 // style modules
 import styles from '../../styles/main.module.css';
+// local modules
+import type { Role, User } from '../../types';
+import { CollectionsBlock } from '../collections-block';
+import { Layout } from '../layout';
+import { ManagementBlock } from '../management-block';
+import { NotAllowedBlock } from '../not-allowed-block';
 
 const Holder = styled.div`
   padding-bottom: 0;
@@ -42,11 +40,7 @@ interface UserProfileContentProps {
   roles: Role[];
 }
 
-export const UserProfileContent = ({
-  type,
-  user,
-  roles,
-}: UserProfileContentProps) => {
+export const UserProfileContent = ({ type, user, roles }: UserProfileContentProps) => {
   const router = useRouter();
   const { loggedIn, allowedUpdate } = useAuthContext();
 

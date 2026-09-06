@@ -1,11 +1,10 @@
 // global modules
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
-
+import { UserProfileContent } from '../../../../components/user-profile-content';
+import { getRoles, getUser } from '../../../../lib/api';
 // local modules
 import type { Role, User } from '../../../../types';
-import { getRoles, getUser } from '../../../../lib/api';
-import { UserProfileContent } from '../../../../components/user-profile-content';
 
 export default async function UserProfileTypePage({
   params,
@@ -24,13 +23,10 @@ export default async function UserProfileTypePage({
   let roles: Role[] = [];
   if (jwt) {
     try {
-      const [userData, rolesData] = await Promise.all([
-        getUser(userId, jwt),
-        getRoles(jwt),
-      ]);
+      const [userData, rolesData] = await Promise.all([getUser(userId, jwt), getRoles(jwt)]);
       user = userData;
       roles = rolesData;
-    } catch (err: any) {}
+    } catch {}
   }
 
   if (!user) {

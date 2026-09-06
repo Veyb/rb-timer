@@ -1,26 +1,21 @@
 'use client';
 
+import { CheckOutlined } from '@ant-design/icons';
 // global modules
 import { Divider } from 'antd';
-import { CheckOutlined } from '@ant-design/icons';
 import { useEffect, useMemo, useState } from 'react';
-
-// local modules
-import { type User } from '../../types';
-import { FilterBlock } from './filter-block';
-import { CollectionsModal } from './collections-modal';
-import { getAllCollectionList } from '../../lib/api';
-import type { Collection } from './collections-block.types';
-import { useAuthContext } from '../../contexts/auth-context';
-import { CollectionItemComponent } from './collection-item';
-import {
-  CollectionContextProvider,
-  useCollectionContext,
-} from '../../contexts/collection-context';
 import { TEST_IDS } from '../../constants/test-ids';
-
+import { useAuthContext } from '../../contexts/auth-context';
+import { CollectionContextProvider, useCollectionContext } from '../../contexts/collection-context';
+import { getAllCollectionList } from '../../lib/api';
+// local modules
+import type { User } from '../../types';
+import { CollectionItemComponent } from './collection-item';
 // style modules
 import styles from './collections-block.module.css';
+import type { Collection } from './collections-block.types';
+import { CollectionsModal } from './collections-modal';
+import { FilterBlock } from './filter-block';
 
 const UnsafeCollectionsBlock = () => {
   const { effects, collections } = useCollectionContext();
@@ -29,10 +24,10 @@ const UnsafeCollectionsBlock = () => {
     () =>
       collections.filter((collection) =>
         collection.items.some(({ item }) =>
-          item.name.toLowerCase().includes(searchValue.toLowerCase())
-        )
+          item.name.toLowerCase().includes(searchValue.toLowerCase()),
+        ),
       ),
-    [collections, searchValue]
+    [collections, searchValue],
   );
 
   return (
@@ -43,19 +38,13 @@ const UnsafeCollectionsBlock = () => {
         <div className={styles.leftBlock}>
           {renderedCollections.length ? (
             renderedCollections.map((collection) => (
-              <CollectionItemComponent
-                key={collection.id}
-                collection={collection}
-              />
+              <CollectionItemComponent key={collection.id} collection={collection} />
             ))
           ) : (
             <p>Нет доступных коллекций</p>
           )}
         </div>
-        <div
-          className={styles.rightBlock}
-          data-testid={TEST_IDS.profileCollections.effectsBlock}
-        >
+        <div className={styles.rightBlock} data-testid={TEST_IDS.profileCollections.effectsBlock}>
           <h2 className={styles.title}>Эффект коллекции</h2>
           <Divider className={styles.divider} />
           <div className={styles.effectsHolder}>

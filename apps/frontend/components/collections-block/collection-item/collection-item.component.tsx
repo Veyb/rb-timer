@@ -1,11 +1,10 @@
 // global modules
 import { CheckCircleOutlined } from '@ant-design/icons';
-
+import { useCollectionContext } from '../../../contexts/collection-context';
+import { getRankColor } from '../collection-block.utils';
+import type { Collection } from '../collections-block.types';
 // local modules
 import { ItemImage } from '../item-image';
-import { getRankColor } from '../collection-block.utils';
-import { type Collection } from '../collections-block.types';
-import { useCollectionContext } from '../../../contexts/collection-context';
 
 // style modules
 import styles from './collection-item.module.css';
@@ -14,9 +13,7 @@ interface CollectionItemComponentProps {
   collection: Collection;
 }
 
-export const CollectionItemComponent = ({
-  collection,
-}: CollectionItemComponentProps) => {
+export const CollectionItemComponent = ({ collection }: CollectionItemComponentProps) => {
   const {
     activeIds,
     userCollections: selfUserCollections,
@@ -34,10 +31,7 @@ export const CollectionItemComponent = ({
   return (
     <div className={styles.holder}>
       <div className={styles.textHolder}>
-        <h3
-          className={styles.name}
-          style={{ color: getRankColor(collection.rank) }}
-        >
+        <h3 className={styles.name} style={{ color: getRankColor(collection.rank) }}>
           {collection.name}
         </h3>
         <p className={styles.text}>{effects}</p>
@@ -49,10 +43,7 @@ export const CollectionItemComponent = ({
             checked={userCollectionsHash[collection.id]?.[collectionItem.id] ?? false}
             collectionItem={collectionItem}
             onClick={() => handleItemClick(collection.id, collectionItem.id)}
-            active={
-              collection.id === activeCollectionId &&
-              collectionItem.id === activeItemId
-            }
+            active={collection.id === activeCollectionId && collectionItem.id === activeItemId}
           />
         ))}
       </div>

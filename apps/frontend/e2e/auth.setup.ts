@@ -1,9 +1,9 @@
-import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { test as setup, expect } from '@playwright/test';
+import path from 'node:path';
+import { expect, test as setup } from '@playwright/test';
 
 import { TEST_IDS } from '../constants/test-ids';
-import { FIXTURE_USER, STORAGE_STATE_PATH, INVALID_CREDENTIALS_TEXT } from './fixtures/constants';
+import { FIXTURE_USER, INVALID_CREDENTIALS_TEXT, STORAGE_STATE_PATH } from './fixtures/constants';
 
 const BACKEND_DIR = path.resolve(__dirname, '../../backend');
 const STORAGE_STATE_ABS_PATH = path.resolve(__dirname, '..', STORAGE_STATE_PATH);
@@ -42,11 +42,10 @@ setup('authenticate as the e2e fixture user', async ({ page }) => {
   // Fresh registration lands on the lowest-privilege role; upgrade it
   // directly in the database so the fixture account can reach every
   // role-gated screen this suite smoke-tests.
-  execFileSync(
-    'pnpm',
-    ['run', 'e2e:fixture-role', FIXTURE_USER.email],
-    { cwd: BACKEND_DIR, stdio: 'inherit' }
-  );
+  execFileSync('pnpm', ['run', 'e2e:fixture-role', FIXTURE_USER.email], {
+    cwd: BACKEND_DIR,
+    stdio: 'inherit',
+  });
 
   // The role change happened outside the running session; navigate to force
   // layout.tsx's server-side getCurrentUser() to refetch /users/me.

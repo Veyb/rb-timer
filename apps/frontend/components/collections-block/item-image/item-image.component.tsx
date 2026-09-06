@@ -1,11 +1,12 @@
 // global modules
+
+import { CheckCircleOutlined } from '@ant-design/icons';
 import cn from 'classnames';
 import Image from 'next/image';
-import { CheckCircleOutlined } from '@ant-design/icons';
 
 // local modules
 import { IMAGE_URL } from '../../../lib/api';
-import { type CollectionItem } from '../collections-block.types';
+import type { CollectionItem } from '../collections-block.types';
 
 // style modules
 import styles from './item-image.module.css';
@@ -43,15 +44,8 @@ export const ItemImage = ({
     />
   );
 
-  return (
-    <div
-      key={item.id}
-      onClick={onClick}
-      className={cn(styles.imageHolder, {
-        [styles.active]: active,
-        [styles.interactive]: !!onClick,
-      })}
-    >
+  const content = (
+    <>
       {image}
       {!!collectionItem.enhancement && (
         <i className={styles.enhancement}>{`+${collectionItem.enhancement}`}</i>
@@ -62,6 +56,25 @@ export const ItemImage = ({
           <CheckCircleOutlined color="#d46f1b" className={styles.icon} />
         </>
       )}
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button
+        key={item.id}
+        type="button"
+        onClick={onClick}
+        className={cn(styles.imageHolder, styles.interactive, { [styles.active]: active })}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <div key={item.id} className={cn(styles.imageHolder, { [styles.active]: active })}>
+      {content}
     </div>
   );
 };

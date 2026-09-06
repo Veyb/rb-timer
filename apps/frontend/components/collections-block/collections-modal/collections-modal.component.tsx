@@ -1,25 +1,18 @@
 // global modules
 import { Button, Modal } from 'antd';
-
-// local modules
-import { ItemImage } from '../item-image';
-import { getRankColor } from '../collection-block.utils';
 import { useCollectionContext } from '../../../contexts/collection-context';
-
+import { getRankColor } from '../collection-block.utils';
 // styles modules
 import styles from '../collections-block.module.css';
+// local modules
+import { ItemImage } from '../item-image';
 
 export const CollectionsModal = () => {
-  const {
-    activeItem,
-    nonInteractive,
-    isActiveItemChecked,
-    handleActiveReset,
-    handleToggleClick,
-  } = useCollectionContext();
+  const { activeItem, nonInteractive, isActiveItemChecked, handleActiveReset, handleToggleClick } =
+    useCollectionContext();
 
   return (
-    (<Modal
+    <Modal
       centered
       open={!!activeItem}
       onCancel={handleActiveReset}
@@ -34,14 +27,11 @@ export const CollectionsModal = () => {
       {activeItem && (
         <>
           <ItemImage collectionItem={activeItem} />
-          <p
-            className={styles.itemName}
-            style={{ color: getRankColor(activeItem.item.rank) }}
-          >
+          <p className={styles.itemName} style={{ color: getRankColor(activeItem.item.rank) }}>
             {activeItem.item.name}
           </p>
         </>
       )}
-    </Modal>)
+    </Modal>
   );
 };

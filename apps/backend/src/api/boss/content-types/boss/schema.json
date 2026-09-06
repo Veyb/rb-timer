@@ -19,12 +19,7 @@
     },
     "quality": {
       "type": "enumeration",
-      "enum": [
-        "none",
-        "blue",
-        "red",
-        "purple"
-      ],
+      "enum": ["none", "blue", "red", "purple"],
       "required": true,
       "default": "blue"
     },

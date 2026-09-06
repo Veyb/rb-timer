@@ -2,15 +2,13 @@
 
 // global modules
 import { useMemo } from 'react';
-
-// local modules
-import type { Role, User } from '../../types';
 import { useAuthContext } from '../../contexts/auth-context';
-import { UserListTable } from '../user-list-table';
-import { NotAllowedBlock } from '../not-allowed-block';
-
 // style modules
 import styles from '../../styles/main.module.css';
+// local modules
+import type { Role, User } from '../../types';
+import { NotAllowedBlock } from '../not-allowed-block';
+import { UserListTable } from '../user-list-table';
 
 interface UsersContentProps {
   users: User[];
@@ -20,7 +18,7 @@ interface UsersContentProps {
 export const UsersContent = ({ users, roles }: UsersContentProps) => {
   const sortedUsers = useMemo(
     () => [...users].sort((a, b) => a.nickname.localeCompare(b.nickname)),
-    [users]
+    [users],
   );
   const { loggedIn, allowed } = useAuthContext();
 

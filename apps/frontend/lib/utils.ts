@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import { type Boss, type BossApiResponse } from '../types';
+import type { Boss, BossApiResponse } from '../types';
 
 export const expandBoss = (boss: BossApiResponse) => {
   const date = dayjs(boss.time).add(boss.interval, 'hour');
@@ -15,4 +15,4 @@ export const expandBossListAndSort = (bossList: BossApiResponse[]) => {
   return sortBossList(bossList.map(expandBoss));
 };
 
-export const isServer = typeof window === 'undefined' ? true : false;
+export const isServer = typeof window === 'undefined';

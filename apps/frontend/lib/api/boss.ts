@@ -2,9 +2,9 @@
 import axios, { type RawAxiosRequestHeaders } from 'axios';
 
 // local modules
-import { type BossApiResponse } from '../../types';
-import { apiGet, API_URL, flattenApiResponse } from './base';
+import type { BossApiResponse } from '../../types';
 import { expandBoss, expandBossListAndSort } from '../utils';
+import { API_URL, apiGet, flattenApiResponse } from './base';
 
 export async function getBossList(token: string | undefined) {
   const params = token
@@ -22,7 +22,7 @@ export async function getBossList(token: string | undefined) {
 export async function updateBossTime(
   documentId: string,
   params: Partial<Omit<BossApiResponse, 'id' | 'documentId' | 'name'>>,
-  token: string | undefined
+  token: string | undefined,
 ) {
   const headers: RawAxiosRequestHeaders = {
     Accept: 'application/json',
@@ -38,8 +38,8 @@ export async function updateBossTime(
         ...params,
       },
     },
-    { headers: { ...headers } }
+    { headers: { ...headers } },
   );
 
-  return expandBoss(flattenApiResponse(data.data));
+  return expandBoss(flattenApiResponse(data.data) as BossApiResponse);
 }

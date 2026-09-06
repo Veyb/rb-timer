@@ -31,17 +31,13 @@ function withRetry(fn, attempts = 5, delayMs = 75) {
 }
 
 try {
-  const user = db
-    .prepare('SELECT id FROM up_users WHERE email = ?')
-    .get(email);
+  const user = db.prepare('SELECT id FROM up_users WHERE email = ?').get(email);
   if (!user) {
     console.error(`e2e-fixture-role: no up_users row for email ${email}`);
     process.exit(1);
   }
 
-  const officerRole = db
-    .prepare("SELECT id FROM up_roles WHERE type = 'officer'")
-    .get();
+  const officerRole = db.prepare("SELECT id FROM up_roles WHERE type = 'officer'").get();
   if (!officerRole) {
     console.error('e2e-fixture-role: no role with type "officer" found');
     process.exit(1);
@@ -52,21 +48,22 @@ try {
     .get(user.id);
 
   if (currentLink && currentLink.role_id === officerRole.id) {
-    console.log('e2e-fixture-role: already officer, no changes made');
+    console.info('e2e-fixture-role: already officer, no changes made');
     process.exit(0);
   }
 
   withRetry(() => {
     const upgrade = db.transaction(() => {
       db.prepare('DELETE FROM up_users_role_lnk WHERE user_id = ?').run(user.id);
-      db.prepare(
-        'INSERT INTO up_users_role_lnk (user_id, role_id) VALUES (?, ?)'
-      ).run(user.id, officerRole.id);
+      db.prepare('INSERT INTO up_users_role_lnk (user_id, role_id) VALUES (?, ?)').run(
+        user.id,
+        officerRole.id,
+      );
     });
     upgrade();
   });
 
-  console.log('e2e-fixture-role: upgraded to officer');
+  console.info('e2e-fixture-role: upgraded to officer');
 } finally {
   db.close();
 }

@@ -1,4 +1,5 @@
 export interface Donation {
+  id: number;
   name: string;
   value: number;
   createdAt: string;

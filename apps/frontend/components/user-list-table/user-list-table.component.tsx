@@ -4,13 +4,12 @@
 import cn from 'classnames';
 import { useRouter } from 'next/navigation';
 import { type MouseEvent, useMemo, useState } from 'react';
-
+import { TEST_IDS } from '../../constants/test-ids';
+import { useAuthContext } from '../../contexts/auth-context';
+import type { Role, User } from '../../types';
 // local modules
 import { Layout } from '../layout';
 import { FilterBlock } from './filter-block';
-import { useAuthContext } from '../../contexts/auth-context';
-import { type Role, type User } from '../../types';
-import { TEST_IDS } from '../../constants/test-ids';
 
 // style modules
 import styles from './user-list-table.module.css';
@@ -24,7 +23,7 @@ const UserRow = ({ user }: UserRowProps) => {
   const { allowedUpdate } = useAuthContext();
   const collectionsValues = Object.values(user.collections || {});
   const checkedCollectionsCount = collectionsValues.filter((collection) =>
-    Object.values(collection).every(Boolean)
+    Object.values(collection).every(Boolean),
   ).length;
 
   const collectionsStatus = collectionsValues.length
@@ -56,25 +55,19 @@ interface UserListTableProps {
 export const UserListTable = ({ users, roles }: UserListTableProps) => {
   const { allowedUpdate } = useAuthContext();
   const [searchValue, setSearchValue] = useState('');
-  const [filteredRoles, setFilteredRoles] = useState(undefined);
+  const [filteredRoles, setFilteredRoles] = useState<string | undefined>(undefined);
 
   const renderedUsers = useMemo(
     () =>
       users
         .filter((user) => !filteredRoles || filteredRoles === user.role.name)
-        .filter((user) =>
-          user.nickname.toLowerCase().includes(searchValue.toLowerCase())
-        ),
-    [users, searchValue, filteredRoles]
+        .filter((user) => user.nickname.toLowerCase().includes(searchValue.toLowerCase())),
+    [users, searchValue, filteredRoles],
   );
 
   return (
     <Layout className={styles.layout}>
-      <FilterBlock
-        roles={roles}
-        handleSearch={setSearchValue}
-        handleFilter={setFilteredRoles}
-      />
+      <FilterBlock roles={roles} handleSearch={setSearchValue} handleFilter={setFilteredRoles} />
 
       <table className={styles.table} data-testid={TEST_IDS.usersList.table}>
         <thead className={styles.tableThead}>

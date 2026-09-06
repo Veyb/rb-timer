@@ -8,7 +8,7 @@ export enum BREAKPOINTS {
   XXL = 75, // 1200px
   XXXL = 90, // 1440px
   XXXXL = 120, // 1920px
-  DEF = Infinity,
+  DEF = 999999, // sentinel: larger than any real breakpoint above
 }
 
 export enum SCREEN_BREAKPOINTS {

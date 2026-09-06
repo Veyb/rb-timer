@@ -1,9 +1,8 @@
 // global modules
 import qs from 'qs';
-
+import type { Meta } from '../../types';
 // local modules
 import { apiGet } from './base';
-import { type Meta } from '../../types';
 
 function getQuery(page?: number) {
   return qs.stringify(
@@ -16,14 +15,11 @@ function getQuery(page?: number) {
     },
     {
       encodeValuesOnly: true,
-    }
+    },
   );
 }
 
-export async function getCollectionList(
-  token: string | undefined,
-  page?: number
-) {
+export async function getCollectionList(token: string | undefined, page?: number) {
   const query = getQuery(page);
   const params = token
     ? {
@@ -41,10 +37,7 @@ export async function getAllCollectionList(token: string | undefined) {
   let page = 1;
   let list = [];
 
-  const { data: firstData, meta: firstMeta } = await getCollectionList(
-    token,
-    page
-  );
+  const { data: firstData, meta: firstMeta } = await getCollectionList(token, page);
 
   list = [...firstData];
   let meta: Meta = firstMeta;

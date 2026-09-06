@@ -1,6 +1,7 @@
 declare const styles: {
   readonly holder: string;
   readonly filterBlock: string;
+  readonly filterButton: string;
   readonly active: string;
   readonly searchBlock: string;
   readonly searchInput: string;

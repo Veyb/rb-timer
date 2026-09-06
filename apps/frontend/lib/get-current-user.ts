@@ -2,7 +2,7 @@
 import { cookies } from 'next/headers';
 
 // local modules
-import { type User } from '../types';
+import type { User } from '../types';
 import { apiGet } from './api';
 
 interface CurrentUser {
@@ -23,7 +23,7 @@ export async function getCurrentUser(): Promise<CurrentUser> {
     });
 
     return { user, jwt };
-  } catch (err: any) {
+  } catch {
     return { user: null, jwt: undefined };
   }
 }

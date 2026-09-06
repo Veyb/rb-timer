@@ -1,16 +1,15 @@
 import { Dropdown } from 'antd';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
-import styled from 'styled-components';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-
-import { type Donation } from '../../../types';
-import { Scrollable } from '../../scrollable';
-import { Button } from '../../../styled-components';
-import { Menu, MenuItem } from '../../menu';
-import { getAllDonationList } from '../../../lib/api';
+import styled from 'styled-components';
 import { useAuthContext } from '../../../contexts/auth-context';
+import { getAllDonationList } from '../../../lib/api';
 import { socket } from '../../../lib/web-sockets';
+import { Button } from '../../../styled-components';
+import type { Donation } from '../../../types';
+import { Menu, MenuItem } from '../../menu';
+import { Scrollable } from '../../scrollable';
 
 const DateItem = styled(MenuItem)`
   display: flex;
@@ -45,8 +44,8 @@ export const Donations = () => {
             <Fragment key={date}>
               <DateItem>{`Донаты за ${date}`}</DateItem>
               <DonationList>
-                {(donationsHash[date] ?? []).map((donation, index) => (
-                  <DonationItem key={`${date}_${index}`}>
+                {(donationsHash[date] ?? []).map((donation) => (
+                  <DonationItem key={donation.id}>
                     <span>{donation.name}</span>
                     <span>{donation.value} &#8381;</span>
                   </DonationItem>
@@ -57,7 +56,7 @@ export const Donations = () => {
         </Scrollable>
       </Menu>
     ),
-    []
+    [],
   );
 
   const [dateKeys, donationsHash] = useMemo(
@@ -66,20 +65,22 @@ export const Donations = () => {
         (acc: [string[], Record<string, Donation[]>], donation) => {
           const dateKey = getDateKey(donation);
           if (!acc[0].includes(dateKey)) acc[0].push(dateKey);
-          acc[1][dateKey]
-            ? acc[1][dateKey].push(donation)
-            : (acc[1][dateKey] = [donation]);
+          if (acc[1][dateKey]) {
+            acc[1][dateKey].push(donation);
+          } else {
+            acc[1][dateKey] = [donation];
+          }
 
           return acc;
         },
-        [[], {}]
+        [[], {}],
       ),
-    [donations]
+    [donations],
   );
 
   const totalSumLastMonth = useMemo(
     () => (donationsHash[currentDateKey] || []).reduce(sum, 0),
-    [currentDateKey, donationsHash]
+    [currentDateKey, donationsHash],
   );
 
   useEffect(() => {

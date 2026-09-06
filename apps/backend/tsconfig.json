@@ -4,7 +4,13 @@
     "outDir": "dist",
     "rootDir": ".",
     "allowJs": true,
-    "tsBuildInfoFile": "./.tsbuildinfo"
+    "tsBuildInfoFile": "./.tsbuildinfo",
+    // Strapi's own preset ships `lib: ["ES2020"]`; bumped to ES2022 (a strict
+    // superset) so `Object.hasOwn` - a real Node 20+ runtime feature (matches
+    // this app's own `engines` requirement) that Biome's noPrototypeBuiltins
+    // rule recommends over `Object.prototype.hasOwnProperty.call` - type-checks.
+    // Only the ambient lib declarations change here, not `target`/`module`.
+    "lib": ["ES2022"]
   },
   "include": ["./", "src/**/*.json"],
   "exclude": [

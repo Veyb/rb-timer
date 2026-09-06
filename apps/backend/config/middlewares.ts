@@ -1,18 +1,18 @@
 export default ({ env }) => [
-  "strapi::errors",
-  "strapi::security",
+  'strapi::errors',
+  'strapi::security',
   {
-    name: "strapi::cors",
+    name: 'strapi::cors',
     config: {
       // Comma-separated list, e.g. "https://example.com,https://www.example.com".
-      origin: env.array("CORS_ORIGINS", ["http://localhost:3000"]),
+      origin: env.array('CORS_ORIGINS', ['http://localhost:3000']),
     },
   },
-  "strapi::poweredBy",
-  "strapi::logger",
-  "strapi::query",
-  "strapi::body",
-  "strapi::session",
-  "strapi::favicon",
-  "strapi::public",
+  'strapi::poweredBy',
+  'strapi::logger',
+  'strapi::query',
+  'strapi::body',
+  'strapi::session',
+  'strapi::favicon',
+  'strapi::public',
 ];

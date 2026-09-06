@@ -6,13 +6,12 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-
+import { TEST_IDS } from '../../constants/test-ids';
 // local modules
 import { useAuthContext } from '../../contexts/auth-context';
 import { deleteUser, updateUser } from '../../lib/api';
 import { Button, Select } from '../../styled-components';
-import { type Role, type User } from '../../types';
-import { TEST_IDS } from '../../constants/test-ids';
+import type { Role, User } from '../../types';
 
 // style modules
 import styles from './management-block.module.css';
@@ -33,12 +32,12 @@ export const ManagementBlock = (props: ManagementBlockProps) => {
     (value: unknown) => {
       setInfo({ ...info, roleId: value as number });
     },
-    [info]
+    [info],
   );
 
   const handleUpdateClick = useCallback(async () => {
-    await updateUser(user.id, { role: info.roleId }, accessToken).then(
-      (response) => setUser(response)
+    await updateUser(user.id, { role: info.roleId }, accessToken).then((response) =>
+      setUser(response),
     );
   }, [accessToken, info, user]);
 
@@ -48,67 +47,65 @@ export const ManagementBlock = (props: ManagementBlockProps) => {
     });
   }, [accessToken, router, user]);
 
-  return (<>
-    <div className={styles.holder}>
-      <div className={styles.wrapper}>
-        <div>{`Имя: ${user.realname}`}</div>
-        <div>{`Никнейм: ${user.nickname}`}</div>
-        <div className={styles.role}>
-          <span>Роль:</span>
-          {allowedAdminister ? (
-            <Select
-              size="small"
-              variant="borderless"
-              onChange={handleSelectChange}
-              disabled={!allowedAdminister}
-              defaultValue={user.role.id}
-              popupMatchSelectWidth={false}
+  return (
+    <>
+      <div className={styles.holder}>
+        <div className={styles.wrapper}>
+          <div>{`Имя: ${user.realname}`}</div>
+          <div>{`Никнейм: ${user.nickname}`}</div>
+          <div className={styles.role}>
+            <span>Роль:</span>
+            {allowedAdminister ? (
+              <Select
+                size="small"
+                variant="borderless"
+                onChange={handleSelectChange}
+                disabled={!allowedAdminister}
+                defaultValue={user.role.id}
+                popupMatchSelectWidth={false}
+              >
+                {props.roles.map((role) => (
+                  <Select.Option key={role.id} value={role.id}>
+                    {role.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            ) : (
+              <span>{user.role.name}</span>
+            )}
+          </div>
+          <div>
+            {`Дата регистрации: ${dayjs(user.createdAt)
+              .locale('ru')
+              .format('DD MMMM YYYY в HH:mm')}`}
+          </div>
+          {allowedAdminister && (
+            <Button
+              className={styles.deleteBtn}
+              onClick={() => setDeleteModal(true)}
+              data-testid={TEST_IDS.profileManagement.deleteButton}
             >
-              {props.roles.map((role) => (
-                <Select.Option key={role.id} value={role.id}>
-                  {role.name}
-                </Select.Option>
-              ))}
-            </Select>
-          ) : (
-            <span>{user.role.name}</span>
+              Удалить
+            </Button>
           )}
         </div>
-        <div>
-          {`Дата регистрации: ${dayjs(user.createdAt)
-            .locale('ru')
-            .format('DD MMMM YYYY в HH:mm')}`}
-        </div>
-        {allowedAdminister && (
-          <Button
-            className={styles.deleteBtn}
-            onClick={() => setDeleteModal(true)}
-            data-testid={TEST_IDS.profileManagement.deleteButton}
-          >
-            Удалить
-          </Button>
-        )}
-      </div>
 
-      <Button
-        type="primary"
-        onClick={handleUpdateClick}
-        disabled={info.roleId === user.role.id}
+        <Button type="primary" onClick={handleUpdateClick} disabled={info.roleId === user.role.id}>
+          Сохранить
+        </Button>
+      </div>
+      <Modal
+        centered
+        title="Удаление"
+        open={deleteModal}
+        onCancel={() => setDeleteModal(false)}
+        footer={<Button onClick={handleDelete}>Да, удалить</Button>}
       >
-        Сохранить
-      </Button>
-    </div>
-    <Modal
-      centered
-      title="Удаление"
-      open={deleteModal}
-      onCancel={() => setDeleteModal(false)}
-      footer={<Button onClick={handleDelete}>Да, удалить</Button>}
-    >
-      <p>
-        {`Уверен, что хочешь удалить профиль пользователя `}
-        <strong>{user.nickname}</strong>?
-      </p>
-    </Modal>
-  </>);
+        <p>
+          {`Уверен, что хочешь удалить профиль пользователя `}
+          <strong>{user.nickname}</strong>?
+        </p>
+      </Modal>
+    </>
+  );
 };

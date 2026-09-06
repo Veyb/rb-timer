@@ -10,10 +10,7 @@ export default function NotFound() {
     <div className={styles.container}>
       <div className={styles.notFoundHolder}>
         <h1>Страница не найдена</h1>
-        <h4>
-          По загадочным причинам такой страницы не существует или она в
-          разработке ;)
-        </h4>
+        <h4>По загадочным причинам такой страницы не существует или она в разработке ;)</h4>
         <Link href="/">На главную</Link>
         <Image src="/owl.png" alt="logo" width="400" height="400" />
       </div>

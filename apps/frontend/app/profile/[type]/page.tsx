@@ -1,17 +1,12 @@
 // global modules
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
-
+import { ProfileContent } from '../../../components/profile-content';
+import { getRoles } from '../../../lib/api';
 // local modules
 import type { Role } from '../../../types';
-import { getRoles } from '../../../lib/api';
-import { ProfileContent } from '../../../components/profile-content';
 
-export default async function ProfileTypePage({
-  params,
-}: {
-  params: Promise<{ type: string }>;
-}) {
+export default async function ProfileTypePage({ params }: { params: Promise<{ type: string }> }) {
   const { type } = await params;
 
   if (type !== 'management' && type !== 'collections') {
@@ -24,7 +19,7 @@ export default async function ProfileTypePage({
   if (jwt) {
     try {
       roles = await getRoles(jwt);
-    } catch (err: any) {}
+    } catch {}
   }
 
   return <ProfileContent type={type} roles={roles} />;

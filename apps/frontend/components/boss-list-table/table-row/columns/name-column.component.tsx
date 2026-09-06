@@ -1,23 +1,22 @@
 // global modules
-import dayjs from 'dayjs';
-import { useCallback } from 'react';
-import { Button, Tooltip } from 'antd';
+
 import {
-  TeamOutlined,
-  QuestionOutlined,
   FieldTimeOutlined,
   QuestionCircleOutlined,
+  QuestionOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
-
-// local modules
-import { getNewRespawnTime } from './utils';
-import { type Boss, type Quality } from '../../../../types';
-import { updateBossTime } from '../../../../lib/api';
+import { Button, Tooltip } from 'antd';
+import dayjs from 'dayjs';
+import { useCallback } from 'react';
 import { useAuthContext } from '../../../../contexts/auth-context';
 import { useBossContext } from '../../../../contexts/boss-context';
-
+import { updateBossTime } from '../../../../lib/api';
+import type { Boss, Quality } from '../../../../types';
 // style modules
 import styles from '../../boss-list-table.module.css';
+// local modules
+import { getNewRespawnTime } from './utils';
 
 function getColor(quality: Quality) {
   switch (quality) {
@@ -48,11 +47,9 @@ export const NameColumn = ({ boss }: NameColumnProps) => {
 
   const notRespawnedClick = useCallback(() => {
     const time = getNewRespawnTime(boss.respawnTime, boss.interval);
-    updateBossTime(
-      boss.documentId,
-      { time, approximately: true },
-      accessToken
-    ).then((newBossApiInfo) => updateBossInList(newBossApiInfo));
+    updateBossTime(boss.documentId, { time, approximately: true }, accessToken).then(
+      (newBossApiInfo) => updateBossInList(newBossApiInfo),
+    );
   }, [accessToken, boss, updateBossInList]);
 
   return (

@@ -2,8 +2,8 @@
 import axios, { type RawAxiosRequestHeaders } from 'axios';
 
 // local modules
-import { type User } from '../../types';
-import { apiGet, API_URL, flattenApiResponse, apiDelete } from './base';
+import type { User } from '../../types';
+import { API_URL, apiDelete, apiGet, flattenApiResponse } from './base';
 
 export async function getUser(id: string, token: string | undefined) {
   const params = {
@@ -39,7 +39,7 @@ interface UpdateUserParams extends Pick<User, 'collections'> {
 export async function updateUser(
   userId: number,
   params: Partial<UpdateUserParams>,
-  token: string | undefined
+  token: string | undefined,
 ) {
   const headers: RawAxiosRequestHeaders = {
     Accept: 'application/json',
@@ -52,16 +52,13 @@ export async function updateUser(
     {
       ...params,
     },
-    { headers: { ...headers } }
+    { headers: { ...headers } },
   );
 
-  return flattenApiResponse(data);
+  return flattenApiResponse(data) as User;
 }
 
-export async function updateUsersMe(
-  params: Partial<UpdateUserParams>,
-  token: string | undefined
-) {
+export async function updateUsersMe(params: Partial<UpdateUserParams>, token: string | undefined) {
   const headers: RawAxiosRequestHeaders = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
@@ -73,10 +70,10 @@ export async function updateUsersMe(
     {
       ...params,
     },
-    { headers: { ...headers } }
+    { headers: { ...headers } },
   );
 
-  return flattenApiResponse(data);
+  return flattenApiResponse(data) as User;
 }
 
 export async function deleteUser(id: string, token: string | undefined) {

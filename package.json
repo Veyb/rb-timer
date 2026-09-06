@@ -1,5 +1,23 @@
 {
   "name": "rb-timer",
   "private": true,
-  "packageManager": "pnpm@12.3.4"
+  "packageManager": "pnpm@12.3.4",
+  "scripts": {
+    "clean:modules": "find . -name node_modules -type d -prune -exec rm -rf {} +",
+    "reinstall": "pnpm run clean:modules && pnpm install",
+    "clean:builds": "pnpm -r run clean",
+    "build": "pnpm -r build",
+    "rebuild": "pnpm run clean:builds && pnpm run build",
+    "check-types": "pnpm -r check-types",
+    "lint": "pnpm -r lint",
+    "lint:fix": "pnpm -r lint:fix",
+    "format": "pnpm -r format",
+    "format:fix": "pnpm -r format:fix",
+    "check": "pnpm -r check",
+    "check:fix": "pnpm -r check:fix"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "lefthook": "catalog:"
+  }
 }

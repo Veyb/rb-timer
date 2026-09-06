@@ -5,8 +5,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
-    "test": "eslint .",
+    "clean": "rm -rf .next",
+    "check-types": "tsc --noEmit",
+    "lint": "biome lint --error-on-warnings .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --error-on-warnings .",
+    "format:fix": "biome format --write .",
+    "check": "biome check --error-on-warnings .",
+    "check:fix": "biome check --write .",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "SLOWMO=1000 playwright test --headed"
@@ -31,6 +37,7 @@
     "styled-normalize": "8.1.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "catalog:",
     "@playwright/test": "1.62.1",
     "@rb-timer/typescript-config": "workspace:*",
     "@types/node": "catalog:",
@@ -38,8 +45,6 @@
     "@types/ramda": "0.32.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
-    "eslint": "9.39.5",
-    "eslint-config-next": "16.3.1",
     "typescript": "catalog:"
   }
 }

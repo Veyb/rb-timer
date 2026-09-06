@@ -1,6 +1,7 @@
 'use client';
 
 // global modules
+import axios from 'axios';
 import {
   createContext,
   type ReactNode,
@@ -10,11 +11,10 @@ import {
   useRef,
   useState,
 } from 'react';
-
-// local modules
-import { type Boss } from '../types';
 import { getBossList } from '../lib/api';
 import { sortBossList } from '../lib/utils';
+// local modules
+import type { Boss } from '../types';
 import { useAuthContext } from './auth-context';
 
 const BossContext = createContext<{
@@ -30,20 +30,15 @@ interface BossContextProviderProps {
   bossList: Boss[];
 }
 
-export const BossContextProvider = ({
-  children,
-  bossList: list,
-}: BossContextProviderProps) => {
-  let timer: any = useRef(null);
+export const BossContextProvider = ({ children, bossList: list }: BossContextProviderProps) => {
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const auth = useAuthContext();
   const [bossList, setBossList] = useState<Boss[]>(list);
 
   const updateBossInList = useCallback(
     (boss: Boss, autoUpdate?: boolean) => {
-      clearTimeout(timer.current);
-      const index = bossList.findIndex(
-        ({ documentId }) => documentId === boss.documentId
-      );
+      clearTimeout(timer.current ?? undefined);
+      const index = bossList.findIndex(({ documentId }) => documentId === boss.documentId);
       const nextBossList = [...bossList];
       nextBossList[index] = boss;
 
@@ -55,9 +50,9 @@ export const BossContextProvider = ({
         setBossList(sortBossList(nextBossList));
       }
 
-      return () => clearTimeout(timer.current);
+      return () => clearTimeout(timer.current ?? undefined);
     },
-    [bossList]
+    [bossList],
   );
 
   useEffect(() => {
@@ -68,8 +63,8 @@ export const BossContextProvider = ({
         .then((data) => {
           setBossList(data);
         })
-        .catch((err: any) => {
-          console.warn(err.response?.data.error);
+        .catch((err) => {
+          console.warn(axios.isAxiosError(err) ? err.response?.data.error : err);
         });
     }, 10000);
 
@@ -91,9 +86,7 @@ export const BossContextProvider = ({
   // }, []);
 
   return (
-    <BossContext.Provider value={{ bossList, updateBossInList }}>
-      {children}
-    </BossContext.Provider>
+    <BossContext.Provider value={{ bossList, updateBossInList }}>{children}</BossContext.Provider>
   );
 };
 

@@ -1,13 +1,7 @@
 // global modules
 import cn from 'classnames';
 import type { HTMLAttributes, MouseEventHandler } from 'react';
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 // local modules
 import { ScrollableHolder, ScrollThumb } from './scrollable-holder';
@@ -44,9 +38,8 @@ export function Scrollable({
         (
           (100 - thumbHeight) *
           (scrollHostRef.current.scrollTop /
-            (scrollHostRef.current.scrollHeight -
-              scrollHostRef.current.clientHeight))
-        ).toFixed(2)
+            (scrollHostRef.current.scrollHeight - scrollHostRef.current.clientHeight))
+        ).toFixed(2),
       );
       setThumbTop(newTop);
     }
@@ -60,33 +53,27 @@ export function Scrollable({
       e.stopPropagation();
       setTopForScroll();
     },
-    [setTopForScroll]
+    [setTopForScroll],
   );
 
-  const handlerMouseMove = useCallback(
-    (e: any): void => {
-      if (dragging.current && scrollHostRef.current) {
-        const deltaScrollHeight =
-          scrollHostRef.current.scrollHeight -
-          scrollHostRef.current.clientHeight;
-        let delta =
-          deltaHeight.current * (scrollTop.current / deltaScrollHeight) +
-          (e.screenY - screenY.current);
-        if (delta > deltaHeight.current) delta = deltaHeight.current;
-        else if (delta < 0) delta = 0;
+  const handlerMouseMove = useCallback((e: MouseEvent): void => {
+    if (dragging.current && scrollHostRef.current) {
+      const deltaScrollHeight =
+        scrollHostRef.current.scrollHeight - scrollHostRef.current.clientHeight;
+      let delta =
+        deltaHeight.current * (scrollTop.current / deltaScrollHeight) +
+        (e.screenY - screenY.current);
+      if (delta > deltaHeight.current) delta = deltaHeight.current;
+      else if (delta < 0) delta = 0;
 
-        const newScrollTop = Math.round(
-          deltaScrollHeight * (delta / deltaHeight.current)
-        );
+      const newScrollTop = Math.round(deltaScrollHeight * (delta / deltaHeight.current));
 
-        // set Scroll top
-        if (scrollHostRef.current) {
-          scrollHostRef.current.scrollTop = newScrollTop;
-        }
+      // set Scroll top
+      if (scrollHostRef.current) {
+        scrollHostRef.current.scrollTop = newScrollTop;
       }
-    },
-    [deltaHeight, scrollTop, screenY]
-  );
+    }
+  }, []);
 
   const handlerMouseUp = useCallback((): void => {
     dragging.current = false;
@@ -95,9 +82,7 @@ export function Scrollable({
     window.removeEventListener('mousemove', handlerMouseMove, false);
   }, [handlerMouseMove]);
 
-  const handlerOnMouseDownThumb = useCallback<
-    MouseEventHandler<HTMLDivElement>
-  >(
+  const handlerOnMouseDownThumb = useCallback<MouseEventHandler<HTMLDivElement>>(
     (e): void => {
       e.stopPropagation();
       e.preventDefault();
@@ -106,31 +91,26 @@ export function Scrollable({
       setStateDragging(true);
       screenY.current = e.screenY;
       if (scrollHostRef.current && thumbRef.current) {
-        deltaHeight.current =
-          scrollHostRef.current?.clientHeight - thumbRef.current?.clientHeight;
+        deltaHeight.current = scrollHostRef.current?.clientHeight - thumbRef.current?.clientHeight;
         scrollTop.current = scrollHostRef.current?.scrollTop;
       }
 
       window.addEventListener('mousemove', handlerMouseMove, false);
       window.addEventListener('mouseup', handlerMouseUp, { once: true });
     },
-    [handlerMouseMove, handlerMouseUp]
+    [handlerMouseMove, handlerMouseUp],
   );
-  const handlerOnMouseDownScrollBar = useCallback<
-    MouseEventHandler<HTMLDivElement>
-  >(
+  const handlerOnMouseDownScrollBar = useCallback<MouseEventHandler<HTMLDivElement>>(
     (e) => {
       const { clientY } = e;
       if (scrollHostRef.current && thumbRef.current) {
         const deltaScrollHeight =
-          scrollHostRef.current.scrollHeight -
-          scrollHostRef.current.clientHeight;
+          scrollHostRef.current.scrollHeight - scrollHostRef.current.clientHeight;
 
         const trackHeight = scrollHostRef.current.clientHeight;
         const thumbHeight = thumbRef.current.getBoundingClientRect().height;
 
-        const topPositionY =
-          scrollHostRef.current.getBoundingClientRect().top + thumbHeight / 2;
+        const topPositionY = scrollHostRef.current.getBoundingClientRect().top + thumbHeight / 2;
         const deltaTopPosition = clientY - topPositionY;
 
         scrollHostRef.current.scrollTop =
@@ -138,16 +118,14 @@ export function Scrollable({
       }
       setTopForScroll();
     },
-    [setTopForScroll]
+    [setTopForScroll],
   );
 
   const recalculateThumbHeight = useCallback(() => {
     const host = scrollHostRef.current;
     if (!host) return;
 
-    const newHeight = Number(
-      ((100 * host.clientHeight) / host.scrollHeight).toFixed(2)
-    );
+    const newHeight = Number(((100 * host.clientHeight) / host.scrollHeight).toFixed(2));
 
     setThumbHeight((prev) => {
       const next = newHeight === 100 ? 0 : newHeight;
@@ -157,35 +135,45 @@ export function Scrollable({
 
   useLayoutEffect(() => {
     recalculateThumbHeight();
-  }, [recalculateThumbHeight, maxHeight, children]);
+  }, [recalculateThumbHeight]);
 
   useEffect(() => {
     const host = scrollHostRef.current;
     if (!host) return;
 
-    const observer = new ResizeObserver(() => recalculateThumbHeight());
-    observer.observe(host);
+    // `ResizeObserver` catches box-size changes (e.g. a `maxHeight` prop change);
+    // `MutationObserver` catches content changes that grow/shrink `scrollHeight`
+    // without changing the host's own box (e.g. `children` adding/removing rows).
+    // Together they cover every real trigger for a stale thumb size, observed
+    // directly on the DOM instead of inferred from React props the calculation
+    // never reads.
+    const resizeObserver = new ResizeObserver(() => recalculateThumbHeight());
+    resizeObserver.observe(host);
 
-    return () => observer.disconnect();
+    const mutationObserver = new MutationObserver(() => recalculateThumbHeight());
+    mutationObserver.observe(host, { childList: true, subtree: true, characterData: true });
+
+    return () => {
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+    };
   }, [recalculateThumbHeight]);
 
   return (
     <ScrollableHolder $maxHeight={maxHeight} $offset={offset}>
       <div
-        className={cn(
-          'scrollHost',
-          { scrollbarExist: !!thumbHeight },
-          className
-        )}
+        className={cn('scrollHost', { scrollbarExist: !!thumbHeight }, className)}
         {...restProps}
         ref={scrollHostRef}
         onScroll={handlerScroll}
       >
         {children}
       </div>
+      {/* Purely a mouse-driven visual proxy for the natively-scrollable div above (which has real `overflow-y: scroll`) - hidden from assistive tech rather than given its own keyboard implementation. */}
       <div
         className={cn('scrollbar', { exist: !!thumbHeight })}
         onMouseDown={handlerOnMouseDownScrollBar}
+        aria-hidden="true"
       >
         <ScrollThumb
           className={cn({ dragging: stateDragging })}

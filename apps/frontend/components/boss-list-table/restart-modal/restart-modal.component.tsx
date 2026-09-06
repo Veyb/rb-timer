@@ -1,13 +1,13 @@
 // global modules
-import dayjs, { Dayjs } from 'dayjs';
-import { useCallback, useState } from 'react';
+
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Modal } from 'antd';
-
+import dayjs, { type Dayjs } from 'dayjs';
+import { useCallback, useState } from 'react';
+import { useAuthContext } from '../../../contexts/auth-context';
+import { useBossContext } from '../../../contexts/boss-context';
 // local modules
 import { updateBossTime } from '../../../lib/api';
-import { useBossContext } from '../../../contexts/boss-context';
-import { useAuthContext } from '../../../contexts/auth-context';
 
 // styles modules
 import styles from './restart-modal.module.css';
@@ -39,7 +39,7 @@ export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
             approximately: false,
             restarted: true,
           },
-          accessToken
+          accessToken,
         );
 
         updateBossInList(updatedBoss, true);
@@ -50,23 +50,17 @@ export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
 
   const handleConfirmClick = useCallback(async () => {
     if (!calendarDate) return;
-    const filteredList = bossList.filter(
-      (boss) => !boss.world && boss.restarted
-    );
+    const filteredList = bossList.filter((boss) => !boss.world && boss.restarted);
 
     filteredList.forEach(async (boss) => {
       const calendarTime = dayjs(calendarDate).second(0);
-      const diff = boss.firstInterval
-        ? boss.firstInterval - boss.interval
-        : undefined;
-      const time = diff
-        ? calendarTime.add(diff, 'hour').toISOString()
-        : calendarTime.toISOString();
+      const diff = boss.firstInterval ? boss.firstInterval - boss.interval : undefined;
+      const time = diff ? calendarTime.add(diff, 'hour').toISOString() : calendarTime.toISOString();
 
       const updatedBoss = await updateBossTime(
         boss.documentId,
         { time, approximately: true },
-        accessToken
+        accessToken,
       );
 
       updateBossInList(updatedBoss, true);
@@ -76,25 +70,18 @@ export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
   }, [accessToken, calendarDate, bossList, updateBossInList, onClose]);
 
   return (
-    (<Modal
-      centered
-      title="Рестарт"
-      open={visible}
-      onCancel={onClose}
-      footer={null}
-    >
+    <Modal centered title="Рестарт" open={visible} onCancel={onClose} footer={null}>
       <p>
-        Кнопка «Сброс» выставляет время респа для всех боссов на текущее время и
-        ставит на паузу таймер автоматического обновления.
+        Кнопка «Сброс» выставляет время респа для всех боссов на текущее время и ставит на паузу
+        таймер автоматического обновления.
       </p>
       <p>
-        Поле ввода служит для корректировки времени респа нереснувшихся боссов.
-        Заполнить это поле надо лишь один раз, когда станет известно время
-        рестарта сервера.
+        Поле ввода служит для корректировки времени респа нереснувшихся боссов. Заполнить это поле
+        надо лишь один раз, когда станет известно время рестарта сервера.
       </p>
       <p>
-        Выяснить время рестарта можно дождавшись респауна босса после рестарта и
-        вычесть из этого времени интервал появления босса.
+        Выяснить время рестарта можно дождавшись респауна босса после рестарта и вычесть из этого
+        времени интервал появления босса.
       </p>
       <div className={styles.buttonsBlock}>
         <Button className={styles.resetButton} onClick={handleResetClick}>
@@ -116,6 +103,6 @@ export const RestartModal = ({ visible, onClose }: RestartModalProps) => {
           icon={<UploadOutlined />}
         />
       </div>
-    </Modal>)
+    </Modal>
   );
 };

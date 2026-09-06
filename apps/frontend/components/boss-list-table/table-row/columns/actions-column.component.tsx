@@ -1,15 +1,15 @@
 // global modules
-import { useCallback } from 'react';
-import dayjs, { Dayjs } from 'dayjs';
-import { Space, Button, DatePicker } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
 
-// local modules
-import { type Boss } from '../../../../types';
+import { UploadOutlined } from '@ant-design/icons';
+import { Button, DatePicker, Space } from 'antd';
+import dayjs, { type Dayjs } from 'dayjs';
+import { useCallback } from 'react';
+import { useAuthContext } from '../../../../contexts/auth-context';
+import { useBossContext } from '../../../../contexts/boss-context';
 import { updateBossTime } from '../../../../lib/api';
 import { useIsClient } from '../../../../lib/hooks/use-is-client';
-import { useBossContext } from '../../../../contexts/boss-context';
-import { useAuthContext } from '../../../../contexts/auth-context';
+// local modules
+import type { Boss } from '../../../../types';
 
 interface ActionsColumnProps {
   boss: Boss;
@@ -38,7 +38,7 @@ export const ActionsColumn = ({
     const updatedBoss = await updateBossTime(
       boss.documentId,
       { time, approximately: false },
-      accessToken
+      accessToken,
     );
 
     updateBossInList(updatedBoss);

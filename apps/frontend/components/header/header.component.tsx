@@ -1,20 +1,19 @@
 'use client';
 
+import { UserOutlined } from '@ant-design/icons';
+import { Dropdown, Modal, Space } from 'antd';
 // global modules
 import dayjs from 'dayjs';
-import Link from 'next/link';
 import Image from 'next/image';
-import styled from 'styled-components';
-import { Dropdown, Modal, Space } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
-
+import styled from 'styled-components';
+import { useAuthContext } from '../../contexts/auth-context';
+import { Button } from '../../styled-components';
+import { Menu, MenuDivider, MenuItem } from '../menu';
 // local modules
 import { Donations } from './donations';
 import { OnlineList } from './online-list';
-import { Button } from '../../styled-components';
-import { useAuthContext } from '../../contexts/auth-context';
-import { Menu, MenuDivider, MenuItem } from '../menu';
 
 const Holder = styled.header`
   position: sticky;
@@ -85,19 +84,13 @@ export const Header = () => {
 
   const menu = (
     <Menu>
-      <MenuItem onClick={() => setSupportModal(true)}>
-        Поддержать автора
-      </MenuItem>
+      <MenuItem onClick={() => setSupportModal(true)}>Поддержать автора</MenuItem>
       <Link href="/profile">
-
         <MenuItem>Профиль</MenuItem>
-
       </Link>
       {auth.allowed && (
         <Link href="/users">
-
           <MenuItem>Пользователи</MenuItem>
-
         </Link>
       )}
       <MenuDivider />
@@ -111,15 +104,7 @@ export const Header = () => {
       <div className="wrapper">
         <Space size="large">
           <Link href="/" className="homeLink">
-
-            <Image
-              priority
-              fill
-              sizes="100%"
-              alt="logo"
-              src="/logo_lu4.webp"
-            />
-
+            <Image priority fill sizes="100%" alt="logo" src="/logo_lu4.webp" />
           </Link>
           <Donations />
         </Space>
@@ -127,18 +112,12 @@ export const Header = () => {
           <OnlineList />
           <h2 className="time">{time}</h2>
           {auth.loggedIn ? (
-            <Dropdown
-              popupRender={() => menu}
-              trigger={['click']}
-              placement="bottomRight"
-            >
+            <Dropdown popupRender={() => menu} trigger={['click']} placement="bottomRight">
               <Button shape="circle" size="large" icon={<UserOutlined />} />
             </Dropdown>
           ) : (
             <Link href="/login">
-
               <Button shape="round">Вход</Button>
-
             </Link>
           )}
         </Space>
@@ -153,8 +132,8 @@ export const Header = () => {
         {
           <>
             <p>
-              Если у вас, вдруг, появилось желание поддержать автора, это можно
-              сделать по следующим реквизитам:
+              Если у вас, вдруг, появилось желание поддержать автора, это можно сделать по следующим
+              реквизитам:
             </p>
 
             <ul className="modalList">
@@ -162,15 +141,15 @@ export const Header = () => {
               <li>4276 5500 3609 9714 (Сбербанк) Олег Ц.</li>
             </ul>
             <p>
-              Или же любым другим удобным Вам способом. Для этого можете
-              напрямую обратить к персонажу Тэя в игре или дискорде :)
+              Или же любым другим удобным Вам способом. Для этого можете напрямую обратить к
+              персонажу Тэя в игре или дискорде :)
             </p>
 
             <p>
               P.S.
               <br />
-              Указывайте пожалуйста ник или как вас подписать (например Аноним),
-              так как теперь есть возможность посмотреть список донатеров.
+              Указывайте пожалуйста ник или как вас подписать (например Аноним), так как теперь есть
+              возможность посмотреть список донатеров.
             </p>
             <p>Спасибо</p>
             <Image src="/requisites.jpg" alt="logo" width="200" height="200" />
