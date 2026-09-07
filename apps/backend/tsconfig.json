@@ -21,7 +21,11 @@
     ".cache/",
     ".tmp/",
     "src/admin/",
-    "**/*.test.ts",
     "src/plugins/**"
   ]
+  // `**/*.test.ts` used to be excluded here (it comes from Strapi's template).
+  // Dropping it means `check-types` covers the suite: with it in place, the
+  // helpers under `tests/helpers/` were checked while the tests using them
+  // were not, so an editor would flag a type error that `pnpm check-types`
+  // reported clean.
 }

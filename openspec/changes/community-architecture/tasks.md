@@ -15,14 +15,14 @@
 
 ## 3. Community entity and membership
 
-- [ ] 3.1 Create the `community` content type with required `name`, required `server` enumeration (`Gamma`, `Black`, `White`, `Carmine`, `MasterWork`) and optional single-image `logo`, and verify it appears in the Content Manager and rejects a missing name or an unknown server
-- [ ] 3.2 Add the `community` `manyToOne` relation to the user schema extension with the matching `users` inverse on `community`, and verify a community can be assigned to a user from the admin panel
-- [ ] 3.3 Leave every users-permissions role without any permission on `api::community.community`, and verify an authenticated request to the community collection endpoint is refused
-- [ ] 3.4 Add a `beforeCreate`/`beforeUpdate` lifecycle hook on `community` that resolves the referenced upload file and rejects a logo whose stored `width` and `height` differ, and verify a non-square upload is refused in the admin panel while a square one is accepted
-- [ ] 3.5 Populate `community` (with `logo`) into `user.me`, and verify `/users/me` returns the community's name, server and logo for a member and a null community for a community-less user
-- [ ] 3.6 Add `Community` to `apps/frontend/types` and extend the `User` type with the optional community, and verify `pnpm --filter frontend check-types` passes
-- [ ] 3.7 Write a migration that seeds one community from the current deployment and assigns every user holding a role other than the default to it, and verify after running it that no previously-privileged user is left without a community
-- [ ] 3.8 Extend the e2e fixtures so the fixture user is assigned a community, and verify the Playwright suite reaches the role-gated screens
+- [x] 3.1 Create the `community` content type with required `name`, required `server` enumeration (`Gamma`, `Black`, `White`, `Carmine`, `MasterWork`) and optional single-image `logo`, and verify it appears in the Content Manager and rejects a missing name or an unknown server
+- [x] 3.2 Add the `community` `manyToOne` relation to the user schema extension with the matching `users` inverse on `community`, and verify a community can be assigned to a user from the admin panel
+- [x] 3.3 Leave every users-permissions role without any permission on `api::community.community`, and verify an authenticated request to the community collection endpoint is refused
+- [x] 3.4 Add a `beforeCreate`/`beforeUpdate` lifecycle hook on `community` that resolves the referenced upload file and rejects a logo whose stored `width` and `height` differ, and verify a non-square upload is refused in the admin panel while a square one is accepted
+- [x] 3.5 Populate `community` (with `logo`) into `user.me`, and verify `/users/me` returns the community's name, server and logo for a member and a null community for a community-less user
+- [x] 3.6 Add `Community` to `apps/frontend/types` and extend the `User` type with the optional community, and verify `pnpm --filter frontend check-types` passes
+- [x] 3.7 Write a migration that seeds one community from the current deployment and assigns every user holding a role other than the default to it, and verify after running it that no previously-privileged user is left without a community
+- [x] 3.8 Extend the e2e fixtures so the fixture user is assigned a community, and verify the Playwright suite reaches the role-gated screens
 
 ## 4. Access gate
 
