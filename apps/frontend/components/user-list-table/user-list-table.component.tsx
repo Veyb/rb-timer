@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { type MouseEvent, useMemo, useState } from 'react';
 import { TEST_IDS } from '../../constants/test-ids';
 import { useAuthContext } from '../../contexts/auth-context';
-import type { Role, User } from '../../types';
+import type { CommunityMember, Role } from '../../types';
 // local modules
 import { Layout } from '../layout';
 import { FilterBlock } from './filter-block';
@@ -15,20 +15,12 @@ import { FilterBlock } from './filter-block';
 import styles from './user-list-table.module.css';
 
 interface UserRowProps {
-  user: User;
+  user: CommunityMember;
 }
 
 const UserRow = ({ user }: UserRowProps) => {
   const router = useRouter();
   const { allowedUpdate } = useAuthContext();
-  const collectionsValues = Object.values(user.collections || {});
-  const checkedCollectionsCount = collectionsValues.filter((collection) =>
-    Object.values(collection).every(Boolean),
-  ).length;
-
-  const collectionsStatus = collectionsValues.length
-    ? `${checkedCollectionsCount}/${collectionsValues.length}`
-    : 'Не заполнено';
 
   const handleClick = (e: MouseEvent<HTMLTableRowElement>) => {
     e.preventDefault();
@@ -42,13 +34,12 @@ const UserRow = ({ user }: UserRowProps) => {
       <td className={styles.nickname}>{user.nickname}</td>
       <td className={styles.column}>{user.realname}</td>
       <td className={cn(styles.column, styles.role)}>{user.role.name}</td>
-      <td className={styles.column}>{collectionsStatus}</td>
     </tr>
   );
 };
 
 interface UserListTableProps {
-  users: User[];
+  users: CommunityMember[];
   roles: Role[];
 }
 
@@ -75,7 +66,6 @@ export const UserListTable = ({ users, roles }: UserListTableProps) => {
             <th className={styles.nickname}>Никнейм</th>
             <th className={styles.column}>Имя</th>
             <th className={cn(styles.column, styles.role)}>Роль</th>
-            <th className={styles.column}>Статус коллекций</th>
           </tr>
         </thead>
         {renderedUsers.length ? (

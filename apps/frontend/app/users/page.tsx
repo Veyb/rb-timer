@@ -1,17 +1,17 @@
 // global modules
 import { cookies } from 'next/headers';
 import { UsersContent } from '../../components/users-content';
-import { getRoles, getUsers } from '../../lib/api';
+import { getCommunityMembers, getRoles } from '../../lib/api';
 // local modules
-import type { Role, User } from '../../types';
+import type { CommunityMember, Role } from '../../types';
 
 export default async function UsersPage() {
   const jwt = (await cookies()).get('jwt')?.value;
 
-  let users: User[] = [];
+  let users: CommunityMember[] = [];
   let roles: Role[] = [];
   try {
-    const [allUsers, rolesData] = await Promise.all([getUsers(jwt), getRoles(jwt)]);
+    const [allUsers, rolesData] = await Promise.all([getCommunityMembers(jwt), getRoles(jwt)]);
     users = allUsers;
     roles = rolesData;
   } catch {}

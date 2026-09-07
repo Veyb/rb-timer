@@ -25,7 +25,16 @@ export const TEST_IDS = {
     inviteCodeSubmit: 'access-placeholder-invite-submit',
   },
   profileManagement: {
-    deleteButton: 'profile-management-delete-button',
+    // Your own role is shown, never editable: the role endpoint refuses a
+    // self-target. So this is the suite's proof that a fixture's role took
+    // effect, in place of the officer-only control it used to assert on.
+    roleValue: 'profile-management-role-value',
+    // Offered only on *another* member's page, and only to an officer.
+    roleSelect: 'profile-management-role-select',
+    leaveCommunity: 'profile-management-leave-community',
+    removeMember: 'profile-management-remove-member',
+    deleteAccount: 'profile-management-delete-account',
+    confirm: 'profile-management-confirm',
   },
   profileCollections: {
     effectsBlock: 'profile-collections-effects-block',

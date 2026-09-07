@@ -61,7 +61,7 @@ export const ProfileContent = ({ type, roles }: ProfileContentProps) => {
     {
       key: 'management',
       label: 'Управление',
-      children: <ManagementBlock user={user} roles={roles} />,
+      children: <ManagementBlock user={user} roles={roles} isOwnProfile />,
     },
   ];
 

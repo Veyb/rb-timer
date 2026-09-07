@@ -6,12 +6,12 @@ import { useAuthContext } from '../../contexts/auth-context';
 // style modules
 import styles from '../../styles/main.module.css';
 // local modules
-import type { Role, User } from '../../types';
+import type { CommunityMember, Role } from '../../types';
 import { AccessPlaceholder } from '../access-placeholder';
 import { UserListTable } from '../user-list-table';
 
 interface UsersContentProps {
-  users: User[];
+  users: CommunityMember[];
   roles: Role[];
 }
 

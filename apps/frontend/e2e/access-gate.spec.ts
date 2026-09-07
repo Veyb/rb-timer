@@ -1,19 +1,20 @@
+import path from 'node:path';
 import { TEST_IDS } from '../constants/test-ids';
-import { DEFAULT_ROLE_MEMBER, NO_COMMUNITY_USER } from './fixtures/constants';
-import { signInOrRegister } from './fixtures/sign-in';
+import {
+  DEFAULT_ROLE_STORAGE_STATE_PATH,
+  NO_COMMUNITY_STORAGE_STATE_PATH,
+} from './fixtures/constants';
 import { expect, test } from './fixtures/test';
 
-// Each account signs in for itself rather than reusing the suite's officer
-// storage state, because the point here is the states the gate refuses.
-test.use({ storageState: { cookies: [], origins: [] } });
+// Sessions saved by gate-fixtures.setup.ts, one per corner of the gate. Signing
+// in per test instead trips Strapi's rate limit on /auth/local.
+const sessionOf = (relative: string) => path.resolve(__dirname, '..', relative);
 
 // Access needs a community AND a role above the one registration grants. One
 // group per failing axis, so neither placeholder is asserted against a state
 // that would have been refused for the other reason anyway.
 test.describe('a role without a community', () => {
-  test.beforeEach(async ({ page }) => {
-    await signInOrRegister(page, NO_COMMUNITY_USER);
-  });
+  test.use({ storageState: sessionOf(NO_COMMUNITY_STORAGE_STATE_PATH) });
 
   // This account holds `viewer`, so a role-only check would have let it
   // through: what refuses it here is the missing membership.
@@ -58,9 +59,7 @@ test.describe('a role without a community', () => {
 });
 
 test.describe('a community member on the default role', () => {
-  test.beforeEach(async ({ page }) => {
-    await signInOrRegister(page, DEFAULT_ROLE_MEMBER);
-  });
+  test.use({ storageState: sessionOf(DEFAULT_ROLE_STORAGE_STATE_PATH) });
 
   // The mirror image: membership is there, the role is not, so the way out is
   // an officer rather than an invite code.

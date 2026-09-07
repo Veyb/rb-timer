@@ -34,6 +34,10 @@
   margin: 0;
 }
 
+.placeholderAction {
+  margin-top: 2rem;
+}
+
 .inviteForm {
   display: flex;
   align-items: flex-end;

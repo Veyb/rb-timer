@@ -38,6 +38,10 @@ export const DEFAULT_ROLE_MEMBER = {
 // Kept in step with the default in apps/backend/scripts/e2e-fixture.js.
 export const FIXTURE_COMMUNITY_NAME = 'E2E Fixture Community';
 
+// One saved session per account. Signing in inside a test instead trips
+// Strapi's rate limit on /auth/local once the suite runs files in parallel.
 export const STORAGE_STATE_PATH = 'e2e/.auth/fixture-user.json';
+export const NO_COMMUNITY_STORAGE_STATE_PATH = 'e2e/.auth/no-community-user.json';
+export const DEFAULT_ROLE_STORAGE_STATE_PATH = 'e2e/.auth/default-role-user.json';
 
 export const INVALID_CREDENTIALS_TEXT = 'Указан неправильный username или пароль';

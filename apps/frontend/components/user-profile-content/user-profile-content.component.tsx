@@ -8,9 +8,8 @@ import { useAuthContext } from '../../contexts/auth-context';
 // style modules
 import styles from '../../styles/main.module.css';
 // local modules
-import type { Role, User } from '../../types';
+import type { CommunityMember, Role } from '../../types';
 import { AccessPlaceholder } from '../access-placeholder';
-import { CollectionsBlock } from '../collections-block';
 import { Layout } from '../layout';
 import { ManagementBlock } from '../management-block';
 
@@ -36,7 +35,7 @@ const Holder = styled.div`
 
 interface UserProfileContentProps {
   type: string;
-  user: User;
+  user: CommunityMember;
   roles: Role[];
 }
 
@@ -62,21 +61,9 @@ export const UserProfileContent = ({ type, user, roles }: UserProfileContentProp
     {
       key: 'management',
       label: 'Управление',
-      children: <ManagementBlock user={user} roles={roles} />,
+      children: <ManagementBlock user={user} roles={roles} isOwnProfile={false} />,
     },
   ];
-
-  // TODO(community-architecture): delete along with the Collection and Effect
-  // content types and the /users/:id/collections route. See the same note in
-  // profile-content — withdrawn from the tab bar, still mounted for a direct
-  // URL so existing links keep working.
-  if (type === 'collections') {
-    items.push({
-      key: 'collections',
-      label: 'Коллекции',
-      children: <CollectionsBlock user={user} />,
-    });
-  }
 
   return (
     <Holder className={styles.container}>

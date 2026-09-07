@@ -29,7 +29,7 @@ setup('authenticate as the e2e fixture user', async ({ page }) => {
   // Those changes happened outside the running session; navigate to force
   // layout.tsx's server-side getCurrentUser() to refetch /users/me.
   await page.goto('/profile/management');
-  await expect(page.getByTestId(TEST_IDS.profileManagement.deleteButton)).toBeVisible();
+  await expect(page.getByTestId(TEST_IDS.profileManagement.roleValue)).toHaveText('Офицер');
 
   await page.context().storageState({ path: STORAGE_STATE_ABS_PATH });
 });

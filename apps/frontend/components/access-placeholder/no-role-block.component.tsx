@@ -2,6 +2,8 @@
 import { TEST_IDS } from '../../constants/test-ids';
 // style modules
 import styles from '../../styles/main.module.css';
+// local modules
+import { LeaveCommunityButton } from '../leave-community-button';
 
 /**
  * Shown to a member of a community whose role does not reach the screen they
@@ -14,6 +16,9 @@ export const NoRoleBlock = () => {
     <div className={styles.infoHolder} data-testid={TEST_IDS.accessPlaceholder.noRole}>
       <h2>Доступ ограничен</h2>
       <div>За доступом обратитесь к кому-нибудь из Офицеров вашего сообщества.</div>
+      <div className={styles.placeholderAction}>
+        <LeaveCommunityButton />
+      </div>
     </div>
   );
 };

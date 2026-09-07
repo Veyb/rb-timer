@@ -10,6 +10,7 @@ export type {
   Rank,
 } from './collection.types';
 export type { Community, CommunityLogo, GameServer } from './community.types';
+export type { CommunityMember } from './community-member.types';
 export type { Donation } from './donation.types';
 export type { Role, RoleType } from './role.types';
 export type { MayHaveTestId } from './test-id.types';
