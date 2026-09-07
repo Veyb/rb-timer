@@ -39,15 +39,15 @@ setup('authenticate as the e2e fixture user', async ({ page }) => {
     await page.waitForURL('/');
   }
 
-  // Fresh registration lands on the lowest-privilege role; upgrade it
-  // directly in the database so the fixture account can reach every
-  // role-gated screen this suite smoke-tests.
-  execFileSync('pnpm', ['run', 'e2e:fixture-role', FIXTURE_USER.email], {
+  // Fresh registration lands on the lowest-privilege role and no community;
+  // grant both directly in the database so the fixture account can reach
+  // every gated screen this suite smoke-tests.
+  execFileSync('pnpm', ['run', 'e2e:fixture', FIXTURE_USER.email], {
     cwd: BACKEND_DIR,
     stdio: 'inherit',
   });
 
-  // The role change happened outside the running session; navigate to force
+  // Those changes happened outside the running session; navigate to force
   // layout.tsx's server-side getCurrentUser() to refetch /users/me.
   await page.goto('/profile/management');
   await expect(page.getByTestId(TEST_IDS.profileManagement.deleteButton)).toBeVisible();

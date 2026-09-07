@@ -8,7 +8,7 @@
     "start": "strapi start",
     "build": "strapi build",
     "strapi": "strapi",
-    "e2e:fixture-role": "node scripts/e2e-fixture-role.js",
+    "e2e:fixture": "node scripts/e2e-fixture.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "clean": "rm -rf dist dist-test",

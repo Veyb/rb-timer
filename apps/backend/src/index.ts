@@ -1,3 +1,5 @@
+import { seedDefaultCommunity } from './helpers/seed-default-community';
+
 export default {
   /**
    * An asynchronous register function that runs before
@@ -37,7 +39,12 @@ export default {
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
    */
-  bootstrap({ strapi }) {
+  async bootstrap({ strapi }) {
+    // Runs after `schema.sync()`, which is the only point at which the
+    // `communities` table exists — see the note in the helper for why this is
+    // not a migration under `database/migrations/`.
+    await seedDefaultCommunity({ strapi });
+
     const socketUsers: Record<string, unknown> = {};
     // Same env var and format as config/middlewares.ts's `strapi::cors` origin
     // (comma-separated, e.g. "https://example.com,https://www.example.com").
