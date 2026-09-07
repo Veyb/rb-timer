@@ -49,7 +49,7 @@
 - [x] 5.9 Add an `io.use()` handshake in `apps/backend/src/index.ts` that verifies the JWT and resolves the user's community server-side, ignoring any client-supplied identity, and verify a connection without a valid credential receives no community data
 - [x] 5.10 Replace the global `socketUsers` broadcast with per-community rooms, leaving `newDonations` global, and verify two members of different communities never appear in each other's presence data and that a community-less connection appears in none
 - [x] 5.11 Add negative e2e tests asserting a member of one community cannot reach a member of another by any route — member list, member detail, role change, presence — and verify they pass
-- [ ] 5.12 Optionally add the document-service middleware backstop with an explicit `SCOPED_UIDS` allowlist and an early return for any auth strategy other than `users-permissions`, and verify the admin panel still lists all users across all communities
+- [~] 5.12 SKIPPED — the document-service middleware backstop would not intercept the code it backs up: it wraps `strapi.documents(uid).*` only, while every member read goes through the query engine. See design.md, Decision 3, "Resolved"; revisit when the invite-code endpoints land
 
 ## 6. Database
 

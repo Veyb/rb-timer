@@ -152,6 +152,34 @@ it is optional — if it proves to obscure more than it protects, tiers 1 and 2
 plus Decision 2 already satisfy the specs. Recorded here so the decision to
 drop it is a decision and not an omission.
 
+**Resolved: tier 3 is not built.** Not on grounds of taste — it would not
+intercept the code it exists to back up. Document-service middlewares wrap only
+the document repository (`middlewares.wrapObject(repository, ...)` in
+`@strapi/core/dist/services/document-service/index.js`), so they see
+`strapi.documents(uid).*` and nothing else. `@strapi/database` holds no
+reference to them at all. Every member read goes through
+`strapi.db.query('plugin::users-permissions.user')` — the member endpoints,
+`/users/me`, the whole users-permissions extension — which is the query engine,
+a layer below. The backstop would sit above the traffic it is meant to watch.
+
+Making it intercept would mean rewriting the member API onto the Document
+Service: a larger change than the backstop, for a layer whose entire value was
+being cheap insurance.
+
+And there is now little to insure. Decision 2 held: exactly one endpoint reads
+member data, it takes the community from `ctx.state.user`, and the
+general-purpose endpoints both refuse in code and go ungranted, reconciled on
+every boot. A forgotten scope would have to be newly written code rather than a
+silent reuse of an unscoped path — and it would arrive with tests. Against
+that, the costs are real: scoping invisible at the call site, harder debugging,
+and a wrong strategy check would quietly narrow the admin panel, which must see
+everything.
+
+*Revisit when:* the invite-code endpoints land. They need transactions, so they
+may well be written against the Document Service — and if they are, this
+middleware would cover a real path and become worth its cost. That is the
+trigger, rather than "someday".
+
 *Alternative considered:* registering a condition into
 `strapi.contentAPI.permissions.providers.condition` and injecting it via the
 engine's `format.permission` hook. Technically reachable, but the resulting CASL
