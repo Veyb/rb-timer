@@ -113,7 +113,11 @@ export default (plugin) => {
     }
     const user = await strapi.db.query(USER_UID).findOne({
       where: { id: ctx.state.user.id },
-      populate: ['role'],
+      // A member reads their own community here, and nowhere else: the
+      // community collection has no Content API route at all. The frontend
+      // needs `name`, `server` and the logo to render the community, and the
+      // membership itself decides whether the app is reachable.
+      populate: { role: true, community: { populate: { logo: true } } },
     });
 
     ctx.body = sanitizeOutput(user);

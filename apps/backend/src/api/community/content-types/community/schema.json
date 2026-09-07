@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "communities",
+  "info": {
+    "singularName": "community",
+    "pluralName": "communities",
+    "displayName": "Community",
+    "description": "A group of players on one game server. Managed only from the admin panel: this API deliberately ships no controller, router or service, so no Content API route exists to grant a role by accident."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "minLength": 1
+    },
+    "server": {
+      "type": "enumeration",
+      "enum": ["Gamma", "Black", "White", "Carmine", "MasterWork"],
+      "required": true
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "users": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "community"
+    }
+  }
+}

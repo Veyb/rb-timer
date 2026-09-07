@@ -11,6 +11,8 @@ import type { Core } from '@strapi/strapi';
 const USER_UID = 'plugin::users-permissions.user';
 const ROLE_UID = 'plugin::users-permissions.role';
 const PERMISSION_UID = 'plugin::users-permissions.permission';
+const FILE_UID = 'plugin::upload.file';
+const COMMUNITY_UID = 'api::community.community';
 
 export interface TestUser {
   id: number;
@@ -60,6 +62,60 @@ export async function createUser(strapi: Core.Strapi, roleId: number): Promise<T
   const jwt = strapi.plugin('users-permissions').service('jwt').issue({ id: user.id });
 
   return { id: user.id, jwt, ...credentials };
+}
+
+/**
+ * An upload record with the given dimensions. No bytes are written: the square
+ * logo constraint reads `width`/`height` off the file row, so a row is all a
+ * test needs. Pass nulls for the SVG case, where there are no intrinsic
+ * dimensions to compare.
+ */
+export async function createFile(
+  strapi: Core.Strapi,
+  { width, height }: { width: number | null; height: number | null },
+) {
+  counter += 1;
+  const name = `fixture-${process.pid}-${counter}`;
+
+  return strapi.db.query(FILE_UID).create({
+    data: {
+      name: `${name}.png`,
+      hash: name,
+      ext: '.png',
+      mime: 'image/png',
+      size: 1,
+      url: `/uploads/${name}.png`,
+      provider: 'local',
+      width,
+      height,
+    },
+  });
+}
+
+/** Creates a community through the Document Service, as the admin panel does. */
+export async function createCommunity(strapi: Core.Strapi, data: Record<string, unknown> = {}) {
+  counter += 1;
+
+  return strapi.documents(COMMUNITY_UID).create({
+    data: { name: `Fixture Community ${counter}`, server: 'Black', ...data },
+  });
+}
+
+/**
+ * Links `userId` to `communityId`, or detaches it when given null. A relation
+ * takes either the numeric id or the documentId, which is also what the
+ * Document Service hands back as `id` — hence the widened type rather than
+ * casts at every call site.
+ */
+export async function setUserCommunity(
+  strapi: Core.Strapi,
+  userId: number,
+  communityId: number | string | null,
+) {
+  await strapi.db.query(USER_UID).update({
+    where: { id: userId },
+    data: { community: communityId },
+  });
 }
 
 /** The role currently linked to `userId`, read back from the database. */
