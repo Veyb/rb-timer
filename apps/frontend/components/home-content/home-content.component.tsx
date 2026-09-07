@@ -6,8 +6,8 @@ import { BossContextProvider } from '../../contexts/boss-context';
 import styles from '../../styles/main.module.css';
 // global modules
 import type { Boss } from '../../types';
+import { AccessPlaceholder } from '../access-placeholder';
 import { BossListTable } from '../boss-list-table';
-import { NotAllowedBlock } from '../not-allowed-block';
 
 interface HomeContentProps {
   list: Boss[];
@@ -24,7 +24,7 @@ export const HomeContent = ({ list }: HomeContentProps) => {
     );
   }
 
-  if (!allowed) return <NotAllowedBlock />;
+  if (!allowed) return <AccessPlaceholder />;
 
   return (
     <BossContextProvider bossList={list}>

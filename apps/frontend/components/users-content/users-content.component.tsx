@@ -7,7 +7,7 @@ import { useAuthContext } from '../../contexts/auth-context';
 import styles from '../../styles/main.module.css';
 // local modules
 import type { Role, User } from '../../types';
-import { NotAllowedBlock } from '../not-allowed-block';
+import { AccessPlaceholder } from '../access-placeholder';
 import { UserListTable } from '../user-list-table';
 
 interface UsersContentProps {
@@ -30,7 +30,7 @@ export const UsersContent = ({ users, roles }: UsersContentProps) => {
     );
   }
 
-  if (!allowed) return <NotAllowedBlock />;
+  if (!allowed) return <AccessPlaceholder />;
 
   return (
     <div className={styles.container}>

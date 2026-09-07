@@ -9,10 +9,10 @@ import { useAuthContext } from '../../contexts/auth-context';
 import styles from '../../styles/main.module.css';
 // local modules
 import type { Role, User } from '../../types';
+import { AccessPlaceholder } from '../access-placeholder';
 import { CollectionsBlock } from '../collections-block';
 import { Layout } from '../layout';
 import { ManagementBlock } from '../management-block';
-import { NotAllowedBlock } from '../not-allowed-block';
 
 const Holder = styled.div`
   padding-bottom: 0;
@@ -56,7 +56,7 @@ export const UserProfileContent = ({ type, user, roles }: UserProfileContentProp
     );
   }
 
-  if (!allowedUpdate) return <NotAllowedBlock />;
+  if (!allowedUpdate) return <AccessPlaceholder />;
 
   const items: TabsProps['items'] = [
     {

@@ -18,6 +18,12 @@ export const TEST_IDS = {
   bossList: {
     table: 'boss-list-table',
   },
+  accessPlaceholder: {
+    noCommunity: 'access-placeholder-no-community',
+    noRole: 'access-placeholder-no-role',
+    inviteCodeInput: 'access-placeholder-invite-code',
+    inviteCodeSubmit: 'access-placeholder-invite-submit',
+  },
   profileManagement: {
     deleteButton: 'profile-management-delete-button',
   },

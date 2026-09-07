@@ -60,6 +60,7 @@ function getErrorMessage(error: { message: string }) {
 const AuthContext = createContext<{
   user: User | null;
   loggedIn: boolean;
+  hasCommunity: boolean;
   allowed: boolean;
   allowedUpdate: boolean;
   allowedAdminister: boolean;
@@ -70,6 +71,7 @@ const AuthContext = createContext<{
 }>({
   user: null,
   loggedIn: false,
+  hasCommunity: false,
   allowed: false,
   allowedUpdate: false,
   allowedAdminister: false,
@@ -96,16 +98,28 @@ export const AuthContextProvider = ({
   const [user, setUser] = useState(propsUser);
   const [accessToken, setAccessToken] = useState(jwt);
   const loggedIn = !!user;
+
+  // Access now turns on two independent axes: belonging to a community, and
+  // holding a role above the one registration grants. Failing either shows a
+  // placeholder — a different one for each, since the way out differs: an
+  // invite code for the first, an officer of your own community for the second.
+  const hasCommunity = !!user?.community;
   const allowed = useMemo(
     () =>
-      user?.role.type === 'editor' || user?.role.type === 'viewer' || user?.role.type === 'officer',
-    [user],
+      hasCommunity &&
+      (user?.role.type === 'editor' ||
+        user?.role.type === 'viewer' ||
+        user?.role.type === 'officer'),
+    [hasCommunity, user],
   );
   const allowedUpdate = useMemo(
-    () => user?.role.type === 'editor' || user?.role.type === 'officer',
-    [user],
+    () => hasCommunity && (user?.role.type === 'editor' || user?.role.type === 'officer'),
+    [hasCommunity, user],
   );
-  const allowedAdminister = useMemo(() => user?.role.type === 'officer', [user]);
+  const allowedAdminister = useMemo(
+    () => hasCommunity && user?.role.type === 'officer',
+    [hasCommunity, user],
+  );
 
   const login = useCallback(async (userData: LoginCredentials) => {
     try {
@@ -185,6 +199,7 @@ export const AuthContextProvider = ({
         logout,
         loggedIn,
         accessToken,
+        hasCommunity,
         allowed,
         allowedUpdate,
         allowedAdminister,

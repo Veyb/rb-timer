@@ -34,6 +34,14 @@
   margin: 0;
 }
 
+.inviteForm {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  text-align: left;
+}
+
 .profileLayout {
   gap: 1rem;
   padding-bottom: 0;
