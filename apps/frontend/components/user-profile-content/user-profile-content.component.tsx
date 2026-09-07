@@ -64,12 +64,19 @@ export const UserProfileContent = ({ type, user, roles }: UserProfileContentProp
       label: 'Управление',
       children: <ManagementBlock user={user} roles={roles} />,
     },
-    {
+  ];
+
+  // TODO(community-architecture): delete along with the Collection and Effect
+  // content types and the /users/:id/collections route. See the same note in
+  // profile-content — withdrawn from the tab bar, still mounted for a direct
+  // URL so existing links keep working.
+  if (type === 'collections') {
+    items.push({
       key: 'collections',
       label: 'Коллекции',
       children: <CollectionsBlock user={user} />,
-    },
-  ];
+    });
+  }
 
   return (
     <Holder className={styles.container}>

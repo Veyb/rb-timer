@@ -9,9 +9,9 @@
 
 ## 2. Profile navigation cleanup
 
-- [ ] 2.1 Change `apps/frontend/app/profile/page.tsx` to redirect to `/profile/management`, and verify opening `/profile` lands on the management section
-- [ ] 2.2 Comment out the collections entry in the profile navigation with a marker noting it is to be deleted later, and verify no navigation element leads to the collections section while the route itself still renders
-- [ ] 2.3 Update or add an e2e assertion that the profile area opens on management, and verify the Playwright suite passes
+- [x] 2.1 Change `apps/frontend/app/profile/page.tsx` to redirect to `/profile/management`, and verify opening `/profile` lands on the management section
+- [x] 2.2 Comment out the collections entry in the profile navigation with a marker noting it is to be deleted later, and verify no navigation element leads to the collections section while the route itself still renders
+- [x] 2.3 Update or add an e2e assertion that the profile area opens on management, and verify the Playwright suite passes
 
 ## 3. Community entity and membership
 

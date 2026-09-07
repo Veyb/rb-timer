@@ -63,12 +63,20 @@ export const ProfileContent = ({ type, roles }: ProfileContentProps) => {
       label: 'Управление',
       children: <ManagementBlock user={user} roles={roles} />,
     },
-    {
+  ];
+
+  // TODO(community-architecture): delete along with the Collection and Effect
+  // content types and the /profile/collections route. Withdrawn from the tab
+  // bar, so nothing navigates here any more; still mounted when its own URL is
+  // opened directly, so existing links and bookmarks keep working — and the
+  // remaining tab gives whoever lands there a way back.
+  if (type === 'collections') {
+    items.push({
       key: 'collections',
       label: 'Коллекции',
       children: <CollectionsBlock />,
-    },
-  ];
+    });
+  }
 
   return (
     <Holder className={styles.container}>
