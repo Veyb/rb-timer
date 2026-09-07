@@ -1,0 +1,82 @@
+## 1. Field allowlists (ships first, on its own branch)
+
+- [x] 1.1 Replace the body spread in `user.updateMe` with an explicit allowlist of `email`, `username`, `password`, `nickname`, `realname`, `collections`, and verify a request carrying `role` is refused while a request carrying only `nickname` succeeds
+- [x] 1.2 Apply the same allowlist discipline to `user.update` in `apps/backend/src/extensions/users-permissions/strapi-server.ts`, keeping `role` accepted on that path for now, and verify a request carrying `community` or `confirmed` is refused
+- [x] 1.3 Add `.noUnknown()` (or an equivalent rejecting check) to `updateUserBodySchema` and use the validated result rather than the raw body, and verify the schema itself rejects an unknown key
+- [x] 1.4 Confirm `register.allowedFields` in `apps/backend/config/plugins.ts` still excludes `role` and `community`, and verify a registration request carrying either produces an account with the default role and no community
+- [x] 1.5 Add backend tests covering escalation attempts through `PUT /users/me` and `PUT /users/:id`, and verify they fail against the pre-fix code and pass after it
+- [x] 1.6 Verify `contexts/collection-context` still saves collections through `PUT /users/me` by exercising the collections screen
+
+## 2. Profile navigation cleanup
+
+- [ ] 2.1 Change `apps/frontend/app/profile/page.tsx` to redirect to `/profile/management`, and verify opening `/profile` lands on the management section
+- [ ] 2.2 Comment out the collections entry in the profile navigation with a marker noting it is to be deleted later, and verify no navigation element leads to the collections section while the route itself still renders
+- [ ] 2.3 Update or add an e2e assertion that the profile area opens on management, and verify the Playwright suite passes
+
+## 3. Community entity and membership
+
+- [ ] 3.1 Create the `community` content type with required `name`, required `server` enumeration (`Gamma`, `Black`, `White`, `Carmine`, `MasterWork`) and optional single-image `logo`, and verify it appears in the Content Manager and rejects a missing name or an unknown server
+- [ ] 3.2 Add the `community` `manyToOne` relation to the user schema extension with the matching `users` inverse on `community`, and verify a community can be assigned to a user from the admin panel
+- [ ] 3.3 Leave every users-permissions role without any permission on `api::community.community`, and verify an authenticated request to the community collection endpoint is refused
+- [ ] 3.4 Add a `beforeCreate`/`beforeUpdate` lifecycle hook on `community` that resolves the referenced upload file and rejects a logo whose stored `width` and `height` differ, and verify a non-square upload is refused in the admin panel while a square one is accepted
+- [ ] 3.5 Populate `community` (with `logo`) into `user.me`, and verify `/users/me` returns the community's name, server and logo for a member and a null community for a community-less user
+- [ ] 3.6 Add `Community` to `apps/frontend/types` and extend the `User` type with the optional community, and verify `pnpm --filter frontend check-types` passes
+- [ ] 3.7 Write a migration that seeds one community from the current deployment and assigns every user holding a role other than the default to it, and verify after running it that no previously-privileged user is left without a community
+- [ ] 3.8 Extend the e2e fixtures so the fixture user is assigned a community, and verify the Playwright suite reaches the role-gated screens
+
+## 4. Access gate
+
+- [ ] 4.1 Derive `allowed` in `contexts/auth-context.tsx` from community membership together with a non-default role, and verify a user with a role but no community is no longer treated as allowed
+- [ ] 4.2 Replace `components/not-allowed-block` with two distinct placeholders — one prompting a community-less user for an invite code, one directing a member on the default role to an officer — and verify each renders for its own case
+- [ ] 4.3 Add the invite-code input to the community-less placeholder, wired to a submit handler that is stubbed until the redeem endpoint exists, and verify the input renders and the placeholder still allows reaching the profile and signing out
+- [ ] 4.4 Verify the boss list screen shows the community-less placeholder instead of the list for a user without a community
+
+## 5. Community isolation
+
+- [ ] 5.1 Add `has-community` and `is-officer` route policies reading only `ctx.state.user`, and verify each refuses the cases it is meant to refuse
+- [ ] 5.2 Implement `GET /community/members` returning only members of the caller's own community, with the community taken from `ctx.state.user` and applied over any client filter, and verify a request filtering for another community still returns only the caller's own
+- [ ] 5.3 Implement `GET /community/members/:id` returning a not-found result for a user outside the caller's community, and verify the response for a foreign member is indistinguishable from a missing record
+- [ ] 5.4 Implement `PUT /community/members/:id/role` accepting nothing but the role, restricted to officers and to members of the caller's own community, and verify a cross-community or community-less target is refused
+- [ ] 5.5 Sanitize member responses through the content-API sanitizer so no password hash, reset token, confirmation token, or another user's email is exposed, and verify the response body of the member list contains none of them
+- [ ] 5.6 Remove the unscoped `find`, `findOne` and `update` overrides that the member API replaces, keeping `me` and `updateMe`, and verify `pnpm --filter backend check-types` passes
+- [ ] 5.7 Revoke every users-permissions permission on `plugin::users-permissions.user` except `me` and `updateMe` for all roles, record how that role configuration is provisioned, and verify each revoked endpoint answers with a refusal for an officer
+- [ ] 5.8 Replace `/users/:id` calls in `apps/frontend/lib/api/user.ts` and its call sites with the member API, and verify the users screen and the member management screen still function
+- [ ] 5.9 Add an `io.use()` handshake in `apps/backend/src/index.ts` that verifies the JWT and resolves the user's community server-side, ignoring any client-supplied identity, and verify a connection without a valid credential receives no community data
+- [ ] 5.10 Replace the global `socketUsers` broadcast with per-community rooms, leaving `newDonations` global, and verify two members of different communities never appear in each other's presence data and that a community-less connection appears in none
+- [ ] 5.11 Add negative e2e tests asserting a member of one community cannot reach a member of another by any route — member list, member detail, role change, presence — and verify they pass
+- [ ] 5.12 Optionally add the document-service middleware backstop with an explicit `SCOPED_UIDS` allowlist and an early return for any auth strategy other than `users-permissions`, and verify the admin panel still lists all users across all communities
+
+## 6. Database
+
+- [ ] 6.1 Switch the development and deployment configuration to `DATABASE_CLIENT=postgres`, transfer the existing data, and verify the application starts and the boss list, member list and admin panel all read correctly
+- [ ] 6.2 Rework `apps/backend/scripts/e2e-fixture-role.js` so it no longer talks to SQLite directly, and verify the Playwright suite still provisions its fixture user
+
+## 7. Invite codes — backend
+
+- [ ] 7.1 Create the `invite-code` content type with `code`, `community`, `maxUses`, `usedCount`, `expiresAt`, `revokedAt` and `createdBy`, and verify a use limit below one is rejected
+- [ ] 7.2 Create the `invite-redemption` content type attributing a code, a user and a moment, and verify a record is written on each successful redemption
+- [ ] 7.3 Implement code generation from a CSPRNG using an alphabet without visually ambiguous characters, formatted in groups, and verify generated codes are unique across a large sample
+- [ ] 7.4 Implement `POST /invite-codes` for officers with the community taken from `ctx.state.user`, and verify a request naming another community still produces a code bound to the officer's own
+- [ ] 7.5 Implement `GET /invite-codes` scoped to the officer's own community, exposing remaining uses and expiry, and verify codes of another community never appear
+- [ ] 7.6 Implement `DELETE /invite-codes/:id` as a revocation restricted to the officer's own community, and verify a revoked code can no longer be redeemed and a foreign code cannot be revoked
+- [ ] 7.7 Implement `POST /invite-codes/redeem` inside `strapi.db.transaction()`, re-reading the code within the transaction before incrementing `usedCount`, and verify two simultaneous redemptions of a single-use code admit exactly one user
+- [ ] 7.8 Make redemption set the community and the `viewer` role, refuse a caller who already belongs to a community, and ignore any role named in the request, and verify each of those three behaviors
+- [ ] 7.9 Return one indistinguishable refusal for unknown, revoked, expired and exhausted codes, disclosing no community, and verify the four responses are identical
+- [ ] 7.10 Rate-limit redemption per client, and verify repeated invalid submissions are throttled
+- [ ] 7.11 Grant the redeem action to the default role and the invite-code management actions to `officer` only, and verify a `viewer` cannot create a code and a community-less user can attempt a redemption
+
+## 8. Invite codes — frontend
+
+- [ ] 8.1 Add `InviteCode` types and API client functions, and verify `pnpm --filter frontend check-types` passes
+- [ ] 8.2 Add the invite management section to the profile area, visible only to an officer who belongs to a community, and verify it is absent for `viewer`, `editor` and a community-less officer
+- [ ] 8.3 Build the code creation form covering use limit and expiry, and verify a created code appears in the list with its remaining uses and expiry
+- [ ] 8.4 Show each code's redemptions to its officer, and verify the redeeming users and moments are listed
+- [ ] 8.5 Add code revocation to the management section, and verify a revoked code is reflected in the list
+- [ ] 8.6 Add a shareable join link carrying the code and a `/join` route that pre-fills it, and verify opening the link as a community-less user pre-fills the code
+- [ ] 8.7 Wire the placeholder's invite-code input to the redeem endpoint, and verify a successful redemption grants access without a manual reload and a refusal shows an error
+
+## 9. Verification
+
+- [ ] 9.1 Run the full Playwright suite plus `pnpm check` and `pnpm check-types` across the workspace, and verify all pass
+- [ ] 9.2 Walk the whole journey manually — register, hit the placeholder, redeem a code, view the member list, have an officer raise a role, issue and revoke a code — and verify each step behaves as its spec scenario describes
+- [ ] 9.3 Attempt every isolation bypass from `specs/community-isolation/spec.md` with a hand-written request against the backend port rather than through the UI, and verify each is refused
