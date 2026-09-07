@@ -25,6 +25,7 @@
     "@rb-timer/typescript-config": "workspace:*",
     "@strapi/typescript-utils": "catalog:",
     "@types/node": "catalog:",
+    "socket.io-client": "catalog:",
     "typescript": "catalog:",
     "vitest": "^4.1.11"
   },
@@ -36,7 +37,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
-    "socket.io": "^4.8.3",
+    "socket.io": "catalog:",
     "styled-components": "^6.0.0"
   },
   "author": {

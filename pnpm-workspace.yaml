@@ -14,6 +14,11 @@ catalog:
   '@strapi/typescript-utils': 5.52.2
   '@biomejs/biome': 2.5.11
   lefthook: 2.1.12
+  # Server and client speak one wire protocol across the client/server
+  # boundary, so they move together or not at all. Pinned exactly rather than
+  # with a caret for the same reason: both halves get bumped deliberately.
+  'socket.io': 4.8.3
+  'socket.io-client': 4.8.3
 
 allowBuilds:
   '@biomejs/biome': true

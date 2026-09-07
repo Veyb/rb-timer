@@ -14,8 +14,8 @@ import {
 } from 'react';
 import { apiGet, apiPost, getUsersMe } from '../lib/api';
 // local modules
-import { socket } from '../lib/web-sockets';
-import type { SocketUser, User } from '../types';
+import { connectSocket, socket } from '../lib/web-sockets';
+import type { User } from '../types';
 
 const INVALID_USERNAME_EMAIL = 'Недопустимый формат e-mail.';
 const EMAIL_IS_ALREADY_TAKEN = 'Данный e-mail уже зарегистрирован.';
@@ -87,9 +87,6 @@ interface AuthContextProviderProps {
   children: ReactNode;
 }
 
-const getSocketUser = (user: User | null): SocketUser | null =>
-  user ? { id: user.id, nickname: user.nickname } : user;
-
 export const AuthContextProvider = ({
   user: propsUser,
   jwt,
@@ -134,7 +131,6 @@ export const AuthContextProvider = ({
 
       setUser(userResponse);
       setAccessToken(loginResponse.jwt);
-      socket.emit('auth', { user: getSocketUser(userResponse) });
     } catch (err) {
       if (!axios.isAxiosError<StrapiErrorResponse>(err) || !err.response) throw err;
       throw new Error(getErrorMessage(err.response.data.error));
@@ -158,7 +154,6 @@ export const AuthContextProvider = ({
 
       setUser(userResponse);
       setAccessToken(registerResponse.jwt);
-      socket.emit('auth', { user: getSocketUser(userResponse) });
     } catch (err) {
       if (!axios.isAxiosError<StrapiErrorResponse>(err) || !err.response) throw err;
       const error = err.response.data.error;
@@ -170,25 +165,23 @@ export const AuthContextProvider = ({
     destroyCookie(null, 'jwt', { path: '/' });
     setUser(null);
     setAccessToken(undefined);
-    socket.emit('auth', { user: null });
   }, []);
 
-  // socket
+  // The handshake carries the identity, so the connection is re-made whenever
+  // the token changes — signing in, signing out, or a session that ended.
   useEffect(() => {
-    const socketUserJoin = () => socket.emit('join', { user: getSocketUser(user) });
+    connectSocket(accessToken);
 
-    const disconnect = (reason: string) => {
-      if (reason === 'io server disconnect') socket.connect();
+    const reconnect = (reason: string) => {
+      if (reason === 'io server disconnect') connectSocket(accessToken);
     };
 
-    socket.on('connect', socketUserJoin);
-    socket.on('disconnect', disconnect);
+    socket.on('disconnect', reconnect);
 
     return () => {
-      socket.off('connect', socketUserJoin);
-      socket.off('disconnect', disconnect);
+      socket.off('disconnect', reconnect);
     };
-  }, [user]);
+  }, [accessToken]);
 
   return (
     <AuthContext.Provider

@@ -1,3 +1,4 @@
+import { setUpRealtime } from './helpers/realtime';
 import { seedDefaultCommunity } from './helpers/seed-default-community';
 import { seedRolesAndPermissions } from './helpers/seed-roles-and-permissions';
 
@@ -51,42 +52,6 @@ export default {
     // not a migration under `database/migrations/`.
     await seedDefaultCommunity({ strapi });
 
-    const socketUsers: Record<string, unknown> = {};
-    // Same env var and format as config/middlewares.ts's `strapi::cors` origin
-    // (comma-separated, e.g. "https://example.com,https://www.example.com").
-    const corsOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3000')
-      .split(',')
-      .map((origin) => origin.trim())
-      .filter(Boolean);
-    const io = require('socket.io')(strapi.server.httpServer, {
-      cors: {
-        origin: corsOrigins,
-        methods: ['GET', 'POST'],
-        credentials: true,
-      },
-    });
-
-    io.on('connection', (socket) => {
-      socket.on('join', ({ user }) => {
-        socketUsers[socket.id] = user;
-        io.emit('socketUsers', { socketUsers });
-      });
-
-      socket.on('auth', ({ user }) => {
-        socketUsers[socket.id] = user;
-        io.emit('socketUsers', { socketUsers });
-      });
-
-      socket.on('disconnect', (_reason) => {
-        delete socketUsers[socket.id];
-        io.emit('socketUsers', { socketUsers });
-      });
-
-      socket.on('reset', () => {
-        io.disconnectSockets();
-      });
-    });
-
-    strapi.io = io;
+    setUpRealtime({ strapi });
   },
 };
