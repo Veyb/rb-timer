@@ -33,14 +33,19 @@
 
 ## 5. Community isolation
 
-- [ ] 5.1 Add `has-community` and `is-officer` route policies reading only `ctx.state.user`, and verify each refuses the cases it is meant to refuse
-- [ ] 5.2 Implement `GET /community/members` returning only members of the caller's own community, with the community taken from `ctx.state.user` and applied over any client filter, and verify a request filtering for another community still returns only the caller's own
-- [ ] 5.3 Implement `GET /community/members/:id` returning a not-found result for a user outside the caller's community, and verify the response for a foreign member is indistinguishable from a missing record
-- [ ] 5.4 Implement `PUT /community/members/:id/role` accepting nothing but the role, restricted to officers and to members of the caller's own community, and verify a cross-community or community-less target is refused
-- [ ] 5.5 Sanitize member responses through the content-API sanitizer so no password hash, reset token, confirmation token, or another user's email is exposed, and verify the response body of the member list contains none of them
-- [ ] 5.6 Remove the unscoped `find`, `findOne` and `update` overrides that the member API replaces, keeping `me` and `updateMe`, and verify `pnpm --filter backend check-types` passes
-- [ ] 5.7 Revoke every users-permissions permission on `plugin::users-permissions.user` except `me` and `updateMe` for all roles, record how that role configuration is provisioned, and verify each revoked endpoint answers with a refusal for an officer
-- [ ] 5.8 Replace `/users/:id` calls in `apps/frontend/lib/api/user.ts` and its call sites with the member API, and verify the users screen and the member management screen still function
+- [x] 5.1 Add `has-community` and `is-officer` route policies reading only `ctx.state.user`, and verify each refuses the cases it is meant to refuse
+- [x] 5.2 Implement `GET /community/members` returning only members of the caller's own community, with the community taken from `ctx.state.user` and applied over any client filter, and verify a request filtering for another community still returns only the caller's own
+- [x] 5.3 Implement `GET /community/members/:id` returning a not-found result for a user outside the caller's community, and verify the response for a foreign member is indistinguishable from a missing record
+- [x] 5.4 Implement `PUT /community/members/:id/role` accepting nothing but the role, restricted to officers and to members of the caller's own community, and verify a cross-community or community-less target is refused
+- [x] 5.5 Sanitize member responses through the content-API sanitizer so no password hash, reset token, confirmation token, or another user's email is exposed, and verify the response body of the member list contains none of them
+- [x] 5.6 Remove the unscoped `find`, `findOne` and `update` overrides that the member API replaces, keeping `me` and `updateMe`, and verify `pnpm --filter backend check-types` passes
+- [x] 5.7 Revoke every users-permissions permission on `plugin::users-permissions.user` except `me` and `updateMe` for all roles, record how that role configuration is provisioned, and verify each revoked endpoint answers with a refusal for an officer
+- [x] 5.8 Replace `/users/:id` calls in `apps/frontend/lib/api/user.ts` and its call sites with the member API, and verify the users screen and the member management screen still function
+- [x] 5.13 Implement `DELETE /community/members/me`, clearing the membership and resetting the role to the registration default, refused for a community-less caller and for the only officer of a community, and verify each of those four behaviours
+- [x] 5.14 Implement `DELETE /community/members/:id` for officers, scoped to their own community, refusing a self-target, and verify a fellow officer can be removed while another community's user answers as not-found
+- [x] 5.15 Implement `DELETE /users/me` available to every signed-in role, taking no target, and verify the account and its membership are gone and that it cannot be aimed at anyone else
+- [x] 5.16 Add a "leave community" control to the profile, and a "remove from community" control on a member's page for officers, and verify each appears only for the role that may use it
+- [x] 5.17 Restore an account-deletion control on the caller's own profile only, behind a confirmation, and verify it no longer appears on another member's page
 - [ ] 5.9 Add an `io.use()` handshake in `apps/backend/src/index.ts` that verifies the JWT and resolves the user's community server-side, ignoring any client-supplied identity, and verify a connection without a valid credential receives no community data
 - [ ] 5.10 Replace the global `socketUsers` broadcast with per-community rooms, leaving `newDonations` global, and verify two members of different communities never appear in each other's presence data and that a community-less connection appears in none
 - [ ] 5.11 Add negative e2e tests asserting a member of one community cannot reach a member of another by any route — member list, member detail, role change, presence — and verify they pass

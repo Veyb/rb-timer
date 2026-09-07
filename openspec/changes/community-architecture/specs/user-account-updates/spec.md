@@ -61,6 +61,34 @@ whose contract names the single attribute it changes.
 - **THEN** the request is rejected with a validation error naming the offending
   attribute
 
+### Requirement: A user may delete their own account
+
+Any signed-in user SHALL be able to delete their own account, whatever role
+they hold and whether or not they belong to a community. The operation SHALL
+address the caller and take no target, so it cannot be pointed at anyone else.
+
+#### Scenario: Member deletes their own account
+
+- **WHEN** a signed-in user asks to delete their own account
+- **THEN** the account no longer exists
+- **AND** their community membership is gone with it
+
+#### Scenario: Community-less user deletes their own account
+
+- **WHEN** a user who belongs to no community asks to delete their own account
+- **THEN** the account no longer exists
+
+#### Scenario: Deletion cannot be aimed at another account
+
+- **WHEN** a signed-in user attempts to delete another user's account
+- **THEN** the request is refused
+- **AND** the other account still exists
+
+#### Scenario: Unauthenticated deletion
+
+- **WHEN** an unauthenticated client attempts the self-deletion endpoint
+- **THEN** the request is refused
+
 ### Requirement: Registration cannot pre-assign membership or role
 
 Self-registration SHALL create an account with the default role and no

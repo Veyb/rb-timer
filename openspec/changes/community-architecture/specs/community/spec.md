@@ -90,6 +90,75 @@ invite code.
 - **WHEN** a user registers
 - **THEN** the account has no community membership
 
+### Requirement: A member may leave their community
+
+A member SHALL be able to leave their community themselves. Leaving SHALL clear
+the membership and reset the role to the one registration grants, so that a
+role earned inside a community does not travel out of it.
+
+#### Scenario: Member leaves
+
+- **WHEN** a member of a community asks to leave it
+- **THEN** they belong to no community
+- **AND** they hold the default registration role
+- **AND** they are shown the placeholder prompting for an invite code
+
+#### Scenario: Community-less user asks to leave
+
+- **WHEN** a user who belongs to no community asks to leave one
+- **THEN** the request is refused
+
+### Requirement: The last officer of a community may not leave it
+
+Leaving SHALL be refused for an officer who is the only officer of their
+community. Nothing self-service can appoint a replacement, so the community
+would be left with nobody able to administer members or invite codes.
+
+#### Scenario: Sole officer asks to leave
+
+- **WHEN** the only officer of a community asks to leave it
+- **THEN** the request is refused with a reason naming the constraint
+- **AND** they remain a member with the officer role
+
+#### Scenario: One of several officers asks to leave
+
+- **WHEN** an officer of a community that has another officer asks to leave
+- **THEN** the request succeeds
+
+### Requirement: An officer may remove a member from their community
+
+An officer SHALL be able to remove any member of their own community except
+themselves, whatever role that member holds. Removal SHALL clear the membership
+and reset the role, exactly as leaving does. An officer SHALL NOT be able to
+remove a user of another community or a user with no community.
+
+#### Scenario: Officer removes a member
+
+- **WHEN** an officer removes a member of their own community
+- **THEN** that member belongs to no community
+- **AND** that member holds the default registration role
+
+#### Scenario: Officer removes another officer
+
+- **WHEN** an officer removes a fellow officer of their own community
+- **THEN** the removal succeeds
+
+#### Scenario: Officer removes themselves
+
+- **WHEN** an officer asks to remove their own account from the community
+- **THEN** the request is refused
+- **AND** they remain a member
+
+#### Scenario: Officer targets another community
+
+- **WHEN** an officer asks to remove a user who belongs to another community
+- **THEN** the request answers as not-found and the user keeps their membership
+
+#### Scenario: Non-officer attempts a removal
+
+- **WHEN** a member holding `viewer` or `editor` asks to remove another member
+- **THEN** the request is refused
+
 ### Requirement: A member can read their own community
 
 An authenticated user SHALL receive their own community's `name`, `server`, and

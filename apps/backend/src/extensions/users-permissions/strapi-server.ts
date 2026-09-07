@@ -1,6 +1,6 @@
 import { errors, validateYupSchema, yup } from '@strapi/utils';
 
-const { ValidationError, ApplicationError } = errors;
+const { ValidationError, ApplicationError, PolicyError } = errors;
 
 const USER_UID = 'plugin::users-permissions.user';
 
@@ -9,9 +9,9 @@ const hasOwn = (object: object, key: string) => Object.hasOwn(object, key);
 type AdvancedSettings = { unique_email?: boolean };
 
 // `getUserService().edit()` forwards whatever object it is handed straight to
-// the Document Service, which writes any attribute of the user model. So these
-// schemas are the allowlist, not just a shape check: every handler below must
-// pass the *validated* result on, never `ctx.request.body`. `validateYupSchema`
+// the Document Service, which writes any attribute of the user model. So this
+// schema is the allowlist, not just a shape check, and the handler must pass
+// the *validated* result on, never `ctx.request.body`. `validateYupSchema`
 // runs yup with `{ strict: true }`, under which `.noUnknown()` rejects an
 // unexpected key instead of silently dropping it — a client sending `role` to
 // its own account is either a defect or an escalation attempt, and silence
@@ -25,42 +25,41 @@ const profileAttributes = {
   collections: yup.object().nullable(),
 };
 
-// A relation accepts either the numeric id (what the frontend sends) or the
-// documentId. Object forms (`{ connect: [...] }`) are refused: this path exists
-// only to set one role by id.
-const roleIdSchema = yup
-  .mixed()
-  .test(
-    'role-id',
-    'role must be a role id',
-    (value) => value === undefined || typeof value === 'number' || typeof value === 'string',
-  );
-
 // Own account: profile attributes only. `role` and `community` are privileged
 // and are never settable from a request body.
 const updateMeBodySchema = yup.object().shape(profileAttributes).noUnknown();
 const validateUpdateMeBody = validateYupSchema(updateMeBodySchema);
 
-// Operator path (`PUT /users/:id`), which additionally carries `role`. The
-// community-architecture change revokes this route in its isolation stage, in
-// favour of a member endpoint that changes nothing but the role.
-const updateUserBodySchema = yup
-  .object()
-  .shape({ ...profileAttributes, role: roleIdSchema })
-  .noUnknown();
-const validateUpdateUserBody = validateYupSchema(updateUserBodySchema);
-
 export default (plugin) => {
   const getUserService = () => strapi.plugin('users-permissions').service('user');
+
+  // The plugin populates only `role` onto `ctx.state.user`, so `community`
+  // would be undefined on every request and every policy or handler would have
+  // to read it back itself — one forgetful path away from a leak. Populated
+  // once here instead: it is the join that decides whether the app is
+  // reachable and which members a caller may see.
+  //
+  // Note the wrapper. Unlike `plugin.controllers.*`, which are plain objects,
+  // `plugin.services.*` are factories — assigning a property straight onto
+  // `plugin.services.user` sets it on the function and is never read, which
+  // fails silently and leaves every community-scoped policy refusing everyone.
+  const createUserService = plugin.services.user;
+  plugin.services.user = (params) => ({
+    ...createUserService(params),
+    fetchAuthenticatedUser: (id) =>
+      strapi.db.query(USER_UID).findOne({
+        where: { id },
+        populate: { role: true, community: true },
+      }),
+  });
 
   const sanitizeOutput = (user) => {
     const { password, resetPasswordToken, confirmationToken, ...sanitizedUser } = user; // be careful, you need to omit other private attributes yourself
     return sanitizedUser;
   };
 
-  // Shared by `PUT /users/:id` and `PUT /users/me`, which differ only in whose
-  // account they address and whether `role` is on the allowlist. One body keeps
-  // the allowlist from being enforced on one path and forgotten on the other.
+  // Only `PUT /users/me` reaches this now; the operator path it used to share
+  // with is gone, replaced by an endpoint that changes nothing but a role.
   const editUser = async (ctx, id, validateBody) => {
     const advancedConfigs = (await strapi
       .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
@@ -123,26 +122,27 @@ export default (plugin) => {
     ctx.body = sanitizeOutput(user);
   };
 
-  plugin.controllers.user.find = async (ctx) => {
-    const users = await strapi.db.query(USER_UID).findMany({ ...ctx.params, populate: ['role'] });
-
-    ctx.body = users.map((user) => sanitizeOutput(user));
-  };
-
-  plugin.controllers.user.findOne = async (ctx) => {
-    const user = await strapi.db.query(USER_UID).findOne({
-      where: { id: ctx.params.id },
-      ...ctx.params,
-      populate: ['role'],
-    });
-
-    ctx.body = sanitizeOutput(user);
-  };
-
-  // Operator path: `role` is on the allowlist here and nowhere else.
-  plugin.controllers.user.update = async (ctx) => {
-    await editUser(ctx, ctx.params.id, validateUpdateUserBody);
-  };
+  // The general-purpose user endpoints answer with no community scope of any
+  // kind: `find` returned every user in the database, `findOne` any user by
+  // id, and `update`/`destroy`/`create` wrote any of them. `api::community-member`
+  // replaces them with reads scoped to the caller's own community, and
+  // `PUT /community/members/:id/role` replaces the operator path.
+  //
+  // Refused in code, not only left ungranted. The permission seeder already
+  // withholds these actions on every boot, but that is one layer; a handler
+  // that cannot serve a request is another, and it holds even if a permission
+  // is granted by accident later. Replacing existing actions rather than
+  // adding any keeps the set of grantable actions unchanged.
+  for (const action of ['find', 'findOne', 'count', 'create', 'update', 'destroy']) {
+    plugin.controllers.user[action] = async () => {
+      // PolicyError rather than ForbiddenError: the authorize middleware
+      // rewrites a handler's ForbiddenError into a bare "Forbidden", and a
+      // caller deserves to be told where the data moved to.
+      throw new PolicyError(
+        'The user collection is not available through the Content API. Use /community/members.',
+      );
+    };
+  }
 
   // Own account: profile attributes only, so no request body can grant its
   // sender a role or a community.
@@ -150,15 +150,47 @@ export default (plugin) => {
     await editUser(ctx, ctx.state.user.id, validateUpdateMeBody);
   };
 
-  // Add the custom route
-  plugin.routes['content-api'].routes.unshift({
-    method: 'PUT',
-    path: '/users/me',
-    handler: 'user.updateMe',
-    config: {
-      prefix: '',
+  /**
+   * Deletes the caller's own account, and only ever the caller's.
+   *
+   * This is what replaces the withdrawn `DELETE /users/:id`, and the difference
+   * is the whole point: there is no target to aim. Available to every signed-in
+   * role, community or not — an account registered by mistake should not need
+   * an administrator to undo.
+   *
+   * The membership goes with it: `up_users_community_lnk` cascades on delete.
+   */
+  plugin.controllers.user.deleteMe = async (ctx) => {
+    const user = await strapi.db.query(USER_UID).findOne({ where: { id: ctx.state.user.id } });
+
+    if (!user) {
+      return ctx.unauthorized();
+    }
+
+    await strapi.documents(USER_UID).delete({ documentId: user.documentId });
+
+    ctx.body = { deleted: true };
+  };
+
+  // Both before `/users/:id`, which would otherwise capture "me".
+  plugin.routes['content-api'].routes.unshift(
+    {
+      method: 'PUT',
+      path: '/users/me',
+      handler: 'user.updateMe',
+      config: {
+        prefix: '',
+      },
     },
-  });
+    {
+      method: 'DELETE',
+      path: '/users/me',
+      handler: 'user.deleteMe',
+      config: {
+        prefix: '',
+      },
+    },
+  );
 
   return plugin;
 };

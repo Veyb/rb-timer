@@ -25,28 +25,24 @@ const PROFILE_ACTIONS = [
   'plugin::users-permissions.user.me',
   'plugin::users-permissions.user.updateMe',
 ];
-const OPERATOR_ACTIONS = [...PROFILE_ACTIONS, 'plugin::users-permissions.user.update'];
 
 let strapi: Core.Strapi;
 let baseUrl: string;
 let viewerRoleId: number;
 let officerRoleId: number;
 let viewer: TestUser;
-let officer: TestUser;
-let target: TestUser;
 
 beforeAll(async () => {
   ({ strapi, baseUrl } = await setupStrapi());
 
   const viewerRole = await createRole(strapi, 'test-viewer', PROFILE_ACTIONS);
-  const officerRole = await createRole(strapi, 'test-officer', OPERATOR_ACTIONS);
+  // Only needed as a role id a viewer might try to grant itself.
+  const officerRole = await createRole(strapi, 'test-officer', PROFILE_ACTIONS);
 
   viewerRoleId = viewerRole.id;
   officerRoleId = officerRole.id;
 
   viewer = await createUser(strapi, viewerRoleId);
-  officer = await createUser(strapi, officerRoleId);
-  target = await createUser(strapi, viewerRoleId);
 });
 
 afterAll(async () => {
@@ -125,21 +121,6 @@ describe('privileged attributes are never client-assignable', () => {
     expect(response.status).toBe(400);
   });
 
-  it.each([
-    ['community', { community: 1 }],
-    ['blocked', { blocked: true }],
-    ['confirmed', { confirmed: false }],
-    ['resetPasswordToken', { resetPasswordToken: 'forged' }],
-  ])('refuses %s on the operator route', async (_attribute, body) => {
-    const response = await apiRequest(baseUrl, 'PUT', `/api/users/${target.id}`, {
-      jwt: officer.jwt,
-      body,
-    });
-
-    expect(response.status).toBe(400);
-    expect((await readUserRole(strapi, target.id)).id).toBe(viewerRoleId);
-  });
-
   it('names the offending attribute rather than ignoring it', async () => {
     const response = await apiRequest(baseUrl, 'PUT', '/api/users/me', {
       jwt: viewer.jwt,
@@ -150,30 +131,10 @@ describe('privileged attributes are never client-assignable', () => {
     expect(errorMessage(response)).toContain('somethingInvented');
   });
 
-  it('refuses a relation-connect object where a role id is expected', async () => {
-    const response = await apiRequest(baseUrl, 'PUT', `/api/users/${target.id}`, {
-      jwt: officer.jwt,
-      body: { role: { connect: [officerRoleId] } },
-    });
-
-    expect(response.status).toBe(400);
-    expect((await readUserRole(strapi, target.id)).id).toBe(viewerRoleId);
-  });
-
-  it('still lets the operator route set a role by id', async () => {
-    const response = await apiRequest(baseUrl, 'PUT', `/api/users/${target.id}`, {
-      jwt: officer.jwt,
-      body: { role: officerRoleId },
-    });
-
-    expect(response.status).toBe(200);
-    expect((await readUserRole(strapi, target.id)).id).toBe(officerRoleId);
-
-    await apiRequest(baseUrl, 'PUT', `/api/users/${target.id}`, {
-      jwt: officer.jwt,
-      body: { role: viewerRoleId },
-    });
-  });
+  // The operator path this group used to exercise — `PUT /users/:id` with a
+  // whole user payload — is gone. Every general-purpose user endpoint refuses
+  // outright now, asserted in community-isolation.test.ts: a request body
+  // never reaches a handler that could apply it.
 });
 
 describe('registration cannot pre-assign membership or role', () => {

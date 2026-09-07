@@ -24,6 +24,20 @@ export interface TestUser {
 
 let counter = 0;
 
+/**
+ * A role the application itself declares, as seed-roles-and-permissions.ts
+ * reconciled it during boot. Preferred over a synthetic role wherever a test
+ * depends on the real configuration — the officer policy, for one, matches on
+ * the role *type*, so `officer` cannot be stood in for.
+ */
+export async function findRole(strapi: Core.Strapi, type: string) {
+  const role = await strapi.db.query(ROLE_UID).findOne({ where: { type } });
+
+  if (!role) throw new Error(`No seeded role of type "${type}"`);
+
+  return role;
+}
+
 /** Creates a role holding exactly `actions`, e.g. `user.me`, `user.updateMe`. */
 export async function createRole(strapi: Core.Strapi, type: string, actions: string[]) {
   const role = await strapi.db.query(ROLE_UID).create({

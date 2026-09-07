@@ -1,4 +1,5 @@
 import { seedDefaultCommunity } from './helpers/seed-default-community';
+import { seedRolesAndPermissions } from './helpers/seed-roles-and-permissions';
 
 export default {
   /**
@@ -40,6 +41,11 @@ export default {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }) {
+    // Reconciles roles and their permissions to the declaration in code. Runs
+    // after the plugin bootstraps, so it has the last word over the plugin's
+    // own `syncPermissions`.
+    await seedRolesAndPermissions({ strapi });
+
     // Runs after `schema.sync()`, which is the only point at which the
     // `communities` table exists — see the note in the helper for why this is
     // not a migration under `database/migrations/`.
