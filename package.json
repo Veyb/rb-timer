@@ -9,6 +9,7 @@
     "build": "pnpm -r build",
     "rebuild": "pnpm run clean:builds && pnpm run build",
     "check-types": "pnpm -r check-types",
+    "test": "pnpm -r --if-present test",
     "lint": "pnpm -r lint",
     "lint:fix": "pnpm -r lint:fix",
     "format": "pnpm -r format",

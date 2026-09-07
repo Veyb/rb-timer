@@ -9,7 +9,9 @@
     "build": "strapi build",
     "strapi": "strapi",
     "e2e:fixture-role": "node scripts/e2e-fixture-role.js",
-    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist dist-test",
     "check-types": "tsc --noEmit",
     "lint": "biome lint --error-on-warnings .",
     "lint:fix": "biome lint --write .",
@@ -23,7 +25,8 @@
     "@rb-timer/typescript-config": "workspace:*",
     "@strapi/typescript-utils": "catalog:",
     "@types/node": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "^4.1.11"
   },
   "dependencies": {
     "@strapi/plugin-users-permissions": "5.52.3",

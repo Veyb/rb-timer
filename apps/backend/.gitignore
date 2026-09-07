@@ -112,6 +112,7 @@ exports
 *.cache
 build
 dist
+dist-test
 .tsbuildinfo
 .strapi-updater.json
 .strapi
