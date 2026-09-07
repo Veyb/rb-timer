@@ -26,10 +26,10 @@
 
 ## 4. Access gate
 
-- [ ] 4.1 Derive `allowed` in `contexts/auth-context.tsx` from community membership together with a non-default role, and verify a user with a role but no community is no longer treated as allowed
-- [ ] 4.2 Replace `components/not-allowed-block` with two distinct placeholders — one prompting a community-less user for an invite code, one directing a member on the default role to an officer — and verify each renders for its own case
-- [ ] 4.3 Add the invite-code input to the community-less placeholder, wired to a submit handler that is stubbed until the redeem endpoint exists, and verify the input renders and the placeholder still allows reaching the profile and signing out
-- [ ] 4.4 Verify the boss list screen shows the community-less placeholder instead of the list for a user without a community
+- [x] 4.1 Derive `allowed` in `contexts/auth-context.tsx` from community membership together with a non-default role, and verify a user with a role but no community is no longer treated as allowed
+- [x] 4.2 Replace `components/not-allowed-block` with two distinct placeholders — one prompting a community-less user for an invite code, one directing a member on the default role to an officer — and verify each renders for its own case
+- [x] 4.3 Add the invite-code input to the community-less placeholder, wired to a submit handler that is stubbed until the redeem endpoint exists, and verify the input renders and the placeholder still allows reaching the profile and signing out
+- [x] 4.4 Verify the boss list screen shows the community-less placeholder instead of the list for a user without a community
 
 ## 5. Community isolation
 
