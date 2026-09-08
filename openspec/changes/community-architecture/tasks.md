@@ -53,8 +53,8 @@
 
 ## 6. Database
 
-- [ ] 6.1 Switch the development and deployment configuration to `DATABASE_CLIENT=postgres`, transfer the existing data, and verify the application starts and the boss list, member list and admin panel all read correctly
-- [ ] 6.2 Rework `apps/backend/scripts/e2e-fixture-role.js` so it no longer talks to SQLite directly, and verify the Playwright suite still provisions its fixture user
+- [x] 6.1 Switch the development and deployment configuration to `DATABASE_CLIENT=postgres`, transfer the existing data, and verify the application starts and the boss list, member list and admin panel all read correctly
+- [x] 6.2 Rework `apps/backend/scripts/e2e-fixture-role.js` so it no longer talks to SQLite directly, and verify the Playwright suite still provisions its fixture user
 
 ## 7. Invite codes — backend
 
