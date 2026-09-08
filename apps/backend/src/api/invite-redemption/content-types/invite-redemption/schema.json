@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "invite_redemptions",
+  "info": {
+    "singularName": "invite-redemption",
+    "pluralName": "invite-redemptions",
+    "displayName": "Invite Redemption",
+    "description": "One successful use of an invite code: which code, by whom, when. Written by the redeem endpoint and read back through the invite-code list; this api folder deliberately ships no routes of its own."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "inviteCode": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::invite-code.invite-code",
+      "inversedBy": "redemptions",
+      "description": "The code that was redeemed. Kept even after the code is revoked, so a community's history survives revocation."
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "description": "The account admitted by this redemption."
+    },
+    "redeemedAt": {
+      "type": "datetime",
+      "required": true,
+      "description": "When it happened. Written explicitly rather than read off `createdAt`, which records when the row was stored and is free to change meaning."
+    }
+  }
+}

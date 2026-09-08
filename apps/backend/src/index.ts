@@ -1,3 +1,4 @@
+import { ensureInviteCodeIndex } from './helpers/ensure-invite-code-index';
 import { setUpRealtime } from './helpers/realtime';
 import { seedDefaultCommunity } from './helpers/seed-default-community';
 import { seedRolesAndPermissions } from './helpers/seed-roles-and-permissions';
@@ -51,6 +52,10 @@ export default {
     // `communities` table exists — see the note in the helper for why this is
     // not a migration under `database/migrations/`.
     await seedDefaultCommunity({ strapi });
+
+    // Also after `schema.sync()`, and for the same reason: the table it indexes
+    // is created there.
+    await ensureInviteCodeIndex({ strapi });
 
     setUpRealtime({ strapi });
   },

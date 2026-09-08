@@ -8,7 +8,10 @@
 
 import type { Core } from '@strapi/strapi';
 
+import { generateCode } from '../../src/helpers/invite-code';
+
 const USER_UID = 'plugin::users-permissions.user';
+const INVITE_CODE_UID = 'api::invite-code.invite-code';
 const ROLE_UID = 'plugin::users-permissions.role';
 const PERMISSION_UID = 'plugin::users-permissions.permission';
 const FILE_UID = 'plugin::upload.file';
@@ -113,6 +116,38 @@ export async function createCommunity(strapi: Core.Strapi, data: Record<string, 
   return strapi.documents(COMMUNITY_UID).create({
     data: { name: `Fixture Community ${counter}`, server: 'Black', ...data },
   });
+}
+
+/**
+ * An invite code written straight to the database.
+ *
+ * Bypasses `POST /invite-codes` on purpose: the redemption tests need codes
+ * that are already revoked, already expired or already exhausted, and the
+ * endpoint refuses to create any of those — as it should.
+ */
+export async function createInviteCode(
+  strapi: Core.Strapi,
+  communityId: number | string,
+  data: Record<string, unknown> = {},
+) {
+  counter += 1;
+
+  const created = await strapi.documents(INVITE_CODE_UID).create({
+    data: {
+      code: generateCode(),
+      community: communityId,
+      maxUses: null,
+      usedCount: 0,
+      ...data,
+    },
+  });
+
+  return strapi.db.query(INVITE_CODE_UID).findOne({ where: { documentId: created.documentId } });
+}
+
+/** The code row as stored, for asserting on a counter or a revocation stamp. */
+export async function readInviteCode(strapi: Core.Strapi, id: number) {
+  return strapi.db.query(INVITE_CODE_UID).findOne({ where: { id }, populate: { community: true } });
 }
 
 /**

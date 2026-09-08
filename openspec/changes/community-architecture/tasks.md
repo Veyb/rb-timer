@@ -58,17 +58,17 @@
 
 ## 7. Invite codes — backend
 
-- [ ] 7.1 Create the `invite-code` content type with `code`, `community`, `maxUses`, `usedCount`, `expiresAt`, `revokedAt` and `createdBy`, and verify a use limit below one is rejected
-- [ ] 7.2 Create the `invite-redemption` content type attributing a code, a user and a moment, and verify a record is written on each successful redemption
-- [ ] 7.3 Implement code generation from a CSPRNG using an alphabet without visually ambiguous characters, formatted in groups, and verify generated codes are unique across a large sample
-- [ ] 7.4 Implement `POST /invite-codes` for officers with the community taken from `ctx.state.user`, and verify a request naming another community still produces a code bound to the officer's own
-- [ ] 7.5 Implement `GET /invite-codes` scoped to the officer's own community, exposing remaining uses and expiry, and verify codes of another community never appear
-- [ ] 7.6 Implement `DELETE /invite-codes/:id` as a revocation restricted to the officer's own community, and verify a revoked code can no longer be redeemed and a foreign code cannot be revoked
-- [ ] 7.7 Implement `POST /invite-codes/redeem` inside `strapi.db.transaction()`, re-reading the code within the transaction before incrementing `usedCount`, and verify two simultaneous redemptions of a single-use code admit exactly one user
-- [ ] 7.8 Make redemption set the community and the `viewer` role, refuse a caller who already belongs to a community, and ignore any role named in the request, and verify each of those three behaviors
-- [ ] 7.9 Return one indistinguishable refusal for unknown, revoked, expired and exhausted codes, disclosing no community, and verify the four responses are identical
-- [ ] 7.10 Rate-limit redemption per client, and verify repeated invalid submissions are throttled
-- [ ] 7.11 Grant the redeem action to the default role and the invite-code management actions to `officer` only, and verify a `viewer` cannot create a code and a community-less user can attempt a redemption
+- [x] 7.1 Create the `invite-code` content type with `code`, `community`, `maxUses`, `usedCount`, `expiresAt`, `revokedAt` and `createdBy`, and verify a use limit below one is rejected
+- [x] 7.2 Create the `invite-redemption` content type attributing a code, a user and a moment, and verify a record is written on each successful redemption
+- [x] 7.3 Implement code generation from a CSPRNG using an alphabet without visually ambiguous characters, formatted in groups, and verify generated codes are unique across a large sample
+- [x] 7.4 Implement `POST /invite-codes` for officers with the community taken from `ctx.state.user`, and verify a request naming another community still produces a code bound to the officer's own
+- [x] 7.5 Implement `GET /invite-codes` scoped to the officer's own community, exposing remaining uses and expiry, and verify codes of another community never appear
+- [x] 7.6 Implement `DELETE /invite-codes/:id` as a revocation restricted to the officer's own community, and verify a revoked code can no longer be redeemed and a foreign code cannot be revoked
+- [x] 7.7 Implement `POST /invite-codes/redeem` inside `strapi.db.transaction()`, re-reading the code within the transaction before incrementing `usedCount`, and verify two simultaneous redemptions of a single-use code admit exactly one user
+- [x] 7.8 Make redemption set the community and the `viewer` role, refuse a caller who already belongs to a community, and ignore any role named in the request, and verify each of those three behaviors
+- [x] 7.9 Return one indistinguishable refusal for unknown, revoked, expired and exhausted codes, disclosing no community, and verify the four responses are identical
+- [x] 7.10 Rate-limit redemption per client, and verify repeated invalid submissions are throttled
+- [x] 7.11 Grant the redeem action to the default role and the invite-code management actions to `officer` only, and verify a `viewer` cannot create a code and a community-less user can attempt a redemption
 
 ## 8. Invite codes — frontend
 

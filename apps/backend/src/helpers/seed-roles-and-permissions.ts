@@ -55,6 +55,34 @@ const OWN_COMMUNITY_MEMBERS = [
   'api::community-member.community-member.leave',
 ];
 
+/**
+ * Joining a community by code. Held by every signed-in role, not only the one
+ * registration grants.
+ *
+ * Leaving or being removed puts a user back on the default role, so in the
+ * normal course of things only that role ever needs this. But an operator can
+ * assign a role in the admin panel without assigning a community — the e2e
+ * fixtures model exactly that account — and the frontend shows the
+ * invite-code form to anyone without a community. Granting it only to the
+ * default role would leave those accounts looking at a form that answers 403.
+ *
+ * It widens nothing: the handler refuses any caller who already belongs to a
+ * community, so for an actual member the action is unreachable whether the
+ * permission is held or not.
+ */
+const JOIN_BY_INVITE = ['api::invite-code.invite-code.redeem'];
+
+/**
+ * Issuing, listing and revoking the invite codes of one's own community.
+ * Officers only — every handler behind these scopes to
+ * `ctx.state.user.community`, and none of them is meaningful without it.
+ */
+const OWN_COMMUNITY_INVITES = [
+  'api::invite-code.invite-code.create',
+  'api::invite-code.invite-code.find',
+  'api::invite-code.invite-code.revoke',
+];
+
 export const ROLES = [
   {
     type: 'public',
@@ -75,6 +103,7 @@ export const ROLES = [
     // What registration grants: enough to see the placeholder, read your own
     // account and delete it, and nothing of any community.
     actions: [
+      ...JOIN_BY_INVITE,
       'api::donation.donation.find',
       'plugin::users-permissions.auth.connect',
       'plugin::users-permissions.user.me',
@@ -89,6 +118,7 @@ export const ROLES = [
       ...SHARED_CONTENT,
       ...OWN_ACCOUNT,
       ...OWN_COMMUNITY_MEMBERS,
+      ...JOIN_BY_INVITE,
       'api::donation.donation.find',
       'plugin::users-permissions.auth.connect',
     ],
@@ -101,6 +131,7 @@ export const ROLES = [
       ...SHARED_CONTENT,
       ...OWN_ACCOUNT,
       ...OWN_COMMUNITY_MEMBERS,
+      ...JOIN_BY_INVITE,
       'api::boss.boss.update',
       'api::donation.donation.find',
       'plugin::users-permissions.auth.connect',
@@ -114,6 +145,8 @@ export const ROLES = [
       ...SHARED_CONTENT,
       ...OWN_ACCOUNT,
       ...OWN_COMMUNITY_MEMBERS,
+      ...OWN_COMMUNITY_INVITES,
+      ...JOIN_BY_INVITE,
       'api::boss.boss.update',
       'api::community-member.community-member.remove',
       'api::community-member.community-member.updateRole',

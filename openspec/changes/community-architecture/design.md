@@ -226,6 +226,29 @@ reach, so it is rate-limited per client, and every failure mode — unknown,
 revoked, expired, exhausted — returns the same refusal so a code cannot be
 probed for the community it belongs to.
 
+*Found while building it — `"unique": true` is not a database constraint in
+Strapi 5.* `transform-content-types-to-models.ts` never turns the attribute flag
+into a `column.unique`, so `createTable` builds no index from it; uniqueness is
+checked by a document-service validator instead. Confirmed against the live
+table, which carried only the primary key, the documents index and the two
+admin-author foreign keys. A validator is a read followed by a write — the shape
+that loses a race — and it does not constrain the raw query-engine writes this
+codebase already makes. `src/helpers/ensure-invite-code-index.ts` creates the
+index at bootstrap, alongside `seed-default-community` and for the same reason:
+migrations run before `schema.sync()`, so on a fresh database the table does not
+exist yet when they execute.
+
+*Found while building it — the plugin's rate limiter can be bypassed on this
+route.* `plugin::users-permissions.rateLimit` builds its bucket key from
+`ctx.request.body.email` for any route outside a short hardcoded list of auth
+paths. The redeem body has no `email` field, but nothing stops a caller adding
+one: the body is validated in the handler, which runs after the middleware, so
+a fresh value there means a fresh bucket on every attempt. Route middlewares run
+after `authenticate` and `authorize` (`compose-endpoint.ts`), so
+`src/middlewares/invite-redeem-rate-limit.ts` keys on the authenticated account
+id instead, which the request cannot vary. Same in-process memory store as the
+plugin's default, and the same limitation with it.
+
 ### Decision 6: Realtime presence uses rooms, keyed by a verified identity
 
 Current `src/index.ts` trusts `socket.on('auth', ({ user }) => ...)` and

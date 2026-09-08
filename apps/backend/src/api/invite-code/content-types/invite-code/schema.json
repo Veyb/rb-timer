@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "collectionName": "invite_codes",
+  "info": {
+    "singularName": "invite-code",
+    "pluralName": "invite-codes",
+    "displayName": "Invite Code",
+    "description": "A code that admits its bearer into one community. Issued and revoked by that community's officers through the Content API; the routes in this api folder are hand-written and scoped, so no unscoped CRUD route exists."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "code": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "minLength": 1,
+      "description": "The redeemable string, stored exactly as it is shown. The unique index is the last line of defence against a generator collision."
+    },
+    "community": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::community.community",
+      "description": "The community this code admits into. Set from the issuing officer's own membership, never from the request."
+    },
+    "maxUses": {
+      "type": "integer",
+      "min": 1,
+      "description": "How many times the code may be redeemed. Null means unlimited; one makes it single-use — a separate flag would only be a second thing to keep consistent with this one."
+    },
+    "usedCount": {
+      "type": "integer",
+      "min": 0,
+      "default": 0,
+      "required": true,
+      "description": "Successful redemptions so far. The single counter redemption contends on."
+    },
+    "expiresAt": {
+      "type": "datetime",
+      "description": "The moment the code stops working. Null means it never expires."
+    },
+    "revokedAt": {
+      "type": "datetime",
+      "description": "Set when an officer revokes the code. Kept rather than deleting the row, so the redemptions already attributed to it stay readable."
+    },
+    "issuedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "description": "The officer who created the code. Named `issuedBy` and not `createdBy`: Strapi reserves `created_by` for its own admin-author relation and refuses to load a content type that redefines it."
+    },
+    "redemptions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::invite-redemption.invite-redemption",
+      "mappedBy": "inviteCode",
+      "description": "Every successful use of this code, so an officer can see who a code let in without a second query."
+    }
+  }
+}

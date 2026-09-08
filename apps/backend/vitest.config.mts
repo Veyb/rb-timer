@@ -2,7 +2,9 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    include: ['tests/**/*.test.ts'],
+    // Deliberately not `tests/**`: `tests/postgres/` needs a running PostgreSQL
+    // server and has its own config, `vitest.postgres.config.mts`.
+    include: ['tests/*.test.ts'],
     environment: 'node',
     // Every test file boots its own Strapi instance, and booting runs
     // `compileStrapi()` which writes to the shared `dist/`. Running files in

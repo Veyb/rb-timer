@@ -21,7 +21,9 @@ NOT be taken from the request.
 
 - **WHEN** an officer of community A creates an invite code while naming
   community B in the request
-- **THEN** the created code is bound to community A
+- **THEN** the request is refused as carrying a field the endpoint does not
+  accept
+- **AND** no code bound to community B exists
 
 #### Scenario: Non-officer creates a code
 
@@ -29,6 +31,26 @@ NOT be taken from the request.
   attempts to create an invite code
 - **THEN** the attempt is refused
 - **AND** no code is created
+
+### Requirement: Requests carry only what the endpoint accepts
+
+The create and redeem endpoints SHALL accept an explicit set of fields and
+SHALL refuse a request carrying anything else, rather than ignoring the extra
+field. A privileged value that a request has no business setting — the bound
+community, the granted role — SHALL therefore be reported as a refusal rather
+than silently dropped, so a defect and an attempt look the same from the
+outside and neither passes unnoticed.
+
+#### Scenario: Create request carries an unknown field
+
+- **WHEN** an officer creates an invite code with a field outside the use limit
+  and the expiry
+- **THEN** the request is refused and no code is created
+
+#### Scenario: Redeem request carries an unknown field
+
+- **WHEN** a user redeems a code with a field outside the code itself
+- **THEN** the request is refused and nothing about the caller changes
 
 ### Requirement: An invite code carries a use limit and an expiry
 
@@ -72,7 +94,9 @@ obtainable through an invite code.
 #### Scenario: Request asks for a higher role
 
 - **WHEN** a redemption request names a role other than `viewer`
-- **THEN** the granted role is still `viewer`
+- **THEN** the request is refused as carrying a field the endpoint does not
+  accept
+- **AND** the caller's role and membership are unchanged
 
 ### Requirement: Only community-less users may redeem a code
 
