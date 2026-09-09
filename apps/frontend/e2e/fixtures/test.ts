@@ -15,6 +15,20 @@ import { test as base, expect } from '@playwright/test';
 //
 // — a list, not a switch, so the guard still holds for everything else the
 // screen might log while the expected failure happens.
+/**
+ * Dev-server noise that arrives as a console error but says nothing about the
+ * page.
+ *
+ * `Failed to execute 'measure' on 'Performance'` is raised by the framework's
+ * own dev instrumentation, never by application code — the mark it measures
+ * from belongs to Next's devtools, and after a dev server has been up long
+ * enough the timestamps go negative. Observed after roughly half an hour:
+ * five runs failing in a row, then three passing in a row after a restart,
+ * with no change to the app in between. A red that a restart fixes is a red
+ * nobody should have to attribute twice.
+ */
+const FRAMEWORK_NOISE = [/Failed to execute 'measure' on 'Performance'/];
+
 export const test = base.extend<{
   allowedConsoleErrors: RegExp[];
   // biome-ignore lint/suspicious/noConfusingVoidType: `void` is Playwright's own documented convention for a value-less auto fixture - their official fixtures guide (playwright.dev/docs/test-fixtures) uses this exact pattern verbatim: `base.extend<{ forEachTest: void }>(...)`. `undefined` would be a non-idiomatic deviation for no benefit.
@@ -24,7 +38,8 @@ export const test = base.extend<{
   assertNoConsoleErrors: [
     async ({ page, allowedConsoleErrors }, use) => {
       const errors: string[] = [];
-      const expected = (text: string) => allowedConsoleErrors.some((pattern) => pattern.test(text));
+      const expected = (text: string) =>
+        [...FRAMEWORK_NOISE, ...allowedConsoleErrors].some((pattern) => pattern.test(text));
 
       page.on('console', (msg) => {
         if (msg.type() === 'error' && !expected(msg.text())) errors.push(msg.text());

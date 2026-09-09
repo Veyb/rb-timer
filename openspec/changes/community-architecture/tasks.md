@@ -99,6 +99,6 @@
 
 ## 9. Verification
 
-- [ ] 9.1 Run the full Playwright suite plus `pnpm check` and `pnpm check-types` across the workspace, and verify all pass
-- [ ] 9.2 Walk the whole journey manually — register, hit the placeholder, redeem a code, view the member list, have an officer raise a role, issue and revoke a code — and verify each step behaves as its spec scenario describes
-- [ ] 9.3 Attempt every isolation bypass from `specs/community-isolation/spec.md` with a hand-written request against the backend port rather than through the UI, and verify each is refused
+- [x] 9.1 Run the full Playwright suite plus `pnpm check` and `pnpm check-types` across the workspace, and verify all pass
+- [x] 9.2 Walk the whole journey manually — register, hit the placeholder, redeem a code, view the member list, have an officer raise a role, issue and revoke a code — and verify each step behaves as its spec scenario describes
+- [x] 9.3 Attempt every isolation bypass from `specs/community-isolation/spec.md` with a hand-written request against the backend port rather than through the UI, and verify each is refused
