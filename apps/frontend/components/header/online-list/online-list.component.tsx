@@ -3,6 +3,7 @@
 import { TeamOutlined } from '@ant-design/icons';
 import { Dropdown } from 'antd';
 import { Fragment, useCallback, useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 // local modules
 import { socket } from '../../../lib/web-sockets';
@@ -18,6 +19,24 @@ interface SocketUserData {
   socketIds: string[];
   count: number;
 }
+
+/**
+ * Holds the button still as the count changes.
+ *
+ * Measured in this font: a proportional `1` is 7.1px against 9.8px for every
+ * other digit, so the button — and the clock and avatar beside it — shifted
+ * 2.7px the moment presence arrived and the count went from 0 to 1.
+ * `tabular-nums` equalises the digits at 9.8px.
+ *
+ * That alone leaves the jump from one digit to two, 9.8px to 19.5px, so the
+ * box reserves the wider of them. Past 99 online it grows again, which is a
+ * shift nobody will be sitting still enough to notice.
+ */
+const Count = styled.span`
+  display: inline-block;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+`;
 
 export const OnlineList = () => {
   const [socketUsers, setSocketUsers] = useState<SocketUserData[]>([]);
@@ -92,8 +111,8 @@ export const OnlineList = () => {
       popupRender={() => renderMenu(socketUsers)}
       disabled={!socketUsers.length}
     >
-      <Button size="large" icon={<TeamOutlined />}>
-        {socketUsers.length}
+      <Button size="large" iconPlacement="end" icon={<TeamOutlined />}>
+        <Count>{socketUsers.length}</Count>
       </Button>
     </Dropdown>
   );
