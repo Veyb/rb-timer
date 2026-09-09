@@ -3,16 +3,18 @@ import type { Role } from './role.types';
 
 export type UserCollections = Record<number, Record<number, boolean>>;
 
-export type UserRole = Omit<Role, 'nb_users'>;
-
 export interface User {
-  id: number;
+  /**
+   * Strapi 5 names documents by `documentId`, and so does every endpoint in
+   * this app. The numeric key the database uses is not part of any contract.
+   */
+  documentId: string;
   username: string;
   email: string;
   nickname: string;
   realname: string;
   collections: UserCollections;
-  role: UserRole;
+  role: Role;
   /**
    * Null until an operator assigns one or an invite code is redeemed. Only
    * `/users/me` carries it; a user never reads anyone else's community.
@@ -22,4 +24,4 @@ export interface User {
   updatedAt: string;
 }
 
-export type SocketUser = Pick<User, 'id' | 'nickname'>;
+export type SocketUser = Pick<User, 'documentId' | 'nickname'>;

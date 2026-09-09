@@ -1,20 +1,19 @@
 // global modules
-import { cookies } from 'next/headers';
 import { UsersContent } from '../../components/users-content';
-import { getCommunityMembers, getRoles } from '../../lib/api';
+import { getCommunityMembers } from '../../lib/api';
 // local modules
-import type { CommunityMember, Role } from '../../types';
+import { getSessionToken } from '../../lib/dal';
+import type { CommunityMember } from '../../types';
 
 export default async function UsersPage() {
-  const jwt = (await cookies()).get('jwt')?.value;
+  const jwt = await getSessionToken();
 
+  // No role list is fetched: the only thing this screen did with it was fill a
+  // filter, and a filter's choices come from what it filters.
   let users: CommunityMember[] = [];
-  let roles: Role[] = [];
   try {
-    const [allUsers, rolesData] = await Promise.all([getCommunityMembers(jwt), getRoles(jwt)]);
-    users = allUsers;
-    roles = rolesData;
+    users = await getCommunityMembers(jwt);
   } catch {}
 
-  return <UsersContent users={users} roles={roles} />;
+  return <UsersContent users={users} />;
 }

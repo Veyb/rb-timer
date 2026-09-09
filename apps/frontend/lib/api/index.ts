@@ -18,5 +18,12 @@ export {
   updateCommunityMemberRole,
 } from './community-member';
 export { getAllDonationList, getDonationList } from './donation';
-export { getRoles } from './role';
+export {
+  createInviteCode,
+  getInviteCodes,
+  getInviteHistory,
+  redeemInviteCode,
+  revokeInviteCode,
+} from './invite-code';
+export { getMemberRoles } from './role';
 export { deleteOwnAccount, getUsersMe, updateUsersMe } from './user';

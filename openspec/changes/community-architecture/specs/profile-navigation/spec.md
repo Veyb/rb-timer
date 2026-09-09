@@ -32,26 +32,54 @@ break.
 - **WHEN** a user opens the item collection route directly
 - **THEN** the section still renders
 
-### Requirement: Officers see an invite management section
+### Requirement: Invitations are their own section, offered to officers only
 
-The profile area SHALL offer an invite management section to users holding
-`officer`, and SHALL NOT offer it to any other role.
+Invitations SHALL be a navigable section of their own rather than part of the
+profile area: issuing codes and reading who came in by them is running a
+community, not tending one's own account. The profile area SHALL offer neither.
 
-#### Scenario: Officer opens the profile area
+A navigation entry leading to it SHALL be offered only to users holding
+`officer` who belong to a community. Opening the section without naming a
+subsection SHALL land on its code list, and it SHALL carry two subsections —
+the codes and the record of admissions.
 
-- **WHEN** a user holding `officer` opens the profile area
-- **THEN** an invite management section is offered
+Reaching the section by its address without that role SHALL be answered with a
+statement that it is for officers, not with a redirect or a missing page: the
+existence of officers and invitations in a community is not a secret, and a
+reader who followed a link deserves to know why there is nothing there.
 
-#### Scenario: Non-officer opens the profile area
+#### Scenario: Officer inspects the navigation
 
-- **WHEN** a user holding `viewer` or `editor` opens the profile area
-- **THEN** no invite management section is offered
+- **WHEN** a user holding `officer` who belongs to a community inspects the
+  navigation
+- **THEN** an entry leading to the invitations section is offered
+
+#### Scenario: Non-officer inspects the navigation
+
+- **WHEN** a user holding `viewer` or `editor` inspects the navigation
+- **THEN** no entry leading to the invitations section is offered
 
 #### Scenario: Officer without a community
 
-- **WHEN** a user holding `officer` who belongs to no community opens the profile
-  area
-- **THEN** no invite management section is offered
+- **WHEN** a user holding `officer` who belongs to no community inspects the
+  navigation
+- **THEN** no entry leading to the invitations section is offered
+
+#### Scenario: Section opened without a subsection
+
+- **WHEN** an officer opens the invitations section without naming a subsection
+- **THEN** the code list is shown
+
+#### Scenario: Non-officer opens the section by its address
+
+- **WHEN** a member who is not an officer opens the invitations section directly
+- **THEN** they are told the section is for officers
+- **AND** neither the codes nor the record of admissions is shown
+
+#### Scenario: The profile area no longer carries invitations
+
+- **WHEN** a user holding `officer` opens the profile area
+- **THEN** no invitation section appears among its sections
 
 ### Requirement: The member list entry follows the access gate
 

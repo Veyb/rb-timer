@@ -1,6 +1,8 @@
 // global modules
 import axios, { type AxiosRequestConfig } from 'axios';
 
+import type { Meta } from '../../types';
+
 export const API_URL = process.env.API_URL;
 export const IMAGE_URL = process.env.IMAGE_URL;
 export const SOCKET_URL = process.env.SOCKET_URL;
@@ -60,10 +62,55 @@ export const flattenListApiResponse = ({ data }: { data: unknown[] }) => {
   return data.map(flattenApiResponse);
 };
 
-export async function apiGet(type: string, params?: AxiosRequestConfig) {
+/**
+ * The Authorization header, or nothing at all when there is no token.
+ *
+ * One helper rather than the same three lines in every client. The `undefined`
+ * case matters: building the header anyway sends the literal string
+ * `Bearer undefined`, which the server rejects as a bad credential (401)
+ * instead of answering as the public role would.
+ */
+export const authHeaders = (token: string | undefined): AxiosRequestConfig =>
+  token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+
+/** The same, for a request that carries a JSON body. */
+export const jsonHeaders = (token: string | undefined): AxiosRequestConfig => ({
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  },
+});
+
+/**
+ * A response as this application's own endpoints send it: the value itself,
+ * with no envelope.
+ *
+ * Separate from `apiGetList` on purpose. This used to be one function that
+ * decided by looking for a `data` key in the body, which worked only for as
+ * long as no hand-written endpoint happened to return one — and would have
+ * thrown on the first that did, since it then also reads `meta.pagination`.
+ * Which shape an endpoint speaks is a fact about the endpoint, so the caller
+ * says it.
+ */
+export async function apiGet<T>(type: string, params?: AxiosRequestConfig): Promise<T> {
   const { data } = await axios.get(`${API_URL}${type}`, params);
 
-  return data.data ? { data: flattenListApiResponse(data), meta: data.meta.pagination } : data;
+  return data as T;
+}
+
+/**
+ * A response as Strapi's own content API sends it: `{ data, meta }`, with each
+ * entry wrapped in `attributes`. Used for the collection types served by a core
+ * router — bosses, collections, donations.
+ */
+export async function apiGetList<T>(
+  type: string,
+  params?: AxiosRequestConfig,
+): Promise<{ data: T[]; meta: Meta }> {
+  const { data } = await axios.get(`${API_URL}${type}`, params);
+
+  return { data: flattenListApiResponse(data) as T[], meta: data.meta.pagination };
 }
 
 export async function apiPost<T extends object>(type: string, params: T) {

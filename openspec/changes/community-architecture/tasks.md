@@ -63,7 +63,7 @@
 - [x] 7.3 Implement code generation from a CSPRNG using an alphabet without visually ambiguous characters, formatted in groups, and verify generated codes are unique across a large sample
 - [x] 7.4 Implement `POST /invite-codes` for officers with the community taken from `ctx.state.user`, and verify a request naming another community still produces a code bound to the officer's own
 - [x] 7.5 Implement `GET /invite-codes` scoped to the officer's own community, exposing remaining uses and expiry, and verify codes of another community never appear
-- [x] 7.6 Implement `DELETE /invite-codes/:id` as a revocation restricted to the officer's own community, and verify a revoked code can no longer be redeemed and a foreign code cannot be revoked
+- [x] 7.6 Implement revocation restricted to the officer's own community, and verify a revoked code can no longer be redeemed and a foreign code cannot be revoked — landed as `POST /invite-codes/:id/revoke` rather than `DELETE`, so that `DELETE /invite-codes/:id` can mean what it says (see 8.8)
 - [x] 7.7 Implement `POST /invite-codes/redeem` inside `strapi.db.transaction()`, re-reading the code within the transaction before incrementing `usedCount`, and verify two simultaneous redemptions of a single-use code admit exactly one user
 - [x] 7.8 Make redemption set the community and the `viewer` role, refuse a caller who already belongs to a community, and ignore any role named in the request, and verify each of those three behaviors
 - [x] 7.9 Return one indistinguishable refusal for unknown, revoked, expired and exhausted codes, disclosing no community, and verify the four responses are identical
@@ -72,13 +72,30 @@
 
 ## 8. Invite codes — frontend
 
-- [ ] 8.1 Add `InviteCode` types and API client functions, and verify `pnpm --filter frontend check-types` passes
-- [ ] 8.2 Add the invite management section to the profile area, visible only to an officer who belongs to a community, and verify it is absent for `viewer`, `editor` and a community-less officer
-- [ ] 8.3 Build the code creation form covering use limit and expiry, and verify a created code appears in the list with its remaining uses and expiry
-- [ ] 8.4 Show each code's redemptions to its officer, and verify the redeeming users and moments are listed
-- [ ] 8.5 Add code revocation to the management section, and verify a revoked code is reflected in the list
-- [ ] 8.6 Add a shareable join link carrying the code and a `/join` route that pre-fills it, and verify opening the link as a community-less user pre-fills the code
-- [ ] 8.7 Wire the placeholder's invite-code input to the redeem endpoint, and verify a successful redemption grants access without a manual reload and a refusal shows an error
+- [x] 8.1 Add `InviteCode` types and API client functions, and verify `pnpm --filter frontend check-types` passes
+- [x] 8.2 Add the invite management section to the profile area, visible only to an officer who belongs to a community, and verify it is absent for `viewer`, `editor` and a community-less officer
+- [x] 8.3 Build the code creation form covering use limit and expiry, and verify a created code appears in the list with its remaining uses and expiry
+- [x] 8.4 Show each code's redemptions to its officer, and verify the redeeming users and moments are listed
+- [x] 8.5 Add code revocation to the management section, and verify a revoked code is reflected in the list
+- [x] 8.6 Add a shareable join link carrying the code and a `/join` route that pre-fills it, and verify opening the link as a community-less user pre-fills the code
+- [x] 8.7 Wire the placeholder's invite-code input to the redeem endpoint, and verify a successful redemption grants access without a manual reload and a refusal shows an error
+- [x] 8.8 Give the redemption record a snapshot of the code, the issuing account's name and the joining account's name, and its own relation to the community, and verify the record still names both after the code is deleted, after the joining account deletes itself, and after both
+- [x] 8.9 Implement `GET /community/invite-history` for officers of their own community, and verify a foreign community's admissions never appear, a non-officer holding the action is still refused by the policy, and no e-mail address is disclosed
+- [x] 8.10 Add the invite history section with a search over names and codes, and verify a deleted account and a deleted code are each still shown by the name recorded at the time
+- [x] 8.13 Move invitations out of the profile into a section of their own at `/invites`, with `Коды` and `История` subsections and an entry in the user menu, and verify the entry is absent for a non-officer, the address answers a non-officer with a statement rather than a redirect, and the profile offers neither section any more
+- [x] 8.14 Rename `allowedAdminister` to `allowedManage` across the frontend, and verify `pnpm --filter frontend check-types` passes
+- [x] 8.15 Move the officer invite-code endpoints under `/community/` alongside the member and history endpoints, leaving redemption outside it because it acts on another community's code, and verify the old addresses no longer answer
+- [x] 8.16 Address and return every document by `documentId` rather than by the numeric key, name roles by `type`, and carry the same through the realtime presence payload, and verify a numeric key answers as not found
+- [x] 8.17 Move the Authorization and JSON header construction into `lib/api/base.ts` and use it from every client, and verify `getRoles` no longer sends `Bearer undefined` when called without a token
+- [x] 8.20 Drop the registration default from the roles an officer may assign, leaving removal as the only way to take a member's access away, and verify the role list omits it and an attempt to set it is rejected
+- [x] 8.24 Move the session cookie behind a data access layer memoised with `React.cache`, as the framework's authentication guide recommends, so no page knows the cookie's name and a layout and its page share one `/users/me`, and verify every route makes exactly one such request
+- [x] 8.23 Send a caller who opens their own member page to their own profile instead, compute `isOwnProfile` rather than hardcoding it, and verify no role control and no removal control is offered for one's own account
+- [x] 8.22 Show a member's own role in the officer's role control even when it is not one an officer may assign, offered but not selectable, and derive the member-list role filter from the members on screen, and verify a member on the registration default reads as a name rather than as `authenticated` and can still be filtered for
+- [x] 8.21 Collect the role vocabulary in `types/role.types.ts` as a single `Role` shape, replacing the two identical interfaces that differed only in where the value came from, and verify `pnpm --filter frontend check-types` passes
+- [x] 8.19 Serve the assignable roles from `GET /community/member-roles` as name and type only, revoke the users-permissions role endpoints for every role, and verify an officer can no longer read installation-wide account counts or a role's permission map
+- [x] 8.18 Split `apiGet` into the raw form this app's own endpoints speak and `apiGetList` for Strapi's `{ data, meta }` collections, typed by the caller, so the shape is declared rather than guessed from the body
+- [x] 8.11 Offer no deletion of invite codes to officers at all — only revocation — and verify no route answers a delete, recording in the spec why: an officer who could remove a code could admit whoever they liked and leave no trace of who issued it
+- [x] 8.12 Give the e2e suite a teardown that returns the joiner account to having no community and removes the invite codes the run issued, scoped to codes issued by the fixture officer, and verify a code issued by anyone else survives it
 
 ## 9. Verification
 

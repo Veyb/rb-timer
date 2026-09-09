@@ -39,15 +39,24 @@ test.describe('a role without a community', () => {
     await expect(page.getByTestId(TEST_IDS.accessPlaceholder.inviteCodeSubmit)).toBeVisible();
   });
 
-  // TODO(community-architecture): replace with an assertion that redeeming
-  // actually joins the community once the endpoint exists (tasks.md 8.7).
-  test('is told plainly that redemption is not wired up yet', async ({ page }) => {
-    await page.goto('/');
+  // A code that was never issued and one that is revoked, expired or exhausted
+  // all answer the same way — the endpoint refuses them indistinguishably so a
+  // code cannot be probed for the community behind it. Redeeming a real code is
+  // covered in invite-codes.spec.ts, which has an account it may spend.
+  test.describe('submitting a code that does not work', () => {
+    // The refusal is the subject here, and Chromium logs a failed request as a
+    // console error. Narrowed to that one status so the guard still holds.
+    test.use({ allowedConsoleErrors: [/status of 403/] });
 
-    await page.getByTestId(TEST_IDS.accessPlaceholder.inviteCodeInput).fill('SOME-CODE');
-    await page.getByTestId(TEST_IDS.accessPlaceholder.inviteCodeSubmit).click();
+    test('is told so, and stays where it was', async ({ page }) => {
+      await page.goto('/');
 
-    await expect(page.getByText(/ещё не подключён/i)).toBeVisible();
+      await page.getByTestId(TEST_IDS.accessPlaceholder.inviteCodeInput).fill('ZZZZ-ZZZZ-ZZZZ');
+      await page.getByTestId(TEST_IDS.accessPlaceholder.inviteCodeSubmit).click();
+
+      await expect(page.getByText(/Код не подошёл/i)).toBeVisible();
+      await expect(page.getByTestId(TEST_IDS.accessPlaceholder.noCommunity)).toBeVisible();
+    });
   });
 
   test('can still reach its own profile', async ({ page }) => {

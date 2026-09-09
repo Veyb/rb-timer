@@ -78,11 +78,16 @@ export const ProfileContent = ({ type, roles }: ProfileContentProps) => {
     });
   }
 
+  // A tab that is not mounted — /profile/collections is only added when it is
+  // the one asked for — falls back to the one every member has, rather than
+  // rendering an empty panel.
+  const activeKey = items.some((item) => item.key === type) ? type : 'management';
+
   return (
     <Holder className={styles.container}>
       <Layout className={styles.profileLayout}>
         <h1>Профиль</h1>
-        <Tabs onChange={handleTabClick} activeKey={type} items={items} />
+        <Tabs onChange={handleTabClick} activeKey={activeKey} items={items} />
       </Layout>
     </Holder>
   );

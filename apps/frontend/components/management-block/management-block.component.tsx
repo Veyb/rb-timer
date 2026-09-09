@@ -10,7 +10,7 @@ import { TEST_IDS } from '../../constants/test-ids';
 import { useAuthContext } from '../../contexts/auth-context';
 import { deleteOwnAccount, removeCommunityMember, updateCommunityMemberRole } from '../../lib/api';
 import { Button, Select } from '../../styled-components';
-import type { Role, User } from '../../types';
+import type { CommunityMember, Role, RoleType } from '../../types';
 import { ErrorDivider } from '../error-divider';
 import { LeaveCommunityButton } from '../leave-community-button';
 
@@ -22,7 +22,10 @@ import styles from './management-block.module.css';
  * here, and the member endpoint answers with an allowlist — so the prop is the
  * shape they have in common rather than a full `User`.
  */
-export type ManagedMember = Pick<User, 'id' | 'nickname' | 'realname' | 'createdAt' | 'role'>;
+export type ManagedMember = Pick<
+  CommunityMember,
+  'documentId' | 'nickname' | 'realname' | 'createdAt' | 'role'
+>;
 
 interface ManagementBlockProps {
   user: ManagedMember;
@@ -48,16 +51,37 @@ export const ManagementBlock = ({
   roles,
   isOwnProfile,
 }: ManagementBlockProps) => {
-  const { accessToken, allowedAdminister, logout } = useAuthContext();
+  const { accessToken, allowedManage, logout } = useAuthContext();
   const [user, setUser] = useState(initialUser);
-  const [roleId, setRoleId] = useState(initialUser.role.id);
+  // The endpoint names a role by its type, so the control offers the same
+  // thing it will send rather than an id to be translated on the way out.
+  const [roleType, setRoleType] = useState(initialUser.role.type);
   const [confirming, setConfirming] = useState<'remove' | 'delete' | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   // Changing a role is an officer's power over *other* members; the endpoint
   // refuses a self-target, so offering the control here would only mislead.
-  const canChangeRole = allowedAdminister && !isOwnProfile;
-  const canRemove = allowedAdminister && !isOwnProfile;
+  const canChangeRole = allowedManage && !isOwnProfile;
+
+  /**
+   * The assignable roles, plus the one this member holds if it is not among
+   * them — offered but not selectable.
+   *
+   * A member can hold a role an officer may not assign: the registration
+   * default, which is what leaving, being removed, or an operator's hand
+   * leaves behind. Without its own entry the control has a value with no
+   * option to match, and antd falls back to printing the raw value — an
+   * officer reading `authenticated` where every other row says a Russian
+   * name. Disabled rather than hidden, because the question the control
+   * answers first is "what is this member now".
+   */
+  const roleOptions = roles.some((role) => role.type === user.role.type)
+    ? roles.map((role) => ({ ...role, assignable: true }))
+    : [
+        { ...user.role, assignable: false },
+        ...roles.map((role) => ({ ...role, assignable: true })),
+      ];
+  const canRemove = allowedManage && !isOwnProfile;
 
   const run = useCallback(async (action: () => Promise<void>) => {
     setErrorMessage(undefined);
@@ -75,18 +99,18 @@ export const ManagementBlock = ({
   const handleSaveRole = useCallback(
     () =>
       run(async () => {
-        setUser(await updateCommunityMemberRole(user.id, roleId, accessToken));
+        setUser(await updateCommunityMemberRole(user.documentId, roleType, accessToken));
       }),
-    [accessToken, roleId, run, user.id],
+    [accessToken, roleType, run, user.documentId],
   );
 
   const handleRemove = useCallback(
     () =>
       run(async () => {
-        await removeCommunityMember(user.id, accessToken);
+        await removeCommunityMember(user.documentId, accessToken);
         reload('/users');
       }),
-    [accessToken, run, user.id],
+    [accessToken, run, user.documentId],
   );
 
   const handleDeleteAccount = useCallback(
@@ -128,13 +152,13 @@ export const ManagementBlock = ({
               <Select
                 size="small"
                 variant="borderless"
-                onChange={(value) => setRoleId(value as number)}
-                defaultValue={user.role.id}
+                onChange={(value) => setRoleType(value as RoleType)}
+                defaultValue={user.role.type}
                 popupMatchSelectWidth={false}
                 data-testid={TEST_IDS.profileManagement.roleSelect}
               >
-                {roles.map((role) => (
-                  <Select.Option key={role.id} value={role.id}>
+                {roleOptions.map((role) => (
+                  <Select.Option key={role.type} value={role.type} disabled={!role.assignable}>
                     {role.name}
                   </Select.Option>
                 ))}
@@ -170,7 +194,7 @@ export const ManagementBlock = ({
         </div>
 
         {canChangeRole && (
-          <Button type="primary" onClick={handleSaveRole} disabled={roleId === user.role.id}>
+          <Button type="primary" onClick={handleSaveRole} disabled={roleType === user.role.type}>
             Сохранить
           </Button>
         )}

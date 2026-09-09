@@ -1,12 +1,12 @@
 // global modules
-import { cookies } from 'next/headers';
 import { HomeContent } from '../components/home-content';
 import { getBossList } from '../lib/api';
 // local modules
+import { getSessionToken } from '../lib/dal';
 import type { Boss } from '../types';
 
 export default async function HomePage() {
-  const jwt = (await cookies()).get('jwt')?.value;
+  const jwt = await getSessionToken();
 
   let list: Boss[] = [];
   try {

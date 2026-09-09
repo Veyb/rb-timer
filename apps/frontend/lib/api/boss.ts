@@ -1,20 +1,13 @@
 // global modules
-import axios, { type RawAxiosRequestHeaders } from 'axios';
+import axios from 'axios';
 
 // local modules
 import type { BossApiResponse } from '../../types';
 import { expandBoss, expandBossListAndSort } from '../utils';
-import { API_URL, apiGet, flattenApiResponse } from './base';
+import { API_URL, apiGetList, authHeaders, flattenApiResponse, jsonHeaders } from './base';
 
 export async function getBossList(token: string | undefined) {
-  const params = token
-    ? {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    : undefined;
-  const { data } = await apiGet('/bosses', params);
+  const { data } = await apiGetList<BossApiResponse>('/bosses', authHeaders(token));
 
   return expandBossListAndSort(data);
 }
@@ -24,21 +17,10 @@ export async function updateBossTime(
   params: Partial<Omit<BossApiResponse, 'id' | 'documentId' | 'name'>>,
   token: string | undefined,
 ) {
-  const headers: RawAxiosRequestHeaders = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  };
-  if (token) headers.Authorization = `Bearer ${token}`;
-
   const { data } = await axios.put(
     `${API_URL}/bosses/${documentId}`,
-    {
-      data: {
-        restarted: false,
-        ...params,
-      },
-    },
-    { headers: { ...headers } },
+    { data: { restarted: false, ...params } },
+    jsonHeaders(token),
   );
 
   return expandBoss(flattenApiResponse(data.data) as BossApiResponse);

@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from 'next';
 
 import { Header } from '../components/header';
 import { AuthContextProvider } from '../contexts/auth-context';
-import { getCurrentUser } from '../lib/get-current-user';
+import { getCurrentUser } from '../lib/dal';
 import { AntdThemeProvider } from './antd-theme-provider';
 import { GlobalStyles } from './global-styles';
 import { StyledComponentsRegistry } from './styled-components-registry';

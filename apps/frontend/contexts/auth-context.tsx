@@ -12,7 +12,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { apiGet, apiPost, getUsersMe } from '../lib/api';
+import { apiPost, getUsersMe } from '../lib/api';
 // local modules
 import { connectSocket, socket } from '../lib/web-sockets';
 import type { User } from '../types';
@@ -63,7 +63,7 @@ const AuthContext = createContext<{
   hasCommunity: boolean;
   allowed: boolean;
   allowedUpdate: boolean;
-  allowedAdminister: boolean;
+  allowedManage: boolean;
   accessToken: string | undefined;
   login: (userData: LoginCredentials) => void;
   register: (userData: RegisterData) => void;
@@ -74,7 +74,7 @@ const AuthContext = createContext<{
   hasCommunity: false,
   allowed: false,
   allowedUpdate: false,
-  allowedAdminister: false,
+  allowedManage: false,
   accessToken: undefined,
   login: () => {},
   register: () => {},
@@ -113,7 +113,7 @@ export const AuthContextProvider = ({
     () => hasCommunity && (user?.role.type === 'editor' || user?.role.type === 'officer'),
     [hasCommunity, user],
   );
-  const allowedAdminister = useMemo(
+  const allowedManage = useMemo(
     () => hasCommunity && user?.role.type === 'officer',
     [hasCommunity, user],
   );
@@ -146,13 +146,7 @@ export const AuthContextProvider = ({
         path: '/',
       });
 
-      const userResponse = await apiGet('/users/me', {
-        headers: {
-          Authorization: `Bearer ${registerResponse.jwt}`,
-        },
-      });
-
-      setUser(userResponse);
+      setUser(await getUsersMe(registerResponse.jwt));
       setAccessToken(registerResponse.jwt);
     } catch (err) {
       if (!axios.isAxiosError<StrapiErrorResponse>(err) || !err.response) throw err;
@@ -195,7 +189,7 @@ export const AuthContextProvider = ({
         hasCommunity,
         allowed,
         allowedUpdate,
-        allowedAdminister,
+        allowedManage,
       }}
     >
       {children}

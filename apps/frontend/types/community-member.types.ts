@@ -1,4 +1,4 @@
-import type { UserRole } from './user.types';
+import type { Role } from './role.types';
 
 /**
  * Another member of the caller's own community, as `/community/members`
@@ -10,11 +10,10 @@ import type { UserRole } from './user.types';
  * member's business, and the old `/users` endpoint handed all of them out.
  */
 export interface CommunityMember {
-  id: number;
   documentId: string;
   username: string;
   nickname: string;
   realname: string;
   createdAt: string;
-  role: UserRole;
+  role: Role;
 }

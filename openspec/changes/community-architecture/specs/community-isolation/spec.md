@@ -6,6 +6,59 @@ crafted outside the application's own UI can reach another community's data.
 
 ## ADDED Requirements
 
+### Requirement: An officer reads roles as names, not as the plugin's records
+
+The list of roles an officer may assign SHALL be served by this application and
+SHALL carry nothing but each role's display name and type. The
+users-permissions plugin's own role endpoints SHALL NOT be granted to any role.
+
+Those endpoints answer with `nb_users` — how many accounts hold each role across
+every community in the installation — and, for a single role, the complete set
+of actions it may call. Neither belongs to an officer, who administers one
+community and is not an operator of the application.
+
+#### Scenario: Officer reads the assignable roles
+
+- **WHEN** an officer reads the role list
+- **THEN** each entry carries a name and a type and nothing else
+- **AND** no count of accounts and no permission list appears
+
+#### Scenario: Officer calls the plugin's role endpoints
+
+- **WHEN** an officer requests the users-permissions role list, or one role by
+  its id
+- **THEN** the attempt is refused
+
+#### Scenario: A member who is not an officer
+
+- **WHEN** a `viewer` or an `editor` reads the role list
+- **THEN** the attempt is refused
+
+### Requirement: One kind of identifier
+
+Every document this application's own endpoints return or accept SHALL be named
+by its `documentId`, as Strapi 5 names documents and as its own routes do. The
+numeric primary key SHALL NOT appear in any response or be accepted in any
+address, and a role SHALL be named by its `type` rather than by an id.
+
+#### Scenario: A member is addressed by documentId
+
+- **WHEN** a member is read, their role changed, or they are removed from a
+  community
+- **THEN** the address carries their `documentId`
+- **AND** the numeric key does not appear in any response
+
+#### Scenario: A numeric key is not an address
+
+- **WHEN** an officer addresses a member endpoint with a numeric key
+- **THEN** the response is the same not-found answer a stranger's document gets
+
+#### Scenario: A role is named by its type
+
+- **WHEN** an officer changes a member's role
+- **THEN** the request names the role by its `type`
+- **AND** a request naming anything else is rejected
+
 ### Requirement: The user collection is not reachable through the Content API
 
 Listing, reading, counting, updating, and deleting user accounts SHALL NOT be

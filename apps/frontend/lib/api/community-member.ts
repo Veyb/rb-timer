@@ -1,9 +1,9 @@
 // global modules
-import axios, { type RawAxiosRequestHeaders } from 'axios';
+import axios from 'axios';
 
 // local modules
-import type { CommunityMember } from '../../types';
-import { API_URL, apiGet, flattenApiResponse } from './base';
+import type { CommunityMember, RoleType } from '../../types';
+import { API_URL, apiGet, authHeaders, jsonHeaders } from './base';
 
 /**
  * The only way member data reaches this app. `/users` and `/users/:id` are
@@ -12,37 +12,27 @@ import { API_URL, apiGet, flattenApiResponse } from './base';
  * community server-side.
  */
 
-const authHeaders = (token: string | undefined) => ({
-  headers: { Authorization: `Bearer ${token}` },
-});
-
 export async function getCommunityMembers(token: string | undefined) {
-  return (await apiGet('/community/members', authHeaders(token))) as CommunityMember[];
+  return apiGet<CommunityMember[]>('/community/members', authHeaders(token));
 }
 
-export async function getCommunityMember(id: string, token: string | undefined) {
-  return (await apiGet(`/community/members/${id}`, authHeaders(token))) as CommunityMember;
+export async function getCommunityMember(documentId: string, token: string | undefined) {
+  return apiGet<CommunityMember>(`/community/members/${documentId}`, authHeaders(token));
 }
 
 /** Changes one member's role and nothing else — the endpoint takes no more. */
 export async function updateCommunityMemberRole(
-  memberId: number,
-  role: number,
+  memberDocumentId: string,
+  role: RoleType,
   token: string | undefined,
 ) {
-  const headers: RawAxiosRequestHeaders = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  };
-  if (token) headers.Authorization = `Bearer ${token}`;
-
   const { data } = await axios.put(
-    `${API_URL}/community/members/${memberId}/role`,
+    `${API_URL}/community/members/${memberDocumentId}/role`,
     { role },
-    { headers },
+    jsonHeaders(token),
   );
 
-  return flattenApiResponse(data) as CommunityMember;
+  return data as CommunityMember;
 }
 
 /** The caller leaves their own community. Takes no target. */
@@ -53,9 +43,9 @@ export async function leaveCommunity(token: string | undefined) {
 }
 
 /** An officer removes a member of their own community. */
-export async function removeCommunityMember(memberId: number, token: string | undefined) {
+export async function removeCommunityMember(memberDocumentId: string, token: string | undefined) {
   const { data } = await axios.delete(
-    `${API_URL}/community/members/${memberId}`,
+    `${API_URL}/community/members/${memberDocumentId}`,
     authHeaders(token),
   );
 

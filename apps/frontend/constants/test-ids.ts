@@ -36,10 +36,54 @@ export const TEST_IDS = {
     deleteAccount: 'profile-management-delete-account',
     confirm: 'profile-management-confirm',
   },
+  join: {
+    signInRequired: 'join-sign-in-required',
+    alreadyMember: 'join-already-member',
+  },
+  profileInvites: {
+    maxUses: 'profile-invites-max-uses',
+    expiry: 'profile-invites-expiry',
+    create: 'profile-invites-create',
+    list: 'profile-invites-list',
+    row: 'profile-invites-row',
+    code: 'profile-invites-code',
+    status: 'profile-invites-status',
+    remaining: 'profile-invites-remaining',
+    expires: 'profile-invites-expires',
+    joinLink: 'profile-invites-join-link',
+    copyLink: 'profile-invites-copy-link',
+    redemption: 'profile-invites-redemption',
+    revoke: 'profile-invites-revoke',
+    empty: 'profile-invites-empty',
+  },
+  header: {
+    // Opens the dropdown the section links live in.
+    userMenu: 'header-user-menu',
+  },
+  // The invitations section: its own screen, reachable from the user menu and
+  // only for officers.
+  invites: {
+    menuItem: 'menu-invites',
+    officersOnly: 'invites-officers-only',
+    codesTab: 'invites-codes-tab',
+    historyTab: 'invites-history-tab',
+  },
+  inviteHistory: {
+    search: 'invite-history-search',
+    list: 'invite-history-list',
+    row: 'invite-history-row',
+    joiner: 'invite-history-joiner',
+    issuer: 'invite-history-issuer',
+    code: 'invite-history-code',
+    moment: 'invite-history-moment',
+    empty: 'invite-history-empty',
+    noMatches: 'invite-history-no-matches',
+  },
   profileCollections: {
     effectsBlock: 'profile-collections-effects-block',
   },
   usersList: {
     table: 'users-list-table',
+    roleFilter: 'users-list-role-filter',
   },
 } as const;

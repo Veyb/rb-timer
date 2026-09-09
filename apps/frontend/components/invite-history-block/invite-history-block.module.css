@@ -1,0 +1,54 @@
+.holder {
+  display: flex;
+  flex-direction: column;
+}
+
+.empty {
+  padding: 2rem 0;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1rem 1.2rem;
+  border: 0.1rem solid #303030;
+  border-radius: 0.2rem;
+}
+
+.who {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  font-size: 1.5rem;
+}
+
+.facts {
+  display: flex;
+  align-items: baseline;
+  gap: 1.6rem;
+  flex-wrap: wrap;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 1.3rem;
+}
+
+.code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.05rem;
+}
+
+.gone {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 1.2rem;
+  font-style: italic;
+}

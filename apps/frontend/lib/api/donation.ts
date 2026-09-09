@@ -1,8 +1,8 @@
 // global modules
 import qs from 'qs';
-import type { Meta } from '../../types';
+import type { Donation, Meta } from '../../types';
 // local modules
-import { apiGet } from './base';
+import { apiGetList, authHeaders } from './base';
 
 function getQuery(page?: number) {
   return qs.stringify(
@@ -20,14 +20,7 @@ function getQuery(page?: number) {
 
 export async function getDonationList(token: string | undefined, page?: number) {
   const query = getQuery(page);
-  const params = token
-    ? {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    : undefined;
-  const donations = await apiGet(`/donations?${query}`, params);
+  const donations = await apiGetList<Donation>(`/donations?${query}`, authHeaders(token));
 
   return donations;
 }

@@ -6,6 +6,27 @@ lifetime.
 
 ## ADDED Requirements
 
+### Requirement: A community-scoped address means a community-scoped answer
+
+Every endpoint whose answer is confined to the caller's own community SHALL
+live under a `/community/` path, and the community SHALL be taken from the
+caller's credentials rather than from the address — the prefix is a claim about
+the answer, not a parameter in the request.
+
+Redemption SHALL be the exception and SHALL sit outside that prefix, because it
+acts on a code belonging to a community the caller does not yet belong to.
+
+#### Scenario: Issuing, listing and revoking are community-scoped addresses
+
+- **WHEN** an officer issues, lists or revokes an invite code
+- **THEN** the address used is under `/community/`
+- **AND** it carries no community identifier
+
+#### Scenario: Redemption is not
+
+- **WHEN** a community-less user redeems a code
+- **THEN** the address used is outside `/community/`
+
 ### Requirement: An officer issues invite codes for their own community
 
 An officer SHALL be able to create an invite code bound to their own community.
@@ -159,6 +180,12 @@ by guessing, and redemption attempts SHALL be rate-limited per client.
 An officer SHALL be able to list and revoke the invite codes of their own
 community, and SHALL NOT be able to see or revoke codes of any other community.
 
+Revoking SHALL stop a code working and SHALL keep the code and its redemption
+records. No API SHALL offer an officer any way to delete either. An officer who
+could remove a code could admit whoever they liked and leave no trace of it,
+not even of which account issued the code; removing a row is an operator's act
+from the admin panel.
+
 #### Scenario: Officer lists own codes
 
 - **WHEN** an officer of community A lists invite codes
@@ -168,6 +195,7 @@ community, and SHALL NOT be able to see or revoke codes of any other community.
 
 - **WHEN** an officer of community A revokes a code bound to community A
 - **THEN** the code can no longer be redeemed
+- **AND** the code and its redemption records remain visible to that officer
 
 #### Scenario: Officer revokes a foreign code
 
@@ -175,6 +203,12 @@ community, and SHALL NOT be able to see or revoke codes of any other community.
   community B
 - **THEN** the attempt is refused
 - **AND** the code remains redeemable
+
+#### Scenario: Officer attempts to delete a code
+
+- **WHEN** an officer attempts to delete an invite code of their own community
+- **THEN** the attempt does not succeed
+- **AND** the code and its redemption records are still there
 
 ### Requirement: Redemptions are attributable
 
@@ -192,3 +226,44 @@ community.
 
 - **WHEN** an officer lists invite codes of their own community
 - **THEN** each entry shows how many uses remain and when it expires
+
+### Requirement: The record of an admission outlives what it refers to
+
+A redemption record SHALL carry, alongside its relations, a copy taken at the
+moment of the admission of the code used, the name of the account that issued
+it and the name of the account that used it, and SHALL be bound to the joined
+community directly rather than only through the code.
+
+The record SHALL therefore remain complete and findable after the code is
+deleted, after either account is deleted, or both. Nothing in the Content API
+SHALL write or delete these records except the redemption endpoint itself.
+
+An officer SHALL be able to read the admissions into their own community, and
+SHALL NOT be able to read those of any other community. The record SHALL
+disclose no e-mail address.
+
+#### Scenario: Officer reviews how members were admitted
+
+- **WHEN** an officer of community A reads the invite history
+- **THEN** every admission into community A is listed with who was admitted,
+  when, and the name of the account that invited them
+
+#### Scenario: The code has been deleted
+
+- **WHEN** an operator deletes an invite code of community A that has been used
+- **THEN** the admissions it made are still listed with the code and both names
+
+#### Scenario: The admitted account has been deleted
+
+- **WHEN** an account admitted by a code deletes itself
+- **THEN** the admission is still listed with the name that account used
+
+#### Scenario: Foreign admissions are not shown
+
+- **WHEN** an officer of community A reads the invite history
+- **THEN** no admission into community B appears, whatever its code
+
+#### Scenario: A member who is not an officer
+
+- **WHEN** a `viewer` or an `editor` of community A reads the invite history
+- **THEN** the attempt is refused

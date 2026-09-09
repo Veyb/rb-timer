@@ -16,7 +16,7 @@ setup('authenticate as the e2e fixture user', async ({ page }) => {
   await page.goto('/login');
   await expect(page.getByLabel('Username или e-mail')).toBeVisible();
 
-  await signInOrRegister(page, FIXTURE_USER);
+  await signInOrRegister(page, FIXTURE_USER, STORAGE_STATE_PATH);
 
   // Fresh registration lands on the lowest-privilege role and no community;
   // grant both directly in the database so the fixture account can reach

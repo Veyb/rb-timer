@@ -35,6 +35,29 @@ export const DEFAULT_ROLE_MEMBER = {
   realname: 'E2E Default Role',
 };
 
+// A member of the fixture community holding `viewer`. The only account that
+// reaches the profile screen without officer rights, and therefore the only one
+// that can show the invites tab is hidden rather than the whole page being
+// hidden — the two accounts above are both stopped by the gate first.
+export const VIEWER_MEMBER = {
+  username: 'e2e-viewer',
+  email: 'e2e-viewer@rb-timer.local',
+  password: 'E2eViewer!2026',
+  nickname: 'E2E Viewer',
+  realname: 'E2E Viewer',
+};
+
+// Redeems a code during the run, which is the point: it is the only fixture
+// that changes community, so no other spec may depend on its membership. The
+// setup puts it back to no community before every run.
+export const JOINER_USER = {
+  username: 'e2e-joiner',
+  email: 'e2e-joiner@rb-timer.local',
+  password: 'E2eJoiner!2026',
+  nickname: 'E2E Joiner',
+  realname: 'E2E Joiner',
+};
+
 // Kept in step with the default in apps/backend/scripts/e2e-fixture.js.
 export const FIXTURE_COMMUNITY_NAME = 'E2E Fixture Community';
 
@@ -43,5 +66,7 @@ export const FIXTURE_COMMUNITY_NAME = 'E2E Fixture Community';
 export const STORAGE_STATE_PATH = 'e2e/.auth/fixture-user.json';
 export const NO_COMMUNITY_STORAGE_STATE_PATH = 'e2e/.auth/no-community-user.json';
 export const DEFAULT_ROLE_STORAGE_STATE_PATH = 'e2e/.auth/default-role-user.json';
+export const VIEWER_STORAGE_STATE_PATH = 'e2e/.auth/viewer-member.json';
+export const JOINER_STORAGE_STATE_PATH = 'e2e/.auth/joiner-user.json';
 
 export const INVALID_CREDENTIALS_TEXT = 'Указан неправильный username или пароль';

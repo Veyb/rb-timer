@@ -7,8 +7,12 @@ import {
   DEFAULT_ROLE_MEMBER,
   DEFAULT_ROLE_STORAGE_STATE_PATH,
   FIXTURE_COMMUNITY_NAME,
+  JOINER_STORAGE_STATE_PATH,
+  JOINER_USER,
   NO_COMMUNITY_STORAGE_STATE_PATH,
   NO_COMMUNITY_USER,
+  VIEWER_MEMBER,
+  VIEWER_STORAGE_STATE_PATH,
 } from './fixtures/constants';
 import { type FixtureAccount, signInOrRegister } from './fixtures/sign-in';
 
@@ -34,7 +38,7 @@ const provision = async (
   flags: string[],
   storageStatePath: string,
 ) => {
-  await signInOrRegister(page, account);
+  await signInOrRegister(page, account, storageStatePath);
 
   execFileSync('pnpm', ['run', 'e2e:fixture', account.email, ...flags], {
     cwd: BACKEND_DIR,
@@ -64,5 +68,26 @@ setup('provision a community member still on the default role', async ({ page })
     DEFAULT_ROLE_MEMBER,
     ['--role=authenticated', `--community=${FIXTURE_COMMUNITY_NAME}`],
     DEFAULT_ROLE_STORAGE_STATE_PATH,
+  );
+});
+
+setup('provision a viewer who belongs to the fixture community', async ({ page }) => {
+  await provision(
+    page,
+    VIEWER_MEMBER,
+    ['--role=viewer', `--community=${FIXTURE_COMMUNITY_NAME}`],
+    VIEWER_STORAGE_STATE_PATH,
+  );
+});
+
+setup('provision an account that will redeem a code during the run', async ({ page }) => {
+  // Reset every run, because the invite spec deliberately leaves it a member of
+  // the fixture community. The default role, so nothing about it is privileged
+  // before the code is applied.
+  await provision(
+    page,
+    JOINER_USER,
+    ['--role=authenticated', '--community=none'],
+    JOINER_STORAGE_STATE_PATH,
   );
 });

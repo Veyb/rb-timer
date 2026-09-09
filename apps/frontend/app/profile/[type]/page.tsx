@@ -1,9 +1,9 @@
 // global modules
-import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { ProfileContent } from '../../../components/profile-content';
-import { getRoles } from '../../../lib/api';
+import { getMemberRoles } from '../../../lib/api';
 // local modules
+import { getSessionToken } from '../../../lib/dal';
 import type { Role } from '../../../types';
 
 export default async function ProfileTypePage({ params }: { params: Promise<{ type: string }> }) {
@@ -13,12 +13,12 @@ export default async function ProfileTypePage({ params }: { params: Promise<{ ty
     notFound();
   }
 
-  const jwt = (await cookies()).get('jwt')?.value;
+  const jwt = await getSessionToken();
 
   let roles: Role[] = [];
   if (jwt) {
     try {
-      roles = await getRoles(jwt);
+      roles = await getMemberRoles(jwt);
     } catch {}
   }
 

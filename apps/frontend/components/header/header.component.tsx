@@ -8,7 +8,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { TEST_IDS } from '../../constants/test-ids';
 import { useAuthContext } from '../../contexts/auth-context';
+import { useIsClient } from '../../lib/hooks/use-is-client';
 import { Button } from '../../styled-components';
 import { Menu, MenuDivider, MenuItem } from '../menu';
 // local modules
@@ -63,6 +65,21 @@ const Holder = styled.header`
 
   & .time {
     margin: 0;
+    /* A box held open whether or not there is a clock in it. The first paint
+       has none — see the comment in the component below — so without a reserve
+       everything to its left would shift when the time appears.
+
+       70px against the 69.1px that 23:59 measures at this heading size, so the
+       reserve is what decides the width. That is under a pixel of headroom: a
+       different font falling in, or a heavier weight, and the text would set
+       the width again and the jump would come back. Re-measure before trusting
+       it after any change to the heading's type.
+
+       Tabular figures keep it still afterwards too — proportional digits
+       change width as the minute ticks over. */
+    min-width: 7rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
   }
 
   & .modalList {
@@ -72,10 +89,19 @@ const Holder = styled.header`
 
 export const Header = () => {
   const auth = useAuthContext();
-  const [time, setTime] = useState(dayjs().format('HH:mm'));
+  // Empty until mounted, on purpose. The server renders this component too,
+  // and it renders the server's minute; a client hydrating one second later
+  // computes its own. When the two straddle a minute boundary React reports a
+  // hydration mismatch and rebuilds the tree — intermittently, roughly once a
+  // minute, which is how the e2e console guard found it. Nothing but the clock
+  // depends on the value, so the first paint simply has no clock.
+  const mounted = useIsClient();
+  const [time, setTime] = useState('');
   const [supportModal, setSupportModal] = useState(false);
 
   useEffect(() => {
+    setTime(dayjs().format('HH:mm'));
+
     const timer = setInterval(() => {
       setTime(dayjs().format('HH:mm'));
     }, 1000);
@@ -91,6 +117,14 @@ export const Header = () => {
       {auth.allowed && (
         <Link href="/users">
           <MenuItem>Пользователи</MenuItem>
+        </Link>
+      )}
+      {/* Running the community, not tending your own account — so it sits
+          beside the other sections rather than inside the profile, and only
+          for the role that can actually use it. */}
+      {auth.allowedManage && (
+        <Link href="/invites">
+          <MenuItem data-testid={TEST_IDS.invites.menuItem}>Приглашения</MenuItem>
         </Link>
       )}
       <MenuDivider />
@@ -110,10 +144,15 @@ export const Header = () => {
         </Space>
         <Space size="large">
           <OnlineList />
-          <h2 className="time">{time}</h2>
+          <h2 className="time">{mounted ? time : ''}</h2>
           {auth.loggedIn ? (
             <Dropdown popupRender={() => menu} trigger={['click']} placement="bottomRight">
-              <Button shape="circle" size="large" icon={<UserOutlined />} />
+              <Button
+                shape="circle"
+                size="large"
+                icon={<UserOutlined />}
+                data-testid={TEST_IDS.header.userMenu}
+              />
             </Dropdown>
           ) : (
             <Link href="/login">

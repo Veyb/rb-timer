@@ -2,6 +2,7 @@
 import { Button } from 'antd';
 import { type ChangeEvent, type SubmitEvent, useCallback, useState } from 'react';
 import styled from 'styled-components';
+import { TEST_IDS } from '../../../constants/test-ids';
 import { Select } from '../../../styled-components';
 import type { Role } from '../../../types';
 // local modules
@@ -22,6 +23,12 @@ const Holder = styled.div`
 `;
 
 interface FilterBlockProps {
+  /**
+   * The roles present among the members being filtered, not the ones an officer
+   * may assign. A filter offers what is there: a member holding the
+   * registration default — left by an operator, or by an officer's removal
+   * elsewhere — appears in the list, so the filter has to be able to find them.
+   */
   roles: Role[];
   handleSearch: (value: string) => void;
   handleFilter: (value: string | undefined) => void;
@@ -73,9 +80,10 @@ export const FilterBlock = ({ roles, handleSearch, handleFilter }: FilterBlockPr
         className={styles.filterBlock}
         popupMatchSelectWidth={false}
         placement="bottomLeft"
+        data-testid={TEST_IDS.usersList.roleFilter}
       >
         {roles.map((role) => (
-          <Select.Option key={role.id} value={role.name}>
+          <Select.Option key={role.type} value={role.name}>
             {role.name}
           </Select.Option>
         ))}

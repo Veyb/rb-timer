@@ -1,8 +1,8 @@
 // global modules
-import { cookies } from 'next/headers';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { UserProfileContent } from '../../../../components/user-profile-content';
-import { getCommunityMember, getRoles } from '../../../../lib/api';
+import { getCommunityMember, getMemberRoles } from '../../../../lib/api';
+import { getCurrentUser } from '../../../../lib/dal';
 // local modules
 import type { CommunityMember, Role } from '../../../../types';
 
@@ -20,7 +20,15 @@ export default async function UserProfileTypePage({
     notFound();
   }
 
-  const jwt = (await cookies()).get('jwt')?.value;
+  const { user: viewer, jwt } = await getCurrentUser();
+
+  // Your own account already has a page, and it is the one that offers leaving
+  // and deletion. This one is built for looking at somebody else: its heading
+  // names them, and its controls are an officer's over another member. Reached
+  // from the member list or typed by hand, your own document belongs there.
+  if (viewer?.documentId === userId) {
+    redirect('/profile/management');
+  }
 
   let user: CommunityMember | null = null;
   let roles: Role[] = [];
@@ -28,7 +36,7 @@ export default async function UserProfileTypePage({
     try {
       const [userData, rolesData] = await Promise.all([
         getCommunityMember(userId, jwt),
-        getRoles(jwt),
+        getMemberRoles(jwt),
       ]);
       user = userData;
       roles = rolesData;

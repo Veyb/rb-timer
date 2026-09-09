@@ -25,7 +25,7 @@ export const OnlineList = () => {
   const updateSocketUsers = useCallback(({ socketUsers }: { socketUsers: ServerSocketUsers }) => {
     const users = Object.entries(socketUsers).reduce(
       (acc: Record<string, SocketUserData>, [socketId, socketUser]) => {
-        const userId: string = socketUser ? `${socketUser.id}` : 'anonymous';
+        const userId: string = socketUser ? socketUser.documentId : 'anonymous';
 
         const user: SocketUserData = acc[userId]
           ? {
@@ -63,7 +63,7 @@ export const OnlineList = () => {
         <Scrollable maxHeight={30}>
           {socketUsers.map((socketUser) =>
             socketUser.user ? (
-              <MenuItem key={socketUser.user.id}>
+              <MenuItem key={socketUser.user.documentId}>
                 <div>
                   {socketUser.count > 1
                     ? `${socketUser.user.nickname} (${socketUser.count})`

@@ -23,6 +23,13 @@ export default defineConfig({
     {
       name: 'setup',
       testMatch: /.*\.setup\.ts/,
+      // Runs once the projects that depend on this one are done, whether they
+      // passed or not — so a failed run does not leave its fixtures altered.
+      teardown: 'cleanup',
+    },
+    {
+      name: 'cleanup',
+      testMatch: /.*\.teardown\.ts/,
     },
     {
       name: 'chromium',

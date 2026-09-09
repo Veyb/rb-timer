@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { type MouseEvent, useMemo, useState } from 'react';
 import { TEST_IDS } from '../../constants/test-ids';
 import { useAuthContext } from '../../contexts/auth-context';
-import type { CommunityMember, Role } from '../../types';
+import type { CommunityMember } from '../../types';
 // local modules
 import { Layout } from '../layout';
 import { FilterBlock } from './filter-block';
@@ -26,7 +26,7 @@ const UserRow = ({ user }: UserRowProps) => {
     e.preventDefault();
     if (!allowedUpdate) return;
 
-    router.push(`/users/${user.id}`);
+    router.push(`/users/${user.documentId}`);
   };
 
   return (
@@ -40,13 +40,23 @@ const UserRow = ({ user }: UserRowProps) => {
 
 interface UserListTableProps {
   users: CommunityMember[];
-  roles: Role[];
 }
 
-export const UserListTable = ({ users, roles }: UserListTableProps) => {
+export const UserListTable = ({ users }: UserListTableProps) => {
   const { allowedUpdate } = useAuthContext();
   const [searchValue, setSearchValue] = useState('');
   const [filteredRoles, setFilteredRoles] = useState<string | undefined>(undefined);
+
+  /**
+   * Derived from the members on screen rather than fetched. The filter narrows
+   * this list, so its choices are the roles this list contains — which also
+   * means a role an officer cannot assign is still one they can filter by.
+   */
+  const roles = useMemo(() => {
+    const byType = new Map(users.map((user) => [user.role.type, user.role]));
+
+    return [...byType.values()].sort((a, b) => a.name.localeCompare(b.name));
+  }, [users]);
 
   const renderedUsers = useMemo(
     () =>
@@ -75,7 +85,7 @@ export const UserListTable = ({ users, roles }: UserListTableProps) => {
             })}
           >
             {renderedUsers.map((user) => (
-              <UserRow key={user.id} user={user} />
+              <UserRow key={user.documentId} user={user} />
             ))}
           </tbody>
         ) : (

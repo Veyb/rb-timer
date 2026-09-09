@@ -125,6 +125,34 @@ would be left with nobody able to administer members or invite codes.
 - **WHEN** an officer of a community that has another officer asks to leave
 - **THEN** the request succeeds
 
+### Requirement: The registration default is not a rank an officer may assign
+
+The roles an officer may assign SHALL be `viewer`, `editor` and `officer` only.
+The role registration grants SHALL NOT be among them.
+
+Assigning it would leave a member inside the community with no access and no
+account of why — which is what removing them from the community already does,
+except that removal names itself, asks for confirmation, and can be undone with
+an invite code. A member an operator has left on that role SHALL still be
+raisable by an officer, so nobody is stranded by its absence.
+
+#### Scenario: Officer reads the assignable roles
+
+- **WHEN** an officer reads the roles they may assign
+- **THEN** the registration default is not among them
+
+#### Scenario: Officer attempts to assign it anyway
+
+- **WHEN** an officer sets a member's role to the registration default
+- **THEN** the request is rejected with a validation error
+- **AND** the member's role is unchanged
+
+#### Scenario: A member left on the default role by an operator
+
+- **WHEN** an officer changes the role of a member of their community who holds
+  the registration default
+- **THEN** the change succeeds
+
 ### Requirement: An officer may remove a member from their community
 
 An officer SHALL be able to remove any member of their own community except

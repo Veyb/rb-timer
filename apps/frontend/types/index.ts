@@ -12,9 +12,17 @@ export type {
 export type { Community, CommunityLogo, GameServer } from './community.types';
 export type { CommunityMember } from './community-member.types';
 export type { Donation } from './donation.types';
+export type {
+  InviteCode,
+  InviteHistoryEntry,
+  InviteParty,
+  InviteRedemption,
+  NewInviteCode,
+  RedeemedInvite,
+} from './invite-code.types';
 export type { Role, RoleType } from './role.types';
 export type { MayHaveTestId } from './test-id.types';
-export type { SocketUser, User, UserCollections, UserRole } from './user.types';
+export type { SocketUser, User, UserCollections } from './user.types';
 
 export interface Meta {
   page: number;

@@ -1,9 +1,9 @@
 // global modules
-import axios, { type RawAxiosRequestHeaders } from 'axios';
+import axios from 'axios';
 
 // local modules
 import type { User } from '../../types';
-import { API_URL, apiGet, flattenApiResponse } from './base';
+import { API_URL, apiGet, authHeaders, flattenApiResponse, jsonHeaders } from './base';
 
 /**
  * Own account only. Reading or writing anyone else went through `/users` and
@@ -12,30 +12,13 @@ import { API_URL, apiGet, flattenApiResponse } from './base';
  */
 
 export async function getUsersMe(token: string) {
-  const params = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  return await apiGet('/users/me', params);
+  return await apiGet<User>('/users/me', authHeaders(token));
 }
 
 type UpdateUserParams = Pick<User, 'collections'>;
 
 export async function updateUsersMe(params: Partial<UpdateUserParams>, token: string | undefined) {
-  const headers: RawAxiosRequestHeaders = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  };
-  if (token) headers.Authorization = `Bearer ${token}`;
-
-  const { data } = await axios.put(
-    `${API_URL}/users/me`,
-    {
-      ...params,
-    },
-    { headers: { ...headers } },
-  );
+  const { data } = await axios.put(`${API_URL}/users/me`, { ...params }, jsonHeaders(token));
 
   return flattenApiResponse(data) as User;
 }
@@ -45,9 +28,7 @@ export async function updateUsersMe(params: Partial<UpdateUserParams>, token: st
  * `DELETE /users/:id`, which could be aimed at anyone.
  */
 export async function deleteOwnAccount(token: string | undefined) {
-  const { data } = await axios.delete(`${API_URL}/users/me`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const { data } = await axios.delete(`${API_URL}/users/me`, authHeaders(token));
 
   return data as { deleted: boolean };
 }

@@ -41,10 +41,10 @@ interface UserProfileContentProps {
 
 export const UserProfileContent = ({ type, user, roles }: UserProfileContentProps) => {
   const router = useRouter();
-  const { loggedIn, allowedUpdate } = useAuthContext();
+  const { loggedIn, allowedUpdate, user: viewer } = useAuthContext();
 
   const handleTabClick = (key: string) => {
-    router.push(`/users/${user.id}/${key}`);
+    router.push(`/users/${user.documentId}/${key}`);
   };
 
   if (!loggedIn) {
@@ -61,7 +61,18 @@ export const UserProfileContent = ({ type, user, roles }: UserProfileContentProp
     {
       key: 'management',
       label: 'Управление',
-      children: <ManagementBlock user={user} roles={roles} isOwnProfile={false} />,
+      // Computed, not hardcoded false. The route redirects your own document to
+      // `/profile/management`, so this should never be true — but the component
+      // must not depend on the route to be right about whose account it shows.
+      // It used to offer an officer looking at themselves a role control and a
+      // removal control, both of which the endpoints refuse by design.
+      children: (
+        <ManagementBlock
+          user={user}
+          roles={roles}
+          isOwnProfile={user.documentId === viewer?.documentId}
+        />
+      ),
     },
   ];
 
