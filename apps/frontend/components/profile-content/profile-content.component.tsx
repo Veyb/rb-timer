@@ -9,7 +9,6 @@ import { useAuthContext } from '../../contexts/auth-context';
 import styles from '../../styles/main.module.css';
 // local modules
 import type { Role } from '../../types';
-import { AccessPlaceholder } from '../access-placeholder';
 import { CollectionsBlock } from '../collections-block';
 import { Layout } from '../layout';
 import { ManagementBlock } from '../management-block';
@@ -41,7 +40,7 @@ interface ProfileContentProps {
 
 export const ProfileContent = ({ type, roles }: ProfileContentProps) => {
   const router = useRouter();
-  const { loggedIn, allowed, user } = useAuthContext();
+  const { loggedIn, user } = useAuthContext();
 
   const handleTabClick = (key: string) => {
     router.push(`/profile/${key}`);
@@ -55,7 +54,17 @@ export const ProfileContent = ({ type, roles }: ProfileContentProps) => {
     );
   }
 
-  if (!allowed) return <AccessPlaceholder />;
+  // Deliberately not behind the access gate. The gate guards a community's
+  // data; this screen is the caller's own account, which they have whether or
+  // not they belong to anything. Gating it meant a user with no community
+  // clicked "Профиль" in the menu, watched the address change, and got the same
+  // placeholder they were already looking at — and, worse, could not reach the
+  // control for deleting the account, which `user-account-updates` requires of
+  // "any signed-in user, whatever role they hold and whether or not they belong
+  // to a community" and which the backend has always granted them.
+  //
+  // Nothing community-scoped is rendered here: the members screen, the boss
+  // list and the invitations section keep their own checks.
 
   const items: TabsProps['items'] = [
     {

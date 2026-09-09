@@ -59,11 +59,26 @@ test.describe('a role without a community', () => {
     });
   });
 
-  test('can still reach its own profile', async ({ page }) => {
+  // Reach it, not merely arrive at its address. The profile is the caller's own
+  // account, which they have whether or not they belong to anything — this used
+  // to change the URL and show the same placeholder, so clicking "Профиль"
+  // looked like it did nothing.
+  test('can still reach its own profile, and it is the profile', async ({ page }) => {
     await page.goto('/profile');
 
     await expect(page).toHaveURL('/profile/management');
-    await expect(page.getByTestId(TEST_IDS.accessPlaceholder.noCommunity)).toBeVisible();
+    await expect(page.getByTestId(TEST_IDS.profileManagement.roleValue)).toBeVisible();
+    await expect(page.getByTestId(TEST_IDS.accessPlaceholder.noCommunity)).toHaveCount(0);
+  });
+
+  // `user-account-updates` requires this of any signed-in user, whatever role
+  // they hold and whether or not they belong to a community. The backend has
+  // always granted it; the screen used to be unreachable for exactly the
+  // accounts the requirement names.
+  test('can delete its own account', async ({ page }) => {
+    await page.goto('/profile/management');
+
+    await expect(page.getByTestId(TEST_IDS.profileManagement.deleteAccount)).toBeVisible();
   });
 });
 

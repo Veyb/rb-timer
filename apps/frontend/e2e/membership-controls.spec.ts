@@ -130,17 +130,25 @@ test.describe('an officer looking at a member on the registration default', () =
   });
 });
 
-// A member the gate refuses never reaches the management screen, so the
-// placeholder is the only place a way out can live — and these are the members
-// most likely to want one.
+// A member the gate refuses is shut out of every screen built on community
+// data, so the placeholder carries a way out too — these are the members most
+// likely to want one, and they should not have to find the profile first.
 test.describe('a community member the gate refuses', () => {
   test.use({ storageState: sessionOf(DEFAULT_ROLE_STORAGE_STATE_PATH) });
 
-  test('can still leave the community from the placeholder', async ({ page }) => {
-    await page.goto('/profile/management');
+  test('can leave the community from the placeholder', async ({ page }) => {
+    await page.goto('/');
 
     await expect(page.getByTestId(TEST_IDS.accessPlaceholder.noRole)).toBeVisible();
     await expect(page.getByTestId(TEST_IDS.profileManagement.leaveCommunity)).toBeVisible();
+  });
+
+  test('and from their own profile, which is not behind the gate', async ({ page }) => {
+    await page.goto('/profile/management');
+
+    await expect(page.getByTestId(TEST_IDS.profileManagement.roleValue)).toHaveText('Бесправный');
+    await expect(page.getByTestId(TEST_IDS.profileManagement.leaveCommunity)).toBeVisible();
+    await expect(page.getByTestId(TEST_IDS.profileManagement.deleteAccount)).toBeVisible();
   });
 
   test('is offered nothing that administers anyone else', async ({ page }) => {
@@ -157,7 +165,10 @@ test.describe('a user who belongs to no community', () => {
   test('has no community to leave', async ({ page }) => {
     await page.goto('/profile/management');
 
-    await expect(page.getByTestId(TEST_IDS.accessPlaceholder.noCommunity)).toBeVisible();
+    // The profile renders for them — that is the point — and offers nothing to
+    // leave, because there is nothing to leave.
+    await expect(page.getByTestId(TEST_IDS.profileManagement.roleValue)).toBeVisible();
     await expect(page.getByTestId(TEST_IDS.profileManagement.leaveCommunity)).toHaveCount(0);
+    await expect(page.getByTestId(TEST_IDS.profileManagement.deleteAccount)).toBeVisible();
   });
 });
