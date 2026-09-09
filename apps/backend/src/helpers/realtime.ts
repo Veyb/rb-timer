@@ -22,7 +22,10 @@ const USER_UID = 'plugin::users-permissions.user';
 const roomFor = (communityId: number | string) => `community:${communityId}`;
 
 /** What a member may know about another member who is online. */
-type PresenceUser = { id: number; nickname: string };
+// Named by `documentId`, like every other document this API hands out: the
+// numeric key is the database's and does not leave it. Here it is only an
+// identity to group a person's several connections under, never an address.
+type PresenceUser = { documentId: string; nickname: string };
 
 /**
  * Resolves the connection's identity from its handshake token.
@@ -47,7 +50,7 @@ const identify = async (token: unknown) => {
     if (!user || user.blocked) return null;
 
     return {
-      user: { id: user.id, nickname: user.nickname } satisfies PresenceUser,
+      user: { documentId: user.documentId, nickname: user.nickname } satisfies PresenceUser,
       communityId: user.community?.id ?? null,
     };
   } catch {

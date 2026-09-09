@@ -73,14 +73,22 @@ const OWN_COMMUNITY_MEMBERS = [
 const JOIN_BY_INVITE = ['api::invite-code.invite-code.redeem'];
 
 /**
- * Issuing, listing and revoking the invite codes of one's own community.
- * Officers only — every handler behind these scopes to
- * `ctx.state.user.community`, and none of them is meaningful without it.
+ * Issuing and revoking the invite codes of one's own community, and reading
+ * the record of who they let in. Officers only — every handler behind these
+ * scopes to `ctx.state.user.community`, and none is meaningful without it.
+ *
+ * Deliberately no delete. An officer who could remove a code could invite
+ * whoever they liked and leave nothing behind, not even a trace of which
+ * account issued it. Removing a row is an operator's act from the admin panel,
+ * and the redemption records survive even that on their own.
  */
 const OWN_COMMUNITY_INVITES = [
   'api::invite-code.invite-code.create',
   'api::invite-code.invite-code.find',
   'api::invite-code.invite-code.revoke',
+  // The record of who was admitted and by whom. Read-only, and never granted
+  // any write or delete action: see the route file for why.
+  'api::invite-redemption.invite-redemption.find',
 ];
 
 export const ROLES = [
@@ -152,9 +160,10 @@ export const ROLES = [
       'api::community-member.community-member.updateRole',
       'api::donation.donation.find',
       'plugin::users-permissions.auth.connect',
-      // Reads the role list the member management screen offers.
-      'plugin::users-permissions.role.find',
-      'plugin::users-permissions.role.findOne',
+      // The role list the member management screen offers comes from
+      // `api::community-member.community-member.roles`, not from the plugin —
+      // see NEVER_GRANTED.
+      'api::community-member.community-member.roles',
     ],
   },
 ] as const;
@@ -165,6 +174,13 @@ export const ROLES = [
  * that answer without a community scope, and the reason the member API exists.
  */
 export const NEVER_GRANTED = [
+  // Answers with `nb_users` — a count of accounts per role across every
+  // community in the installation — and, for a single role, its entire
+  // permission map. An officer administers their own community; the shape of
+  // the whole application's authorisation is not theirs to read.
+  // `GET /community/member-roles` gives the screen the name and type it needs.
+  'plugin::users-permissions.role.find',
+  'plugin::users-permissions.role.findOne',
   'plugin::users-permissions.user.find',
   'plugin::users-permissions.user.findOne',
   'plugin::users-permissions.user.count',

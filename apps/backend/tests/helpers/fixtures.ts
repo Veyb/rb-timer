@@ -19,6 +19,12 @@ const COMMUNITY_UID = 'api::community.community';
 
 export interface TestUser {
   id: number;
+  /**
+   * How every endpoint in this app addresses a user. `id` is kept alongside it
+   * because a test still reaches into the database by the key the database
+   * uses; it is never what a request carries.
+   */
+  documentId: string;
   jwt: string;
   email: string;
   username: string;
@@ -78,7 +84,7 @@ export async function createUser(strapi: Core.Strapi, roleId: number): Promise<T
 
   const jwt = strapi.plugin('users-permissions').service('jwt').issue({ id: user.id });
 
-  return { id: user.id, jwt, ...credentials };
+  return { id: user.id, documentId: user.documentId, jwt, ...credentials };
 }
 
 /**
@@ -148,6 +154,13 @@ export async function createInviteCode(
 /** The code row as stored, for asserting on a counter or a revocation stamp. */
 export async function readInviteCode(strapi: Core.Strapi, id: number) {
   return strapi.db.query(INVITE_CODE_UID).findOne({ where: { id }, populate: { community: true } });
+}
+
+/** The same, addressed the way the API addresses it. */
+export async function readInviteCodeByDocumentId(strapi: Core.Strapi, documentId: string) {
+  return strapi.db
+    .query(INVITE_CODE_UID)
+    .findOne({ where: { documentId }, populate: { community: true } });
 }
 
 /**

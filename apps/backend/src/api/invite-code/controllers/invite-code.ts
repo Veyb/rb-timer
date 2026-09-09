@@ -54,9 +54,13 @@ const isExpired = (code: { expiresAt?: Date | string | null }, at: Date) =>
 const isExhausted = (code: { maxUses?: number | null; usedCount?: number | null }) =>
   code.maxUses != null && (code.usedCount ?? 0) >= code.maxUses;
 
-/** What an officer is shown about a code of their own community. */
+/**
+ * What an officer is shown about a code of their own community.
+ *
+ * Addressed by `documentId`, like every other document in this API and like
+ * Strapi's own routes. The numeric key stays in the database where it belongs.
+ */
 const toInviteCode = (code) => ({
-  id: code.id,
   documentId: code.documentId,
   code: code.code,
   maxUses: code.maxUses ?? null,
@@ -66,17 +70,13 @@ const toInviteCode = (code) => ({
   revokedAt: code.revokedAt ?? null,
   createdAt: code.createdAt,
   issuedBy: code.issuedBy
-    ? { id: code.issuedBy.id, nickname: code.issuedBy.nickname, username: code.issuedBy.username }
+    ? { documentId: code.issuedBy.documentId, nickname: code.issuedBy.nickname }
     : null,
   redemptions: (code.redemptions ?? []).map((redemption) => ({
-    id: redemption.id,
+    documentId: redemption.documentId,
     redeemedAt: redemption.redeemedAt,
     user: redemption.user
-      ? {
-          id: redemption.user.id,
-          nickname: redemption.user.nickname,
-          username: redemption.user.username,
-        }
+      ? { documentId: redemption.user.documentId, nickname: redemption.user.nickname }
       : null,
   })),
 });
@@ -93,6 +93,25 @@ const readForOfficer = async (where: Record<string, unknown>) =>
       redemptions: { populate: { user: true } },
     },
   });
+
+/**
+ * The addressed code, if it belongs to the caller's own community.
+ *
+ * A code of another community answers exactly like one that does not exist —
+ * the officer must not learn that it is out there, let alone act on it. Shared
+ * by revoke and delete so the two cannot drift apart in what they disclose.
+ */
+const ownCode = async (ctx) => {
+  const code = await strapi.db.query(INVITE_CODE_UID).findOne({
+    where: { documentId: ctx.params.id, community: ctx.state.user.community.id },
+  });
+
+  if (!code) {
+    throw new NotFoundError('Invite code not found');
+  }
+
+  return code;
+};
 
 /**
  * A code nobody holds yet.
@@ -173,19 +192,16 @@ export default {
   /**
    * Revokes a code of the officer's own community.
    *
-   * The row is stamped rather than deleted: the redemptions attributed to it
-   * are a community's own history, and deleting the code would orphan them. A
-   * code of another community answers as missing — the officer must not learn
-   * that it exists.
+   * Stamping is the only ending this API offers. There is deliberately no
+   * delete: a code and the redemptions hanging off it are the community's
+   * record of who admitted whom, and an officer who could erase that could
+   * invite whoever they liked and leave nothing behind — not even a trace of
+   * which account issued the code. Removing a row is an operator's act, from
+   * the admin panel, and even then the redemption records survive it on their
+   * own (see the snapshot fields on `invite-redemption`).
    */
   async revoke(ctx) {
-    const code = await strapi.db.query(INVITE_CODE_UID).findOne({
-      where: { id: ctx.params.id, community: ctx.state.user.community.id },
-    });
-
-    if (!code) {
-      throw new NotFoundError('Invite code not found');
-    }
+    const code = await ownCode(ctx);
 
     if (!code.revokedAt) {
       await strapi.documents(INVITE_CODE_UID).update({
@@ -261,10 +277,13 @@ export default {
       // inside the transaction.
       const inviteCode = await strapi.db.query(INVITE_CODE_UID).findOne({
         where: { id: locked.id },
-        populate: { community: true },
+        populate: { community: true, issuedBy: true },
       });
 
       if (!inviteCode?.community) return null;
+
+      const issuedBy = inviteCode.issuedBy;
+
       if (inviteCode.revokedAt) return null;
       if (isExpired(inviteCode, new Date())) return null;
       if (isExhausted(inviteCode)) return null;
@@ -282,8 +301,18 @@ export default {
         data: { community: inviteCode.community.id, role: grantedRole.id },
       });
 
+      // Written with a snapshot beside the relations, so the record still says
+      // who admitted whom after a code is deleted or an account removes itself.
       await strapi.documents(REDEMPTION_UID).create({
-        data: { inviteCode: inviteCode.id, user: user.id, redeemedAt: new Date() },
+        data: {
+          community: inviteCode.community.id,
+          inviteCode: inviteCode.id,
+          user: user.id,
+          redeemedAt: new Date(),
+          codeValue: inviteCode.code,
+          issuedByUsername: issuedBy?.username ?? null,
+          redeemedByUsername: user.username,
+        },
       });
 
       return inviteCode.community.id;
@@ -298,14 +327,9 @@ export default {
     ctx.body = {
       redeemed: true,
       community: community
-        ? {
-            id: community.id,
-            documentId: community.documentId,
-            name: community.name,
-            server: community.server,
-          }
+        ? { documentId: community.documentId, name: community.name, server: community.server }
         : null,
-      role: { id: grantedRole.id, name: grantedRole.name, type: grantedRole.type },
+      role: { name: grantedRole.name, type: grantedRole.type },
     };
   },
 };

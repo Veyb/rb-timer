@@ -9,6 +9,7 @@
     "build": "strapi build",
     "strapi": "strapi",
     "e2e:fixture": "node scripts/e2e-fixture.js",
+    "e2e:invite-cleanup": "node scripts/e2e-invite-cleanup.js",
     "test": "vitest run && vitest run --config vitest.postgres.config.mts",
     "test:postgres": "vitest run --config vitest.postgres.config.mts",
     "test:watch": "vitest",

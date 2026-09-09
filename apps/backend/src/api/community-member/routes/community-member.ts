@@ -8,6 +8,15 @@
  */
 export default {
   routes: [
+    // Before `/community/members/:id`, which would otherwise capture it.
+    {
+      method: 'GET',
+      path: '/community/member-roles',
+      handler: 'community-member.roles',
+      config: {
+        policies: ['global::is-officer'],
+      },
+    },
     {
       method: 'GET',
       path: '/community/members',

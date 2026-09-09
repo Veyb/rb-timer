@@ -114,6 +114,71 @@ describe('the user collection is not reachable through the Content API', () => {
   });
 });
 
+describe('the role list an officer may read', () => {
+  it('names the assignable roles and nothing else', async () => {
+    const response = await apiRequest(baseUrl, 'GET', '/api/community/member-roles', {
+      jwt: alphaOfficer.jwt,
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body.map((role: { type: string }) => role.type)).toEqual([
+      'viewer',
+      'editor',
+      'officer',
+    ]);
+
+    for (const role of response.body) {
+      expect(Object.keys(role).sort()).toEqual(['name', 'type']);
+    }
+  });
+
+  it('discloses no installation-wide count and no permission map', async () => {
+    // What the plugin's own role endpoints answer with, and the reason this
+    // one exists: `nb_users` counts accounts per role across every community,
+    // and a single role comes back carrying every action it may call.
+    const response = await apiRequest(baseUrl, 'GET', '/api/community/member-roles', {
+      jwt: alphaOfficer.jwt,
+    });
+
+    const body = JSON.stringify(response.body);
+    expect(body).not.toContain('nb_users');
+    expect(body).not.toContain('permissions');
+  });
+
+  it('leaves the plugin role endpoints refused for an officer', async () => {
+    for (const route of ['/api/users-permissions/roles', '/api/users-permissions/roles/1']) {
+      const response = await apiRequest(baseUrl, 'GET', route, { jwt: alphaOfficer.jwt });
+
+      expect(response.status).toBe(403);
+    }
+  });
+
+  it('is refused for a member who is not an officer', async () => {
+    const response = await apiRequest(baseUrl, 'GET', '/api/community/member-roles', {
+      jwt: alphaViewer.jwt,
+    });
+
+    expect(response.status).toBe(403);
+  });
+
+  it('is refused by the policy, not only by the permission', async () => {
+    // `alphaViewer` above does not hold the action at all, so that test cannot
+    // tell whether the route policy does anything. This one grants the action
+    // to a role that is not `officer` — the only shape that reaches the policy.
+    const role = await createRole(strapi, `roles_probe_${process.pid}`, [
+      'api::community-member.community-member.roles',
+    ]);
+    const caller = await createUser(strapi, role.id);
+    await setUserCommunity(strapi, caller.id, alphaId);
+
+    const response = await apiRequest(baseUrl, 'GET', '/api/community/member-roles', {
+      jwt: caller.jwt,
+    });
+
+    expect(response.status).toBe(403);
+  });
+});
+
 describe('member listing is scoped to the caller`s community', () => {
   it('returns only members of the caller`s own community', async () => {
     const response = await apiRequest(baseUrl, 'GET', '/api/community/members', {
@@ -122,11 +187,11 @@ describe('member listing is scoped to the caller`s community', () => {
 
     expect(response.status).toBe(200);
 
-    const ids = response.body.map((member: { id: number }) => member.id);
-    expect(ids).toContain(alphaViewer.id);
-    expect(ids).toContain(alphaOfficer.id);
-    expect(ids).not.toContain(betaMember.id);
-    expect(ids).not.toContain(homeless.id);
+    const ids = response.body.map((member: { documentId: string }) => member.documentId);
+    expect(ids).toContain(alphaViewer.documentId);
+    expect(ids).toContain(alphaOfficer.documentId);
+    expect(ids).not.toContain(betaMember.documentId);
+    expect(ids).not.toContain(homeless.documentId);
   });
 
   it('refuses a caller who belongs to no community', async () => {
@@ -144,33 +209,38 @@ describe('member listing is scoped to the caller`s community', () => {
     ['a populate directive', 'populate=*'],
     ['a fields directive', 'fields=email'],
   ])('cannot be widened by %s', async (_label, query) => {
-    const suffix = query.endsWith('=') ? `${query}${betaMember.id}` : query;
+    const suffix = query.endsWith('=') ? `${query}${betaMember.documentId}` : query;
     const response = await apiRequest(baseUrl, 'GET', `/api/community/members?${suffix}`, {
       jwt: alphaViewer.jwt,
     });
 
     expect(response.status).toBe(200);
 
-    const ids = response.body.map((member: { id: number }) => member.id);
-    expect(ids).not.toContain(betaMember.id);
-    expect(ids).not.toContain(homeless.id);
-    expect(ids).toContain(alphaViewer.id);
+    const ids = response.body.map((member: { documentId: string }) => member.documentId);
+    expect(ids).not.toContain(betaMember.documentId);
+    expect(ids).not.toContain(homeless.documentId);
+    expect(ids).toContain(alphaViewer.documentId);
   });
 });
 
 describe('member detail is scoped to the caller`s community', () => {
   it('returns a member of the same community', async () => {
-    const response = await apiRequest(baseUrl, 'GET', `/api/community/members/${alphaOfficer.id}`, {
-      jwt: alphaViewer.jwt,
-    });
+    const response = await apiRequest(
+      baseUrl,
+      'GET',
+      `/api/community/members/${alphaOfficer.documentId}`,
+      {
+        jwt: alphaViewer.jwt,
+      },
+    );
 
     expect(response.status).toBe(200);
-    expect(response.body.id).toBe(alphaOfficer.id);
+    expect(response.body.documentId).toBe(alphaOfficer.documentId);
   });
 
   it.each([
-    ['another community', () => betaMember.id],
-    ['no community', () => homeless.id],
+    ['another community', () => betaMember.documentId],
+    ['no community', () => homeless.documentId],
   ])('answers as not-found for a user of %s', async (_label, id) => {
     const response = await apiRequest(baseUrl, 'GET', `/api/community/members/${id()}`, {
       jwt: alphaViewer.jwt,
@@ -201,9 +271,14 @@ describe('member data exposes no account secrets', () => {
   });
 
   it('omits them from a single member', async () => {
-    const response = await apiRequest(baseUrl, 'GET', `/api/community/members/${alphaOfficer.id}`, {
-      jwt: alphaViewer.jwt,
-    });
+    const response = await apiRequest(
+      baseUrl,
+      'GET',
+      `/api/community/members/${alphaOfficer.documentId}`,
+      {
+        jwt: alphaViewer.jwt,
+      },
+    );
 
     for (const field of FORBIDDEN) {
       expect(Object.keys(response.body)).not.toContain(field);
@@ -216,10 +291,15 @@ describe('role administration is scoped to the caller`s community', () => {
     const target = await createUser(strapi, viewerRoleId);
     await setUserCommunity(strapi, target.id, alphaId);
 
-    const response = await apiRequest(baseUrl, 'PUT', `/api/community/members/${target.id}/role`, {
-      jwt: alphaOfficer.jwt,
-      body: { role: 'editor' },
-    });
+    const response = await apiRequest(
+      baseUrl,
+      'PUT',
+      `/api/community/members/${target.documentId}/role`,
+      {
+        jwt: alphaOfficer.jwt,
+        body: { role: 'editor' },
+      },
+    );
 
     expect(response.status).toBe(200);
     expect((await readUserRole(strapi, target.id)).type).toBe('editor');
@@ -231,7 +311,7 @@ describe('role administration is scoped to the caller`s community', () => {
     const response = await apiRequest(
       baseUrl,
       'PUT',
-      `/api/community/members/${betaMember.id}/role`,
+      `/api/community/members/${betaMember.documentId}/role`,
       { jwt: alphaOfficer.jwt, body: { role: 'officer' } },
     );
 
@@ -243,12 +323,38 @@ describe('role administration is scoped to the caller`s community', () => {
     const response = await apiRequest(
       baseUrl,
       'PUT',
-      `/api/community/members/${homeless.id}/role`,
+      `/api/community/members/${homeless.documentId}/role`,
       { jwt: alphaOfficer.jwt, body: { role: 'officer' } },
     );
 
     expect(response.status).toBe(404);
     expect((await readUserRole(strapi, homeless.id)).id).toBe(viewerRoleId);
+  });
+
+  it('does not offer the registration default as a rank', async () => {
+    // Assigning it would leave a member inside the community with no access —
+    // what removal already does, but silently and without a way back for the
+    // member. Removal is the named act; this is not a rank.
+    const response = await apiRequest(baseUrl, 'GET', '/api/community/member-roles', {
+      jwt: alphaOfficer.jwt,
+    });
+
+    expect(response.body.map((role: { type: string }) => role.type)).not.toContain('authenticated');
+  });
+
+  it('refuses an attempt to set the registration default', async () => {
+    const target = await createUser(strapi, viewerRoleId);
+    await setUserCommunity(strapi, target.id, alphaId);
+
+    const response = await apiRequest(
+      baseUrl,
+      'PUT',
+      `/api/community/members/${target.documentId}/role`,
+      { jwt: alphaOfficer.jwt, body: { role: 'authenticated' } },
+    );
+
+    expect(response.status).toBe(400);
+    expect((await readUserRole(strapi, target.id)).type).toBe('viewer');
   });
 
   it('refuses a non-officer', async () => {
@@ -257,8 +363,8 @@ describe('role administration is scoped to the caller`s community', () => {
     const response = await apiRequest(
       baseUrl,
       'PUT',
-      `/api/community/members/${alphaOfficer.id}/role`,
-      { jwt: alphaViewer.jwt, body: { role: 'authenticated' } },
+      `/api/community/members/${alphaOfficer.documentId}/role`,
+      { jwt: alphaViewer.jwt, body: { role: 'viewer' } },
     );
 
     expect(response.status).toBe(403);
@@ -269,7 +375,7 @@ describe('role administration is scoped to the caller`s community', () => {
     const response = await apiRequest(
       baseUrl,
       'PUT',
-      `/api/community/members/${alphaOfficer.id}/role`,
+      `/api/community/members/${alphaOfficer.documentId}/role`,
       { jwt: alphaOfficer.jwt, body: { role: 'viewer' } },
     );
 
@@ -281,7 +387,7 @@ describe('role administration is scoped to the caller`s community', () => {
     const response = await apiRequest(
       baseUrl,
       'PUT',
-      `/api/community/members/${alphaViewer.id}/role`,
+      `/api/community/members/${alphaViewer.documentId}/role`,
       { jwt: alphaOfficer.jwt, body: { role: 'public' } },
     );
 
@@ -292,7 +398,7 @@ describe('role administration is scoped to the caller`s community', () => {
     const response = await apiRequest(
       baseUrl,
       'PUT',
-      `/api/community/members/${alphaViewer.id}/role`,
+      `/api/community/members/${alphaViewer.documentId}/role`,
       { jwt: alphaOfficer.jwt, body: { nickname: 'Renamed' } },
     );
 

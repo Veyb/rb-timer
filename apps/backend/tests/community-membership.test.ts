@@ -145,9 +145,14 @@ describe('an officer may remove a member from their community', () => {
     const { community, officer } = await makeCommunity('Remove Basic');
     const member = await addMember(community.id, editorRoleId);
 
-    const response = await apiRequest(baseUrl, 'DELETE', `/api/community/members/${member.id}`, {
-      jwt: officer.jwt,
-    });
+    const response = await apiRequest(
+      baseUrl,
+      'DELETE',
+      `/api/community/members/${member.documentId}`,
+      {
+        jwt: officer.jwt,
+      },
+    );
 
     expect(response.status).toBe(200);
     expect(await communityOf(member.id)).toBeNull();
@@ -158,9 +163,14 @@ describe('an officer may remove a member from their community', () => {
     const { community, officer } = await makeCommunity('Remove Officer');
     const other = await addMember(community.id, officerRoleId);
 
-    const response = await apiRequest(baseUrl, 'DELETE', `/api/community/members/${other.id}`, {
-      jwt: officer.jwt,
-    });
+    const response = await apiRequest(
+      baseUrl,
+      'DELETE',
+      `/api/community/members/${other.documentId}`,
+      {
+        jwt: officer.jwt,
+      },
+    );
 
     expect(response.status).toBe(200);
     expect(await communityOf(other.id)).toBeNull();
@@ -169,9 +179,14 @@ describe('an officer may remove a member from their community', () => {
   it('refuses a self-target, pointing at the leave endpoint', async () => {
     const { officer } = await makeCommunity('Remove Self');
 
-    const response = await apiRequest(baseUrl, 'DELETE', `/api/community/members/${officer.id}`, {
-      jwt: officer.jwt,
-    });
+    const response = await apiRequest(
+      baseUrl,
+      'DELETE',
+      `/api/community/members/${officer.documentId}`,
+      {
+        jwt: officer.jwt,
+      },
+    );
 
     expect(response.status).toBe(403);
     expect(response.body.error.message).toMatch(/leave/i);
@@ -183,9 +198,14 @@ describe('an officer may remove a member from their community', () => {
     const { community: other } = await makeCommunity('Remove Foreign B');
     const outsider = await addMember(other.id, viewerRoleId);
 
-    const response = await apiRequest(baseUrl, 'DELETE', `/api/community/members/${outsider.id}`, {
-      jwt: officer.jwt,
-    });
+    const response = await apiRequest(
+      baseUrl,
+      'DELETE',
+      `/api/community/members/${outsider.documentId}`,
+      {
+        jwt: officer.jwt,
+      },
+    );
 
     expect(response.status).toBe(404);
     expect(await communityOf(outsider.id)).not.toBeNull();
@@ -196,9 +216,14 @@ describe('an officer may remove a member from their community', () => {
     const { officer } = await makeCommunity('Remove Homeless');
     const homeless = await createUser(strapi, viewerRoleId);
 
-    const response = await apiRequest(baseUrl, 'DELETE', `/api/community/members/${homeless.id}`, {
-      jwt: officer.jwt,
-    });
+    const response = await apiRequest(
+      baseUrl,
+      'DELETE',
+      `/api/community/members/${homeless.documentId}`,
+      {
+        jwt: officer.jwt,
+      },
+    );
 
     expect(response.status).toBe(404);
   });
@@ -211,9 +236,14 @@ describe('an officer may remove a member from their community', () => {
     const actor = await addMember(community.id, roleId());
     const target = await addMember(community.id, viewerRoleId);
 
-    const response = await apiRequest(baseUrl, 'DELETE', `/api/community/members/${target.id}`, {
-      jwt: actor.jwt,
-    });
+    const response = await apiRequest(
+      baseUrl,
+      'DELETE',
+      `/api/community/members/${target.documentId}`,
+      {
+        jwt: actor.jwt,
+      },
+    );
 
     expect(response.status).toBe(403);
     expect(await communityOf(target.id)).not.toBeNull();

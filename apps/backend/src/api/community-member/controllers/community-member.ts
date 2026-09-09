@@ -24,19 +24,40 @@ const ROLE_UID = 'plugin::users-permissions.role';
  *
  * `email` is deliberately absent — a member's address is their own business,
  * and the old `/users` endpoint leaked every one of them.
+ *
+ * The numeric `id` is absent too. It is the database's key, not the document's
+ * name: Strapi 5 addresses documents by `documentId` and every route here does
+ * the same, so returning both would only invite a caller to pick the wrong one.
+ * A role is named by its `type`, which is what the endpoints below accept.
  */
-const MEMBER_FIELDS = ['id', 'documentId', 'username', 'nickname', 'realname', 'createdAt'];
+const MEMBER_FIELDS = ['documentId', 'username', 'nickname', 'realname', 'createdAt'];
 
 const toMember = (user) => ({
   ...Object.fromEntries(MEMBER_FIELDS.map((field) => [field, user[field]])),
-  role: user.role ? { id: user.role.id, name: user.role.name, type: user.role.type } : null,
+  role: user.role ? { name: user.role.name, type: user.role.type } : null,
 });
 
 /**
- * Roles an officer may hand out. `authenticated` is included so a role can be
- * taken back as well as given; `public` is not a role a user can hold.
+ * Roles an officer may hand out, and the whole of what
+ * `GET /community/member-roles` answers with.
+ *
+ * `public` is not a role a user can hold. The registration default is absent
+ * too, and that is the interesting one: assigning it would leave a member of
+ * the community with no access and no explanation, which is what removing them
+ * from the community already does — except that removal says so, asks for
+ * confirmation, and can be undone with an invite code. A rank list is the wrong
+ * place for an act that is not a rank; the day suspension is wanted, it wants
+ * its own control and its own words.
+ *
+ * A member an operator left on the default role is not stranded by this: every
+ * role above it is still assignable, so an officer can raise them.
+ *
+ * The officer screen used to read the plugin's own `/users-permissions/roles`,
+ * which hands out `nb_users` — a count across every community in the
+ * installation — and, on `findOne`, the role's entire permission map. Neither
+ * is an officer's business, and the screen only ever wanted a name and a type.
  */
-const ASSIGNABLE_ROLE_TYPES = ['authenticated', 'viewer', 'editor', 'officer'];
+const ASSIGNABLE_ROLE_TYPES = ['viewer', 'editor', 'officer'];
 
 /**
  * Detaches a user from their community and puts the role back to what
@@ -68,6 +89,26 @@ const countOfficers = async (communityId: number) =>
 
 export default {
   /**
+   * The roles an officer may assign, named and nothing more.
+   *
+   * Not scoped to a community because roles are not community data — but
+   * deliberately narrow, which is the point: the plugin's own endpoint answers
+   * the same question with installation-wide user counts and permission maps
+   * attached.
+   */
+  async roles() {
+    const roles = await strapi.db
+      .query(ROLE_UID)
+      .findMany({ where: { type: { $in: ASSIGNABLE_ROLE_TYPES } } });
+
+    // Ordered as declared, so the screen lists them least to most privileged
+    // rather than in whatever order the database returns.
+    return ASSIGNABLE_ROLE_TYPES.map((type) => roles.find((role) => role.type === type))
+      .filter(Boolean)
+      .map((role) => ({ name: role.name, type: role.type }));
+  },
+
+  /**
    * Members of the caller's own community.
    *
    * The community comes from `ctx.state.user` and is applied as the `where`
@@ -93,7 +134,7 @@ export default {
    */
   async findOne(ctx) {
     const user = await strapi.db.query(USER_UID).findOne({
-      where: { id: ctx.params.id, community: ctx.state.user.community.id },
+      where: { documentId: ctx.params.id, community: ctx.state.user.community.id },
       populate: { role: true },
     });
 
@@ -110,16 +151,20 @@ export default {
    * The contract carries a single attribute on purpose. `PUT /users/:id` used
    * to accept a whole user payload, which is how a request body could grant
    * itself a role in the first place.
+   *
+   * The role is named by its `type` — `viewer`, `editor` — and not by an id.
+   * One name for one thing: an endpoint that took either would be an endpoint
+   * whose contract you have to read the body of to know.
    */
   async updateRole(ctx) {
     const { role } = ctx.request.body ?? {};
 
-    if (role === undefined || role === null) {
-      throw new ValidationError('role is required');
+    if (typeof role !== 'string' || role === '') {
+      throw new ValidationError('role is required, as a role type');
     }
 
     const target = await strapi.db.query(USER_UID).findOne({
-      where: { id: ctx.params.id, community: ctx.state.user.community.id },
+      where: { documentId: ctx.params.id, community: ctx.state.user.community.id },
       populate: { role: true },
     });
 
@@ -127,11 +172,11 @@ export default {
       throw new NotFoundError('Member not found');
     }
 
-    const nextRole = await strapi.db.query(ROLE_UID).findOne({
-      where: /^\d+$/.test(String(role)) ? { id: Number(role) } : { type: String(role) },
-    });
+    const nextRole = ASSIGNABLE_ROLE_TYPES.includes(role)
+      ? await strapi.db.query(ROLE_UID).findOne({ where: { type: role } })
+      : null;
 
-    if (!nextRole || !ASSIGNABLE_ROLE_TYPES.includes(nextRole.type)) {
+    if (!nextRole) {
       throw new ValidationError(`role must be one of ${ASSIGNABLE_ROLE_TYPES.join(', ')}`);
     }
 
@@ -182,7 +227,7 @@ export default {
    */
   async remove(ctx) {
     const target = await strapi.db.query(USER_UID).findOne({
-      where: { id: ctx.params.id, community: ctx.state.user.community.id },
+      where: { documentId: ctx.params.id, community: ctx.state.user.community.id },
     });
 
     if (!target) {

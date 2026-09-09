@@ -5,30 +5,50 @@
     "singularName": "invite-redemption",
     "pluralName": "invite-redemptions",
     "displayName": "Invite Redemption",
-    "description": "One successful use of an invite code: which code, by whom, when. Written by the redeem endpoint and read back through the invite-code list; this api folder deliberately ships no routes of its own."
+    "description": "One successful use of an invite code: which code, by whom, when, and on whose invitation. The record of how somebody got into a community, and it is meant to outlive everything it refers to — see the snapshot fields below."
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
+    "community": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::community.community",
+      "description": "The community that was joined. Held here as well as on the code, so the history of a community can be read even for a code that no longer exists — without it, a redemption is only reachable through its code and becomes unfindable the moment the code is removed."
+    },
     "inviteCode": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::invite-code.invite-code",
       "inversedBy": "redemptions",
-      "description": "The code that was redeemed. Kept even after the code is revoked, so a community's history survives revocation."
+      "description": "The code that was redeemed, while it exists."
     },
     "user": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "description": "The account admitted by this redemption."
+      "description": "The account admitted by this redemption, while it exists."
     },
     "redeemedAt": {
       "type": "datetime",
       "required": true,
       "description": "When it happened. Written explicitly rather than read off `createdAt`, which records when the row was stored and is free to change meaning."
+    },
+    "codeValue": {
+      "type": "string",
+      "required": true,
+      "description": "The code as a string, copied at the moment it was used. A snapshot, not a convenience: the three relations above are all breakable — a code can be deleted from the admin panel, and either account can delete itself — and a record of an admission that cannot say who admitted whom is no record at all."
+    },
+    "issuedByUsername": {
+      "type": "string",
+      "description": "Who created the code, copied at the moment it was used. Null only if the code carried no issuer."
+    },
+    "redeemedByUsername": {
+      "type": "string",
+      "required": true,
+      "description": "Who used the code, copied at the moment it was used."
     }
   }
 }

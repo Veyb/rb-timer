@@ -20,12 +20,14 @@ import {
   errorMessage,
   findRole,
   readInviteCode,
+  readInviteCodeByDocumentId,
   readUserRole,
   setUserCommunity,
 } from './helpers/fixtures';
 import { cleanupStrapi, setupStrapi } from './helpers/strapi.cjs';
 
 const USER_UID = 'plugin::users-permissions.user';
+const REDEMPTION_UID = 'api::invite-redemption.invite-redemption';
 
 let strapi: Core.Strapi;
 let baseUrl: string;
@@ -71,11 +73,11 @@ afterAll(async () => {
   await cleanupStrapi();
 });
 
-describe('POST /invite-codes', () => {
+describe('POST /community/invite-codes', () => {
   it('binds a new code to the issuing officer own community', async () => {
     const { community, officer } = await makeCommunity('Issue Own');
 
-    const response = await apiRequest(baseUrl, 'POST', '/api/invite-codes', {
+    const response = await apiRequest(baseUrl, 'POST', '/api/community/invite-codes', {
       jwt: officer.jwt,
       body: {},
     });
@@ -83,9 +85,9 @@ describe('POST /invite-codes', () => {
     expect(response.status).toBe(200);
     expect(response.body.code).toMatch(/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/);
     expect(response.body.usedCount).toBe(0);
-    expect(response.body.issuedBy.id).toBe(officer.id);
+    expect(response.body.issuedBy.documentId).toBe(officer.documentId);
 
-    const stored = await readInviteCode(strapi, response.body.id);
+    const stored = await readInviteCodeByDocumentId(strapi, response.body.documentId);
     expect(stored.community.id).toBe(community.id);
   });
 
@@ -93,7 +95,7 @@ describe('POST /invite-codes', () => {
     const { officer } = await makeCommunity('Issue Naming A');
     const { community: other } = await makeCommunity('Issue Naming B');
 
-    const response = await apiRequest(baseUrl, 'POST', '/api/invite-codes', {
+    const response = await apiRequest(baseUrl, 'POST', '/api/community/invite-codes', {
       jwt: officer.jwt,
       body: { community: other.id },
     });
@@ -113,7 +115,7 @@ describe('POST /invite-codes', () => {
     const { officer } = await makeCommunity('Issue Limit');
 
     for (const maxUses of [0, -1]) {
-      const response = await apiRequest(baseUrl, 'POST', '/api/invite-codes', {
+      const response = await apiRequest(baseUrl, 'POST', '/api/community/invite-codes', {
         jwt: officer.jwt,
         body: { maxUses },
       });
@@ -125,7 +127,7 @@ describe('POST /invite-codes', () => {
   it('rejects an expiry in the past', async () => {
     const { officer } = await makeCommunity('Issue Expiry');
 
-    const response = await apiRequest(baseUrl, 'POST', '/api/invite-codes', {
+    const response = await apiRequest(baseUrl, 'POST', '/api/community/invite-codes', {
       jwt: officer.jwt,
       body: { expiresAt: new Date(Date.now() - 60_000).toISOString() },
     });
@@ -137,7 +139,7 @@ describe('POST /invite-codes', () => {
     const { officer } = await makeCommunity('Issue Limited');
     const expiresAt = new Date(Date.now() + 86_400_000);
 
-    const response = await apiRequest(baseUrl, 'POST', '/api/invite-codes', {
+    const response = await apiRequest(baseUrl, 'POST', '/api/community/invite-codes', {
       jwt: officer.jwt,
       body: { maxUses: 5, expiresAt: expiresAt.toISOString() },
     });
@@ -158,7 +160,7 @@ describe('POST /invite-codes', () => {
     const strandedOfficer = await createUser(strapi, officerRoleId);
 
     for (const caller of [viewer, editor, strandedOfficer]) {
-      const response = await apiRequest(baseUrl, 'POST', '/api/invite-codes', {
+      const response = await apiRequest(baseUrl, 'POST', '/api/community/invite-codes', {
         jwt: caller.jwt,
         body: {},
       });
@@ -173,7 +175,7 @@ describe('POST /invite-codes', () => {
   });
 });
 
-describe('GET /invite-codes', () => {
+describe('GET /community/invite-codes', () => {
   it('lists only the codes of the caller own community', async () => {
     const { community: alpha, officer: alphaOfficer } = await makeCommunity('List Alpha');
     const { community: beta } = await makeCommunity('List Beta');
@@ -181,7 +183,7 @@ describe('GET /invite-codes', () => {
     const own = await createInviteCode(strapi, alpha.id);
     const foreign = await createInviteCode(strapi, beta.id);
 
-    const response = await apiRequest(baseUrl, 'GET', '/api/invite-codes', {
+    const response = await apiRequest(baseUrl, 'GET', '/api/community/invite-codes', {
       jwt: alphaOfficer.jwt,
     });
 
@@ -195,7 +197,9 @@ describe('GET /invite-codes', () => {
     const expiresAt = new Date(Date.now() + 86_400_000);
     await createInviteCode(strapi, community.id, { maxUses: 3, usedCount: 1, expiresAt });
 
-    const response = await apiRequest(baseUrl, 'GET', '/api/invite-codes', { jwt: officer.jwt });
+    const response = await apiRequest(baseUrl, 'GET', '/api/community/invite-codes', {
+      jwt: officer.jwt,
+    });
 
     expect(response.body[0].maxUses).toBe(3);
     expect(response.body[0].usedCount).toBe(1);
@@ -207,7 +211,9 @@ describe('GET /invite-codes', () => {
     const { community, officer } = await makeCommunity('List Unlimited');
     await createInviteCode(strapi, community.id, { maxUses: null, usedCount: 7 });
 
-    const response = await apiRequest(baseUrl, 'GET', '/api/invite-codes', { jwt: officer.jwt });
+    const response = await apiRequest(baseUrl, 'GET', '/api/community/invite-codes', {
+      jwt: officer.jwt,
+    });
 
     expect(response.body[0].maxUses).toBeNull();
     expect(response.body[0].remainingUses).toBeNull();
@@ -221,22 +227,29 @@ describe('GET /invite-codes', () => {
 
     expect((await redeem(newcomer.jwt, { code: code.code })).status).toBe(200);
 
-    const response = await apiRequest(baseUrl, 'GET', '/api/invite-codes', { jwt: officer.jwt });
+    const response = await apiRequest(baseUrl, 'GET', '/api/community/invite-codes', {
+      jwt: officer.jwt,
+    });
 
     expect(response.body[0].redemptions).toHaveLength(1);
-    expect(response.body[0].redemptions[0].user.id).toBe(newcomer.id);
+    expect(response.body[0].redemptions[0].user.documentId).toBe(newcomer.documentId);
     expect(Number.isNaN(Date.parse(response.body[0].redemptions[0].redeemedAt))).toBe(false);
   });
 });
 
-describe('DELETE /invite-codes/:id', () => {
+describe('POST /community/invite-codes/:id/revoke', () => {
   it('revokes a code of the caller own community and stops it working', async () => {
     const { community, officer } = await makeCommunity('Revoke Own');
     const code = await createInviteCode(strapi, community.id);
 
-    const response = await apiRequest(baseUrl, 'DELETE', `/api/invite-codes/${code.id}`, {
-      jwt: officer.jwt,
-    });
+    const response = await apiRequest(
+      baseUrl,
+      'POST',
+      `/api/community/invite-codes/${code.documentId}/revoke`,
+      {
+        jwt: officer.jwt,
+      },
+    );
 
     expect(response.status).toBe(200);
     expect(response.body.revokedAt).not.toBeNull();
@@ -252,10 +265,14 @@ describe('DELETE /invite-codes/:id', () => {
     const newcomer = await makeNewcomer();
     await redeem(newcomer.jwt, { code: code.code });
 
-    await apiRequest(baseUrl, 'DELETE', `/api/invite-codes/${code.id}`, { jwt: officer.jwt });
+    await apiRequest(baseUrl, 'POST', `/api/community/invite-codes/${code.documentId}/revoke`, {
+      jwt: officer.jwt,
+    });
 
-    const response = await apiRequest(baseUrl, 'GET', '/api/invite-codes', { jwt: officer.jwt });
-    expect(response.body[0].redemptions[0].user.id).toBe(newcomer.id);
+    const response = await apiRequest(baseUrl, 'GET', '/api/community/invite-codes', {
+      jwt: officer.jwt,
+    });
+    expect(response.body[0].redemptions[0].user.documentId).toBe(newcomer.documentId);
   });
 
   it('answers as not-found for a code of another community, and leaves it usable', async () => {
@@ -263,9 +280,14 @@ describe('DELETE /invite-codes/:id', () => {
     const { community: beta } = await makeCommunity('Revoke Foreign B');
     const foreign = await createInviteCode(strapi, beta.id);
 
-    const response = await apiRequest(baseUrl, 'DELETE', `/api/invite-codes/${foreign.id}`, {
-      jwt: alphaOfficer.jwt,
-    });
+    const response = await apiRequest(
+      baseUrl,
+      'POST',
+      `/api/community/invite-codes/${foreign.documentId}/revoke`,
+      {
+        jwt: alphaOfficer.jwt,
+      },
+    );
 
     expect(response.status).toBe(404);
 
@@ -303,12 +325,35 @@ describe('POST /invite-codes/redeem', () => {
     expect(stored.usedCount).toBe(1);
 
     const redemptions = await strapi.db
-      .query('api::invite-redemption.invite-redemption')
+      .query(REDEMPTION_UID)
       .findMany({ where: { inviteCode: code.id }, populate: { user: true } });
 
     expect(redemptions).toHaveLength(1);
     expect(redemptions[0].user.id).toBe(newcomer.id);
     expect(Number.isNaN(new Date(redemptions[0].redeemedAt).getTime())).toBe(false);
+  });
+
+  it('copies the code, the issuer and the joiner onto the record', async () => {
+    // The relations alongside these are all breakable — a code an operator
+    // deletes, an account that deletes itself. The snapshot is what makes the
+    // record still say who admitted whom afterwards.
+    const { community, officer } = await makeCommunity('Redeem Snapshot');
+    const issued = await apiRequest(baseUrl, 'POST', '/api/community/invite-codes', {
+      jwt: officer.jwt,
+      body: {},
+    });
+    const newcomer = await makeNewcomer();
+
+    await redeem(newcomer.jwt, { code: issued.body.code });
+
+    const [record] = await strapi.db
+      .query(REDEMPTION_UID)
+      .findMany({ where: { codeValue: issued.body.code }, populate: { community: true } });
+
+    expect(record.codeValue).toBe(issued.body.code);
+    expect(record.issuedByUsername).toBe(officer.username);
+    expect(record.redeemedByUsername).toBe(newcomer.username);
+    expect(record.community.id).toBe(community.id);
   });
 
   it('accepts the code however it was copied', async () => {

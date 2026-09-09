@@ -17,7 +17,7 @@ import {
 } from './helpers/fixtures';
 import { cleanupStrapi, setupStrapi } from './helpers/strapi.cjs';
 
-type Presence = Record<string, { id: number; nickname: string } | null>;
+type Presence = Record<string, { documentId: string; nickname: string } | null>;
 
 let strapi: Core.Strapi;
 let baseUrl: string;
@@ -104,7 +104,7 @@ const connect = async (token?: string): Promise<TestSocket> => {
 
 const nicknamesIn = (presence: Presence | null) =>
   Object.values(presence ?? {})
-    .filter((entry): entry is { id: number; nickname: string } => entry !== null)
+    .filter((entry): entry is { documentId: string; nickname: string } => entry !== null)
     .map((entry) => entry.nickname);
 
 beforeAll(async () => {
@@ -235,15 +235,15 @@ describe('identity comes from the server, not from the client', () => {
 
     const entry = Object.values(presence ?? {}).find((value) => value !== null);
     expect(entry?.nickname).toBe(await nicknameOf(alphaOne));
-    expect(entry?.id).toBe(alphaOne.id);
+    expect(entry?.documentId).toBe(alphaOne.documentId);
   });
 
-  it('exposes nothing but an id and a nickname', async () => {
+  it('exposes nothing but a documentId and a nickname', async () => {
     const member = await connect(alphaOne.jwt);
     const presence = await member.next();
 
     const entry = Object.values(presence ?? {}).find((value) => value !== null);
-    expect(Object.keys(entry ?? {}).sort()).toEqual(['id', 'nickname']);
+    expect(Object.keys(entry ?? {}).sort()).toEqual(['documentId', 'nickname']);
   });
 });
 
