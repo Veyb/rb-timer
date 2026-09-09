@@ -140,10 +140,13 @@ export const Header = () => {
           <Link href="/" className="homeLink">
             <Image priority fill sizes="100%" alt="logo" src="/logo_lu4.webp" />
           </Link>
+
           <Donations />
         </Space>
+
         <Space size="large">
           <OnlineList />
+
           <h2 className="time">{mounted ? time : ''}</h2>
           {auth.loggedIn ? (
             <Dropdown popupRender={() => menu} trigger={['click']} placement="bottomRight">

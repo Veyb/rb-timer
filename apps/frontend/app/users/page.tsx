@@ -1,6 +1,6 @@
 // global modules
 import { UsersContent } from '../../components/users-content';
-import { getCommunityMembers } from '../../lib/api';
+import { getCommunityMembers, loadOrEmpty } from '../../lib/api';
 // local modules
 import { getSessionToken } from '../../lib/dal';
 import type { CommunityMember } from '../../types';
@@ -10,10 +10,7 @@ export default async function UsersPage() {
 
   // No role list is fetched: the only thing this screen did with it was fill a
   // filter, and a filter's choices come from what it filters.
-  let users: CommunityMember[] = [];
-  try {
-    users = await getCommunityMembers(jwt);
-  } catch {}
+  const users = await loadOrEmpty<CommunityMember[]>(() => getCommunityMembers(jwt), []);
 
   return <UsersContent users={users} />;
 }

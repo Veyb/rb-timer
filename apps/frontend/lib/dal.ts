@@ -1,4 +1,5 @@
 // global modules
+import axios from 'axios';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 
@@ -41,9 +42,17 @@ export const getSessionToken = cache(async () => (await cookies()).get('jwt')?.v
 
 /**
  * The caller, as `/users/me` describes them, with the token that identified
- * them. A token that no longer works answers the same as no token: this runs on
- * every request for the shell, and an expired session is a signed-out visitor,
- * not a broken page.
+ * them.
+ *
+ * A token the server rejects answers the same as no token: an expired session
+ * is a signed-out visitor, not a broken page. Anything else is rethrown and
+ * reaches `app/global-error.tsx` — this runs in the root layout, so it is
+ * outside `app/error.tsx`.
+ *
+ * The distinction is the point. Swallowing everything here made a backend that
+ * was down render as the signed-out shell, so a reader whose server had fallen
+ * over was invited to log in again and told nothing about why it would not
+ * work.
  */
 export const getCurrentUser = cache(async (): Promise<CurrentUser> => {
   const jwt = await getSessionToken();
@@ -52,7 +61,11 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser> => {
 
   try {
     return { user: await getUsersMe(jwt), jwt };
-  } catch {
-    return { user: null, jwt: undefined };
+  } catch (error) {
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+
+    if (status === 401 || status === 403) return { user: null, jwt: undefined };
+
+    throw error;
   }
 });

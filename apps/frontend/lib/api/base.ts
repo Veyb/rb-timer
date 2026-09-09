@@ -3,9 +3,20 @@ import axios, { type AxiosRequestConfig } from 'axios';
 
 import type { Meta } from '../../types';
 
-export const API_URL = process.env.API_URL;
-export const IMAGE_URL = process.env.IMAGE_URL;
-export const SOCKET_URL = process.env.SOCKET_URL;
+/**
+ * Read straight from `process.env` with the `NEXT_PUBLIC_` prefix, which is
+ * what makes Next.js inline them into the browser bundle. They used to be
+ * listed under the `env` key in `next.config.js` — a key the framework's own
+ * documentation marks `version: legacy`, and which inlines its values whether
+ * or not they are prefixed.
+ *
+ * Being in the browser bundle is the point: the browser calls the API and
+ * opens the socket itself. The consequence to know is that the server render
+ * uses the same public address, so there is no separate internal URL for SSR.
+ */
+export const API_URL = process.env.NEXT_PUBLIC_API_URL;
+export const IMAGE_URL = process.env.NEXT_PUBLIC_IMAGE_URL;
+export const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Object.prototype.toString.call(value) === '[object Object]';
@@ -111,6 +122,41 @@ export async function apiGetList<T>(
   const { data } = await axios.get(`${API_URL}${type}`, params);
 
   return { data: flattenListApiResponse(data) as T[], meta: data.meta.pagination };
+}
+
+/**
+ * Runs a page's data fetch, treating a refusal as "nothing to show" and
+ * anything else as a fault.
+ *
+ * Pages used to wrap every fetch in a bare `try {} catch {}`, which made a
+ * backend that was down look exactly like a community with no bosses in it.
+ * They cannot simply let everything through either: the access gate is
+ * rendered client-side from `/users/me`, so a member the gate will refuse
+ * still asks for the data first and is answered 401 or 403. That answer is
+ * expected and the placeholder explains it.
+ *
+ * Everything else — a connection refused, a 500, a malformed body — reaches
+ * `app/error.tsx` and says so.
+ */
+export async function loadOrEmpty<T>(
+  load: () => Promise<T>,
+  whenRefused: T,
+  /**
+   * Which answers count as "nothing to show". A lookup by id adds 404: a
+   * document of another community answers as missing on purpose, and the page
+   * turns that into `notFound()` rather than into a fault.
+   */
+  expected: number[] = [401, 403],
+): Promise<T> {
+  try {
+    return await load();
+  } catch (error) {
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+
+    if (status !== undefined && expected.includes(status)) return whenRefused;
+
+    throw error;
+  }
 }
 
 export async function apiPost<T extends object>(type: string, params: T) {

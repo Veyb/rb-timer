@@ -17,6 +17,30 @@ import { apiPost, getUsersMe } from '../lib/api';
 import { connectSocket, socket } from '../lib/web-sockets';
 import type { User } from '../types';
 
+/**
+ * How the session cookie is written.
+ *
+ * `secure` outside development, so the token is never sent over plain http.
+ * Not in development, where the app is served over http and the flag would
+ * stop the cookie being set at all.
+ *
+ * `sameSite: 'lax'` and deliberately not `strict`. Strict withholds the cookie
+ * on a cross-site navigation, and an invite link is exactly that — followed
+ * from a chat message. A signed-in member opening `/join?code=…` would be
+ * served the page as a stranger and told to log in.
+ *
+ * What this does not fix: the cookie is written from the browser, so it cannot
+ * be `httpOnly`, and the client reads it back to sign every API call. Any
+ * script on the page can take the session. Closing that means moving the API
+ * calls to the server, which is its own change.
+ */
+const SESSION_COOKIE = {
+  maxAge: 30 * 24 * 60 * 60,
+  path: '/',
+  sameSite: 'lax' as const,
+  secure: process.env.NODE_ENV === 'production',
+};
+
 const INVALID_USERNAME_EMAIL = 'Недопустимый формат e-mail.';
 const EMAIL_IS_ALREADY_TAKEN = 'Данный e-mail уже зарегистрирован.';
 const INVALID_CREDENTIALS_EMAIL =
@@ -122,10 +146,7 @@ export const AuthContextProvider = ({
     try {
       const loginResponse = await apiPost('/auth/local', userData);
 
-      setCookie(null, 'jwt', loginResponse.jwt, {
-        maxAge: 30 * 24 * 60 * 60,
-        path: '/',
-      });
+      setCookie(null, 'jwt', loginResponse.jwt, SESSION_COOKIE);
 
       const userResponse = await getUsersMe(loginResponse.jwt);
 
@@ -141,10 +162,7 @@ export const AuthContextProvider = ({
     try {
       const registerResponse = await apiPost('/auth/local/register', userData);
 
-      setCookie(null, 'jwt', registerResponse.jwt, {
-        maxAge: 30 * 24 * 60 * 60,
-        path: '/',
-      });
+      setCookie(null, 'jwt', registerResponse.jwt, SESSION_COOKIE);
 
       setUser(await getUsersMe(registerResponse.jwt));
       setAccessToken(registerResponse.jwt);

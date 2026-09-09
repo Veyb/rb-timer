@@ -1,7 +1,7 @@
 // global modules
 import { notFound, redirect } from 'next/navigation';
 import { UserProfileContent } from '../../../../components/user-profile-content';
-import { getCommunityMember, getMemberRoles } from '../../../../lib/api';
+import { getCommunityMember, getMemberRoles, loadOrEmpty } from '../../../../lib/api';
 import { getCurrentUser } from '../../../../lib/dal';
 // local modules
 import type { CommunityMember, Role } from '../../../../types';
@@ -30,18 +30,18 @@ export default async function UserProfileTypePage({
     redirect('/profile/management');
   }
 
-  let user: CommunityMember | null = null;
-  let roles: Role[] = [];
-  if (jwt) {
-    try {
-      const [userData, rolesData] = await Promise.all([
-        getCommunityMember(userId, jwt),
-        getMemberRoles(jwt),
-      ]);
-      user = userData;
-      roles = rolesData;
-    } catch {}
-  }
+  // A member outside the caller's community answers as not found, and so does
+  // a caller the gate refuses — both are `notFound()` rather than a fault, and
+  // the placeholder below explains the second. Anything else reaches
+  // `app/error.tsx`.
+  const [user, roles] = await Promise.all([
+    loadOrEmpty<CommunityMember | null>(
+      () => getCommunityMember(userId, jwt),
+      null,
+      [401, 403, 404],
+    ),
+    loadOrEmpty<Role[]>(() => getMemberRoles(jwt), []),
+  ]);
 
   if (!user) {
     notFound();
