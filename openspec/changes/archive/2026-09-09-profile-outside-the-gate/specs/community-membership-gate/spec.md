@@ -1,10 +1,4 @@
-# community-membership-gate Specification
-
-## Purpose
-Defines what a signed-in user can reach, based on two independent axes:
-whether they belong to a community, and what role they hold within it.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Application access requires community membership and a granted role
 
@@ -62,37 +56,3 @@ way to submit a code.
 - **AND** opening the profile area shows their own account, not the placeholder
   again — an implementation that only changed the address satisfied the earlier
   wording of this scenario while leaving the profile unreachable
-
-### Requirement: Role determines capabilities within a community
-
-Within their own community, `viewer` SHALL be able to read shared data,
-`editor` SHALL additionally be able to modify it, and `officer` SHALL
-additionally be able to administer members and invite codes. No role SHALL grant
-any capability outside the user's own community.
-
-#### Scenario: Viewer attempts a modification
-
-- **WHEN** a user holding `viewer` attempts to modify shared community data
-- **THEN** the attempt is refused
-
-#### Scenario: Editor attempts to administer members
-
-- **WHEN** a user holding `editor` attempts to change another member's role or
-  create an invite code
-- **THEN** the attempt is refused
-
-#### Scenario: Officer administers own community
-
-- **WHEN** a user holding `officer` administers members or invite codes of their
-  own community
-- **THEN** the operation is permitted
-
-### Requirement: Gate changes do not alter boss list access
-
-Access to the boss list SHALL continue to require community membership and a
-granted role, as with every other functional screen.
-
-#### Scenario: Community-less user requests the boss list
-
-- **WHEN** a user who belongs to no community opens the boss list screen
-- **THEN** the community-less placeholder is shown instead of the list
