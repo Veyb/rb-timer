@@ -15,6 +15,7 @@ import { Button } from '../../styled-components';
 import { Menu, MenuDivider, MenuItem } from '../menu';
 // local modules
 import { Donations } from './donations';
+import { Logo } from './logo';
 import { OnlineList } from './online-list';
 
 const Holder = styled.header`
@@ -52,11 +53,20 @@ const Holder = styled.header`
   & .homeLink {
     display: flex;
     align-items: center;
-    align-content: center;
-    justify-content: left;
-    width: 4.6rem;
+    /* Ширину не задаём: логотип — маска с собственным aspect-ratio, и коробка
+       ссылки складывается по нему. Единственная точка, где задан цвет
+       логотипа: он рисуется background-color: currentColor. */
     height: 4.6rem;
-    position: relative;
+    color: #f4f4f4;
+    transition: color 0.15s ease;
+
+    /* Тот же цвет, в который antd красит Button на hover (colorPrimaryHover
+       тёмной темы) — логотип и кнопки шапки реагируют на курсор одинаково.
+       Скопирован сюда значением: свои --ant-btn-* antd держит в хэшированном
+       классе на самой кнопке, снаружи на них не сослаться. */
+    &:hover {
+      color: #3c89e8;
+    }
   }
 
   & .donations {
@@ -137,8 +147,8 @@ export const Header = () => {
       <div className="background" />
       <div className="wrapper">
         <Space size="large">
-          <Link href="/" className="homeLink">
-            <Image priority fill sizes="100%" alt="logo" src="/logo_lu4.webp" />
+          <Link href="/" className="homeLink" aria-label="На главную">
+            <Logo />
           </Link>
 
           <Donations />
@@ -164,6 +174,7 @@ export const Header = () => {
           )}
         </Space>
       </div>
+
       <Modal
         centered
         open={supportModal}
