@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_catalog_dungeons",
+  "info": {
+    "displayName": "Dungeon",
+    "icon": "manyToOne",
+    "description": "A location's floor plan and the rectangle it covers on the world map. Only 15 of the 63 locations have one, so this is optional on the location rather than a type of its own."
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "mapX": { "type": "decimal", "required": true },
+    "mapY": { "type": "decimal", "required": true },
+    "width": { "type": "decimal", "required": true, "min": 0 },
+    "height": { "type": "decimal", "required": true, "min": 0 }
+  }
+}

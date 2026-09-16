@@ -1,0 +1,114 @@
+{
+  "kind": "collectionType",
+  "collectionName": "boss_drops",
+  "info": {
+    "singularName": "boss-drop",
+    "pluralName": "boss-drops",
+    "displayName": "Boss drop",
+    "description": "One boss dropping one item, with the chance and quantity range. A type of its own rather than a list on the boss: 2791 rows would travel with every boss read, and \"which bosses drop this item\" would be unanswerable. `label` exists so the record can name itself in the admin panel \u2014 every other field here is a number or a relation, and Strapi would fall back to the record id."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "config": {
+    "settings": {
+      "bulkable": true,
+      "filterable": true,
+      "searchable": true,
+      "pageSize": 50,
+      "mainField": "label",
+      "defaultSortBy": "label",
+      "defaultSortOrder": "ASC"
+    },
+    "metadatas": {
+      "label": {
+        "edit": {
+          "editable": false,
+          "description": "Set from the boss and the item; not editable."
+        },
+        "list": {}
+      },
+      "raidBoss": {
+        "edit": {
+          "mainField": "name"
+        },
+        "list": {}
+      },
+      "item": {
+        "edit": {
+          "mainField": "name"
+        },
+        "list": {}
+      }
+    },
+    "layouts": {
+      "list": ["label", "chance", "minCount", "maxCount"],
+      "edit": [
+        [
+          {
+            "name": "raidBoss",
+            "size": 6
+          },
+          {
+            "name": "item",
+            "size": 6
+          }
+        ],
+        [
+          {
+            "name": "chance",
+            "size": 4
+          },
+          {
+            "name": "minCount",
+            "size": 4
+          },
+          {
+            "name": "maxCount",
+            "size": 4
+          }
+        ]
+      ]
+    }
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": false,
+      "maxLength": 255
+    },
+    "raidBoss": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::raid-boss.raid-boss",
+      "inversedBy": "drops",
+      "required": true,
+      "description": "Required in the admin form. Not enforced on create by the lifecycle: a drop made from inside a boss has no boss yet, and the raid boss lifecycle attaches and names it."
+    },
+    "item": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::item.item",
+      "inversedBy": "drops",
+      "required": true,
+      "description": "Required, and enforced by the lifecycle - Strapi does not validate required on relations."
+    },
+    "chance": {
+      "type": "float",
+      "required": true,
+      "min": 0,
+      "max": 100
+    },
+    "minCount": {
+      "type": "integer",
+      "required": true,
+      "min": 0
+    },
+    "maxCount": {
+      "type": "integer",
+      "required": true,
+      "min": 0
+    }
+  }
+}

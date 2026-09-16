@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_catalog_respawns",
+  "info": {
+    "displayName": "Respawn",
+    "icon": "clock",
+    "description": "How long a boss stays down. Interval bosses carry a base and a variance; scheduled ones carry neither, and their weekly entries live on the boss itself."
+  },
+  "options": {},
+  "attributes": {
+    "kind": {
+      "type": "enumeration",
+      "enum": ["interval", "scheduled"],
+      "required": true,
+      "default": "interval"
+    },
+    "baseMinutes": {
+      "type": "integer",
+      "min": 1
+    },
+    "varianceMinutes": {
+      "type": "integer",
+      "min": 0
+    }
+  }
+}

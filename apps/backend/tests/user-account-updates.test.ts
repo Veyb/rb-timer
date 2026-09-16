@@ -2,9 +2,9 @@
 //
 // Regression guard for a real escalation: `user.updateMe` used to forward
 // `{ ...ctx.request.body }` to the Document Service, which writes any attribute
-// of the user model. A `viewer` — the lowest role that holds `updateMe`, since
-// the collections screen needs it — could send `{ role: <officer id> }` and be
-// promoted. The `community` cases below pass today because the schema rejects
+// of the user model. A `viewer` — the lowest role that holds `updateMe` — could
+// send `{ role: <officer id> }` and be promoted. The `community` cases below
+// pass today because the schema rejects
 // unknown keys; they keep passing once `community` becomes a real attribute,
 // which is the point.
 import type { Core } from '@strapi/strapi';
@@ -60,15 +60,18 @@ describe('self-service updates accept only profile attributes', () => {
     expect(response.body.nickname).toBe('Renamed');
   });
 
-  it('keeps the collections tracking path working', async () => {
-    const collections = { 1: { 2: true } };
+  // `collections` was an allowed profile attribute until the item collection
+  // feature was withdrawn and the attribute left the user model with it. It is
+  // named here rather than dropped from the suite so a reappearance is caught:
+  // the allowlist is what keeps `updateMe` from writing arbitrary attributes,
+  // and a key readmitted by accident would be silent otherwise.
+  it('refuses the withdrawn collections attribute', async () => {
     const response = await apiRequest(baseUrl, 'PUT', '/api/users/me', {
       jwt: viewer.jwt,
-      body: { collections },
+      body: { collections: { 1: { 2: true } } },
     });
 
-    expect(response.status).toBe(200);
-    expect(response.body.collections).toEqual(collections);
+    expect(response.status).toBe(400);
   });
 
   it('refuses a self-assigned role and leaves the role untouched', async () => {

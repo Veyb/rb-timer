@@ -1,0 +1,176 @@
+{
+  "kind": "collectionType",
+  "collectionName": "raid_bosses",
+  "info": {
+    "singularName": "raid-boss",
+    "pluralName": "raid-bosses",
+    "displayName": "Raid boss",
+    "description": "The raid-boss reference catalogue: what a boss is, where it stands and what it drops. Distinct from `Boss`, which despite the name is the live respawn timer and is deprecated."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "config": {
+    "settings": {
+      "bulkable": true,
+      "filterable": true,
+      "searchable": true,
+      "pageSize": 10,
+      "mainField": "name"
+    },
+    "metadatas": {
+      "avatar": {
+        "edit": {
+          "mainField": "slug"
+        },
+        "list": {}
+      },
+      "drops": {
+        "edit": {
+          "mainField": "label"
+        },
+        "list": {}
+      },
+      "resistances": {
+        "edit": {
+          "mainField": "label"
+        },
+        "list": {}
+      },
+      "vulnerabilities": {
+        "edit": {
+          "mainField": "label"
+        },
+        "list": {}
+      }
+    }
+  },
+  "attributes": {
+    "slug": {
+      "type": "uid",
+      "required": true
+    },
+    "gameId": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "minLength": 1
+    },
+    "race": {
+      "type": "enumeration",
+      "enum": [
+        "animal",
+        "beast",
+        "bug",
+        "construct",
+        "demonic",
+        "dragon",
+        "elemental",
+        "fairy",
+        "giant",
+        "humanoid",
+        "plant",
+        "undead"
+      ],
+      "required": true
+    },
+    "level": {
+      "type": "integer",
+      "required": true,
+      "min": 1
+    },
+    "epic": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "saMaxLevel": {
+      "type": "integer",
+      "min": 0
+    },
+    "mapX": {
+      "type": "decimal",
+      "required": true
+    },
+    "mapY": {
+      "type": "decimal",
+      "required": true
+    },
+    "worldX": {
+      "type": "integer",
+      "required": true
+    },
+    "worldY": {
+      "type": "integer",
+      "required": true
+    },
+    "respawn": {
+      "type": "component",
+      "repeatable": false,
+      "component": "catalog.respawn",
+      "required": true
+    },
+    "respawnSchedule": {
+      "type": "component",
+      "repeatable": true,
+      "component": "catalog.respawn-entry"
+    },
+    "stats": {
+      "type": "component",
+      "repeatable": false,
+      "component": "catalog.boss-stats",
+      "required": true
+    },
+    "resistances": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::weapon-type.weapon-type",
+      "inversedBy": "resistedBy"
+    },
+    "vulnerabilities": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::weapon-type.weapon-type",
+      "inversedBy": "vulnerableBy"
+    },
+    "elementModifiers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "catalog.element-modifier"
+    },
+    "statModifiers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "catalog.stat-modifier"
+    },
+    "location": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::location.location",
+      "inversedBy": "raidBosses"
+    },
+    "avatar": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::avatar.avatar",
+      "inversedBy": "raidBosses"
+    },
+    "grade": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::grade.grade"
+    },
+    "drops": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::boss-drop.boss-drop",
+      "mappedBy": "raidBoss"
+    }
+  }
+}

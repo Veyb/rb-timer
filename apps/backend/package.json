@@ -20,7 +20,9 @@
     "format": "biome format --error-on-warnings .",
     "format:fix": "biome format --write .",
     "check": "biome check --error-on-warnings .",
-    "check:fix": "biome check --write ."
+    "check:fix": "biome check --write .",
+    "seed:catalog": "node scripts/seed-catalog.js",
+    "export:catalog-grades": "node scripts/export-catalog-grades.js"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",

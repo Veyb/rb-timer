@@ -73,9 +73,6 @@
       "required": true,
       "minLength": 1
     },
-    "collections": {
-      "type": "json"
-    },
     "community": {
       "type": "relation",
       "relation": "manyToOne",

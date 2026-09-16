@@ -16,13 +16,18 @@ type AdvancedSettings = { unique_email?: boolean };
 // unexpected key instead of silently dropping it — a client sending `role` to
 // its own account is either a defect or an escalation attempt, and silence
 // would hide both.
+//
+// `collections` was on this list until the item collection feature was
+// withdrawn. The attribute is gone from the user model, so the key now names
+// nothing and belongs with every other unknown one: an allowlist entry for a
+// column that does not exist is exactly the kind of grant that outlives its
+// reason.
 const profileAttributes = {
   email: yup.string().email().min(1),
   username: yup.string().min(1),
   password: yup.string().min(1),
   nickname: yup.string().min(1),
   realname: yup.string().min(1),
-  collections: yup.object().nullable(),
 };
 
 // Own account: profile attributes only. `role` and `community` are privileged

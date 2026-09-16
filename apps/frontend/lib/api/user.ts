@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // local modules
 import type { User } from '../../types';
-import { API_URL, apiGet, authHeaders, flattenApiResponse, jsonHeaders } from './base';
+import { API_URL, apiGet, authHeaders } from './base';
 
 /**
  * Own account only. Reading or writing anyone else went through `/users` and
@@ -15,13 +15,12 @@ export async function getUsersMe(token: string) {
   return await apiGet<User>('/users/me', authHeaders(token));
 }
 
-type UpdateUserParams = Pick<User, 'collections'>;
-
-export async function updateUsersMe(params: Partial<UpdateUserParams>, token: string | undefined) {
-  const { data } = await axios.put(`${API_URL}/users/me`, { ...params }, jsonHeaders(token));
-
-  return flattenApiResponse(data) as User;
-}
+/**
+ * `PUT /users/me` is still there and `user-account-updates` still defines what
+ * it accepts, but nothing in the client calls it any more: its one caller wrote
+ * `collections`, and that attribute went with the item collection feature. A
+ * profile editor would add the call back against the surviving attributes.
+ */
 
 /**
  * Deletes the caller's own account. Takes no target — this is what replaced

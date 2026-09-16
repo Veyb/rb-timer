@@ -1,14 +1,4 @@
 export type { Boss, BossApiResponse, Quality } from './boss.types';
-export type {
-  Collection,
-  CollectionItem,
-  Effect,
-  FilterType,
-  ImageType,
-  Item,
-  ItemType,
-  Rank,
-} from './collection.types';
 export type { Community, CommunityLogo, GameServer } from './community.types';
 export type { CommunityMember } from './community-member.types';
 export type { Donation } from './donation.types';
@@ -20,9 +10,25 @@ export type {
   NewInviteCode,
   RedeemedInvite,
 } from './invite-code.types';
+export type {
+  Avatar,
+  BossDrop,
+  BossStats,
+  CatalogImage,
+  CatalogItem,
+  Dungeon,
+  Element,
+  Grade,
+  Location,
+  RaidBoss,
+  Respawn,
+  RespawnEntry,
+  WeaponType,
+  Weekday,
+} from './raid-boss.types';
 export type { Role, RoleType } from './role.types';
 export type { MayHaveTestId } from './test-id.types';
-export type { SocketUser, User, UserCollections } from './user.types';
+export type { SocketUser, User } from './user.types';
 
 export interface Meta {
   page: number;

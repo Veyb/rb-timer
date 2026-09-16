@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_catalog_boss_stats",
+  "info": {
+    "displayName": "Boss stats",
+    "icon": "chartBubble",
+    "description": "The combat figures the source publishes for every boss."
+  },
+  "options": {},
+  "attributes": {
+    "hp": { "type": "biginteger", "required": true },
+    "mp": { "type": "biginteger", "required": true },
+    "exp": { "type": "biginteger", "required": true },
+    "sp": { "type": "biginteger", "required": true },
+    "pAtk": { "type": "integer", "required": true },
+    "mAtk": { "type": "integer", "required": true },
+    "pDef": { "type": "integer", "required": true },
+    "mDef": { "type": "integer", "required": true },
+    "acc": { "type": "integer", "required": true },
+    "eva": { "type": "integer", "required": true }
+  }
+}

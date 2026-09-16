@@ -9,7 +9,6 @@ import { useAuthContext } from '../../contexts/auth-context';
 import styles from '../../styles/main.module.css';
 // local modules
 import type { Role } from '../../types';
-import { CollectionsBlock } from '../collections-block';
 import { Layout } from '../layout';
 import { ManagementBlock } from '../management-block';
 
@@ -74,22 +73,9 @@ export const ProfileContent = ({ type, roles }: ProfileContentProps) => {
     },
   ];
 
-  // TODO(community-architecture): delete along with the Collection and Effect
-  // content types and the /profile/collections route. Withdrawn from the tab
-  // bar, so nothing navigates here any more; still mounted when its own URL is
-  // opened directly, so existing links and bookmarks keep working — and the
-  // remaining tab gives whoever lands there a way back.
-  if (type === 'collections') {
-    items.push({
-      key: 'collections',
-      label: 'Коллекции',
-      children: <CollectionsBlock />,
-    });
-  }
-
-  // A tab that is not mounted — /profile/collections is only added when it is
-  // the one asked for — falls back to the one every member has, rather than
-  // rendering an empty panel.
+  // Management is the only section now. The item collection tab that used to be
+  // mounted here when its own URL was asked for went with the Collection and
+  // Effect content types; `/profile/collections` no longer resolves at all.
   const activeKey = items.some((item) => item.key === type) ? type : 'management';
 
   return (

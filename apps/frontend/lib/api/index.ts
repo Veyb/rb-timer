@@ -10,7 +10,6 @@ export {
   SOCKET_URL,
 } from './base';
 export { getBossList, updateBossTime } from './boss';
-export { getAllCollectionList, getCollectionList } from './collection';
 export {
   getCommunityMember,
   getCommunityMembers,
@@ -26,5 +25,6 @@ export {
   redeemInviteCode,
   revokeInviteCode,
 } from './invite-code';
+export { getBossDrops, getRaidBoss, getRaidBossList, getRaidBossPage } from './raid-boss';
 export { getMemberRoles } from './role';
-export { deleteOwnAccount, getUsersMe, updateUsersMe } from './user';
+export { deleteOwnAccount, getUsersMe } from './user';

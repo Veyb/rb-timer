@@ -9,7 +9,7 @@ import type { Role } from '../../../types';
 export default async function ProfileTypePage({ params }: { params: Promise<{ type: string }> }) {
   const { type } = await params;
 
-  if (type !== 'management' && type !== 'collections') {
+  if (type !== 'management') {
     notFound();
   }
 

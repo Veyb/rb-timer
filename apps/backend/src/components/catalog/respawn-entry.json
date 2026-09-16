@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_catalog_respawn_entries",
+  "info": {
+    "displayName": "Respawn entry",
+    "icon": "calendar",
+    "description": "One weekly appointment of a scheduled boss. A boss may hold any number of these, including none — the source records the epic bosses only as \"Fixed\" and names no day."
+  },
+  "options": {},
+  "attributes": {
+    "weekday": {
+      "type": "enumeration",
+      "enum": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
+      "required": true
+    },
+    "time": {
+      "type": "time",
+      "required": true
+    }
+  }
+}

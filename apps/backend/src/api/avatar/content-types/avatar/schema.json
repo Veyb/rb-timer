@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "avatars",
+  "info": {
+    "singularName": "avatar",
+    "pluralName": "avatars",
+    "displayName": "Avatar",
+    "description": "A boss's appearance, as a full-size and a miniature image. A type of its own because 96 of them serve 153 bosses: keeping the pair here makes the sharing the thing an operator edits, instead of two media fields per boss that quietly drift apart when one is replaced."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "config": {
+    "settings": {
+      "bulkable": true,
+      "filterable": true,
+      "searchable": true,
+      "pageSize": 10,
+      "mainField": "slug"
+    },
+    "metadatas": {
+      "raidBosses": {
+        "edit": {
+          "mainField": "name"
+        },
+        "list": {}
+      }
+    }
+  },
+  "attributes": {
+    "slug": {
+      "type": "uid",
+      "required": true
+    },
+    "full": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "mini": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "raidBosses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::raid-boss.raid-boss",
+      "mappedBy": "avatar"
+    }
+  }
+}

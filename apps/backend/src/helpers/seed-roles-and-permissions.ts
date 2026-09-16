@@ -21,15 +21,37 @@ const ROLE_UID = 'plugin::users-permissions.role';
 const PERMISSION_UID = 'plugin::users-permissions.permission';
 
 /** Readable data everyone signed in may see, whatever their community. */
-const SHARED_CONTENT = [
-  'api::boss.boss.find',
-  'api::boss.boss.findOne',
-  'api::collection.collection.find',
-  'api::collection.collection.findOne',
-  'api::effect.effect.find',
-  'api::effect.effect.findOne',
+const SHARED_CONTENT = ['api::boss.boss.find', 'api::boss.boss.findOne'];
+
+/**
+ * The raid-boss catalogue. Game reference data, the same for every community
+ * and readable by a visitor with no account at all — see `raid-boss-catalog`.
+ *
+ * Granted to `public` *and* repeated on every signed-in role on purpose. A
+ * users-permissions role is not layered over the public one: an authenticated
+ * request is authorised against that user's role alone, so a catalogue granted
+ * only to `public` would be readable by anonymous visitors and refused to every
+ * member — the exact opposite of the intent.
+ *
+ * Read actions only. The catalogue is maintained from the admin panel and the
+ * seed; no role holds create, update or delete on any of it, which is what
+ * keeps `find`/`findOne` from being the thin end of a wedge.
+ */
+const CATALOGUE = [
+  'api::raid-boss.raid-boss.find',
+  'api::raid-boss.raid-boss.findOne',
+  'api::boss-drop.boss-drop.find',
+  'api::boss-drop.boss-drop.findOne',
   'api::item.item.find',
   'api::item.item.findOne',
+  'api::location.location.find',
+  'api::location.location.findOne',
+  'api::avatar.avatar.find',
+  'api::avatar.avatar.findOne',
+  'api::grade.grade.find',
+  'api::grade.grade.findOne',
+  'api::weapon-type.weapon-type.find',
+  'api::weapon-type.weapon-type.findOne',
 ];
 
 /**
@@ -97,6 +119,7 @@ export const ROLES = [
     name: 'Анонимный',
     description: 'Default role given to unauthenticated user.',
     actions: [
+      ...CATALOGUE,
       'api::donation.donation.find',
       'plugin::users-permissions.auth.callback',
       'plugin::users-permissions.auth.connect',
@@ -111,6 +134,7 @@ export const ROLES = [
     // What registration grants: enough to see the placeholder, read your own
     // account and delete it, and nothing of any community.
     actions: [
+      ...CATALOGUE,
       ...JOIN_BY_INVITE,
       'api::donation.donation.find',
       'plugin::users-permissions.auth.connect',
@@ -124,6 +148,7 @@ export const ROLES = [
     description: 'The user who can view data.',
     actions: [
       ...SHARED_CONTENT,
+      ...CATALOGUE,
       ...OWN_ACCOUNT,
       ...OWN_COMMUNITY_MEMBERS,
       ...JOIN_BY_INVITE,
@@ -137,6 +162,7 @@ export const ROLES = [
     description: 'The user who can edit data.',
     actions: [
       ...SHARED_CONTENT,
+      ...CATALOGUE,
       ...OWN_ACCOUNT,
       ...OWN_COMMUNITY_MEMBERS,
       ...JOIN_BY_INVITE,
@@ -151,6 +177,7 @@ export const ROLES = [
     description: 'The user who can edit important data.',
     actions: [
       ...SHARED_CONTENT,
+      ...CATALOGUE,
       ...OWN_ACCOUNT,
       ...OWN_COMMUNITY_MEMBERS,
       ...OWN_COMMUNITY_INVITES,

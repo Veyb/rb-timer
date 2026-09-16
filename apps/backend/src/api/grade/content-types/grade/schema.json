@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "grades",
+  "info": {
+    "singularName": "grade",
+    "pluralName": "grades",
+    "displayName": "Grade",
+    "description": "The equipment grade shared by raid bosses and items. A collection type rather than an enumeration on each, for two reasons: one place to add a grade instead of two, and `order`, without which sorting by grade is alphabetical — A, B, C, D, NG, S — instead of the game's NG, D, C, B, A, S."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "code": {
+      "type": "uid",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "required": true,
+      "minLength": 1
+    },
+    "order": {
+      "type": "integer",
+      "required": true,
+      "min": 0
+    }
+  }
+}

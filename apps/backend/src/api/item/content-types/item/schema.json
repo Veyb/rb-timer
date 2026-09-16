@@ -5,55 +5,50 @@
     "singularName": "item",
     "pluralName": "items",
     "displayName": "Item",
-    "description": ""
+    "description": "Something a raid boss drops. Identity is the name: the source's `itemId` names the icon, not the item, and 737 distinct items share 359 icons \u2014 keying on it would collapse the catalogue to less than half."
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
+  "config": {
+    "metadatas": {
+      "drops": {
+        "edit": {
+          "mainField": "label"
+        },
+        "list": {}
+      }
+    }
+  },
   "attributes": {
-    "name": {
-      "type": "string",
-      "unique": true,
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
       "required": true
     },
-    "image": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "minLength": 1
+    },
+    "grade": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::grade.grade"
+    },
+    "icon": {
       "type": "media",
       "multiple": false,
       "required": false,
       "allowedTypes": ["images"]
     },
-    "rank": {
-      "type": "enumeration",
-      "enum": ["common", "rare", "unique", "epic", "legend"],
-      "required": true,
-      "default": "unique"
-    },
-    "type": {
-      "type": "enumeration",
-      "enum": [
-        "sword",
-        "dualblades",
-        "dagger",
-        "bow",
-        "orb",
-        "staff",
-        "upper",
-        "lower",
-        "gloves",
-        "shoes",
-        "helm",
-        "cloak",
-        "shirt",
-        "sigil",
-        "necklace",
-        "earring",
-        "ring",
-        "belt",
-        "bracelet",
-        "skillbook"
-      ],
-      "required": true
+    "drops": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::boss-drop.boss-drop",
+      "mappedBy": "item"
     }
   }
 }

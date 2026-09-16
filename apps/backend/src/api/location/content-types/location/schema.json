@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "collectionName": "locations",
+  "info": {
+    "singularName": "location",
+    "pluralName": "locations",
+    "displayName": "Location",
+    "description": "Where a raid boss stands. Every boss belongs to exactly one, so the relation is many-to-one rather than the many-to-many the source's array shape suggests."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "config": {
+    "metadatas": {
+      "raidBosses": {
+        "edit": {
+          "mainField": "name"
+        },
+        "list": {}
+      },
+      "hasDungeon": {
+        "edit": {
+          "editable": false,
+          "description": "Set from the dungeon plan below; not editable."
+        },
+        "list": {}
+      }
+    },
+    "layouts": {
+      "list": ["id", "name", "slug", "hasDungeon"]
+    }
+  },
+  "attributes": {
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "minLength": 1
+    },
+    "dungeon": {
+      "type": "component",
+      "repeatable": false,
+      "component": "catalog.dungeon"
+    },
+    "hasDungeon": {
+      "type": "boolean",
+      "default": false
+    },
+    "raidBosses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::raid-boss.raid-boss",
+      "mappedBy": "location"
+    }
+  }
+}

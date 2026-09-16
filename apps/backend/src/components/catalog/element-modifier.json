@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_catalog_element_modifiers",
+  "info": {
+    "displayName": "Element modifier",
+    "icon": "bolt",
+    "description": "A boss's affinity to one element, as a signed whole number. The source publishes only -1 and +1 today; the field is an integer so a wider scale needs no schema change."
+  },
+  "options": {},
+  "attributes": {
+    "element": {
+      "type": "enumeration",
+      "enum": ["holy", "dark", "earth", "wind", "fire", "water"],
+      "required": true
+    },
+    "value": {
+      "type": "integer",
+      "required": true
+    }
+  }
+}

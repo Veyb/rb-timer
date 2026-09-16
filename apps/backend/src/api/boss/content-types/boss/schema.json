@@ -5,7 +5,7 @@
     "singularName": "boss",
     "pluralName": "bosses",
     "displayName": "Boss",
-    "description": ""
+    "description": "DEPRECATED. Despite the name this is not a catalogue but the live respawn timer: `updateBossTime()` writes `time` and `restarted` here on every kill. The catalogue is `Raid boss`. The two are unrelated in the data — these 34 rows carry Russian names with no reliable join to the catalogue's 153 English ones — so merging them is a later change that maps them by hand. Nothing here has been altered; do not add catalogue fields to it."
   },
   "options": {
     "draftAndPublish": true

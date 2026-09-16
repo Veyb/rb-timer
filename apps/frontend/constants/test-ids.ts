@@ -79,9 +79,6 @@ export const TEST_IDS = {
     empty: 'invite-history-empty',
     noMatches: 'invite-history-no-matches',
   },
-  profileCollections: {
-    effectsBlock: 'profile-collections-effects-block',
-  },
   usersList: {
     table: 'users-list-table',
     roleFilter: 'users-list-role-filter',
