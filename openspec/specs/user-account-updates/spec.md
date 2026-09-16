@@ -7,39 +7,6 @@ membership it was not given.
 
 ## Requirements
 
-### Requirement: Self-service updates accept only profile attributes
-
-A user updating their own account SHALL be able to change only their profile
-attributes: `email`, `username`, `password`, `nickname`, `realname`, and
-`collections`. Any other attribute present in the request SHALL be rejected.
-
-#### Scenario: Profile attribute is accepted
-
-- **WHEN** an authenticated user submits an update of their own account
-  containing only `nickname`
-- **THEN** the account's `nickname` is changed and the response reflects the new
-  value
-
-#### Scenario: Self-assigning a role is rejected
-
-- **WHEN** an authenticated user submits an update of their own account
-  containing a `role` attribute
-- **THEN** the request is rejected with a validation error
-- **AND** the user's role is unchanged
-
-#### Scenario: Self-assigning a community is rejected
-
-- **WHEN** an authenticated user submits an update of their own account
-  containing a `community` attribute
-- **THEN** the request is rejected with a validation error
-- **AND** the user's community membership is unchanged
-
-#### Scenario: Collections tracking keeps working
-
-- **WHEN** an authenticated user submits an update of their own account
-  containing only `collections`
-- **THEN** the update succeeds
-
 ### Requirement: Privileged attributes are never client-assignable
 
 `role`, `community`, `confirmed`, `blocked`, `provider`, `resetPasswordToken`,
@@ -101,3 +68,41 @@ community membership, ignoring any role or community supplied by the client.
 - **THEN** registration either succeeds with the default role and no community,
   or is rejected
 - **AND** the created account never has the supplied role or community
+
+### Requirement: Self-service updates accept only the surviving profile attributes
+
+A user updating their own account SHALL be able to change only their profile
+attributes: `email`, `username`, `password`, `nickname`, and `realname`. Any
+other attribute present in the request SHALL be rejected.
+
+`collections` was on this list until the item collection feature was withdrawn.
+The attribute it named no longer exists on the user model, so a request body
+carrying it names nothing, and the allowlist rejects it like any other unknown
+key rather than accepting a write that would go nowhere.
+
+#### Scenario: Profile attribute is accepted
+
+- **WHEN** an authenticated user submits an update of their own account
+  containing only `nickname`
+- **THEN** the account's `nickname` is changed and the response reflects the new
+  value
+
+#### Scenario: Self-assigning a role is rejected
+
+- **WHEN** an authenticated user submits an update of their own account
+  containing a `role` attribute
+- **THEN** the request is rejected with a validation error
+- **AND** the user's role is unchanged
+
+#### Scenario: Self-assigning a community is rejected
+
+- **WHEN** an authenticated user submits an update of their own account
+  containing a `community` attribute
+- **THEN** the request is rejected with a validation error
+- **AND** the user's community membership is unchanged
+
+#### Scenario: The withdrawn collections attribute is rejected
+
+- **WHEN** an authenticated user submits an update of their own account
+  containing only `collections`
+- **THEN** the request is rejected with a validation error
