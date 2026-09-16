@@ -32,9 +32,9 @@
     "vitest": "^4.1.11"
   },
   "dependencies": {
-    "@strapi/plugin-users-permissions": "5.52.3",
-    "@strapi/strapi": "5.52.3",
-    "@strapi/utils": "5.52.3",
+    "@strapi/plugin-users-permissions": "catalog:",
+    "@strapi/strapi": "catalog:",
+    "@strapi/utils": "catalog:",
     "better-sqlite3": "^13.0.3",
     "pg": "8.23.0",
     "react": "^18.0.0",
