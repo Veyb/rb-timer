@@ -1,0 +1,411 @@
+{
+  "npc": {
+    "id": 25020,
+    "slug": "breka-warlock-pastu",
+    "name": "Breka Warlock Pastu",
+    "title": "Raid Boss",
+    "race": "Humanoid",
+    "level": 34,
+    "icon": "/i64/t_ic_humanoid_big.png",
+    "respawn": "6 hours ± 2 hours",
+    "hp": 156584,
+    "mp": 1982,
+    "patk": 454,
+    "matk": 181,
+    "pdef": 400,
+    "mdef": 531,
+    "acc": 88,
+    "eva": 97,
+    "exp": 809200,
+    "sp": 135023,
+    "atk_attr": "None",
+    "has_spawn": 1,
+    "is_raid": 1,
+    "spawn_count": 1,
+    "role": "monster",
+    "respawn_seconds": 21600,
+    "spawn_spread": 0,
+    "reagent_carrier": 0,
+    "elite": 0,
+    "aggressive": 0,
+    "defAttributes": { "fire": 20, "water": 20, "wind": 53, "earth": 20, "holy": 20, "unholy": 20 },
+    "skills": [
+      {
+        "id": 4494,
+        "slug": "raid-boss",
+        "level": 1,
+        "name": "Raid Boss",
+        "icon": "/i64/skillraid.png",
+        "description": "Raid Boss reward chance is reduced based on the level difference. Boss is higher: +5 - 85%, +6 - 70%, +7 - 50%, +8 - 35%. Player is higher: +6 - 85%, +7 - 70%, +8 - 50%. If player is 9 or more levels higher, Raid Curse is applied."
+      },
+      {
+        "id": 4797,
+        "slug": "raid-boss",
+        "level": 1,
+        "name": "Raid Boss",
+        "icon": "/i64/skillraid.png",
+        "description": "An Orc Dark Mage with superior talent. He was once known as 'the Hope of the Breka Orc tribe,' but he was tricked into plotting against his leader, and exiled. Now, he dreams of the day he will take vengeance on those who betrayed and exiled him. He grows in power, and uses summoning magic learned from the Dark Elves to harness powerful servitors and minions."
+      },
+      {
+        "id": 4416,
+        "slug": "humanoids",
+        "level": 6,
+        "name": "Humanoids",
+        "icon": "/i64/t_ic_humanoid_big.png",
+        "description": "Takes 10% increased damage from attacks that are effective against Humanoids. Atk. Spd. +2.5% Accuracy +3 Evasion +2 P. Def. -5% Received P. Crit. Damage +5% Resistance to Bleed -10%"
+      },
+      {
+        "id": 4414,
+        "slug": "light-armor-type",
+        "level": 3,
+        "name": "Light Armor Type",
+        "icon": "/i64/skill4313.png",
+        "description": "P. Def. -15% Evasion +10."
+      },
+      {
+        "id": 4045,
+        "slug": "resist-full-magic-attack",
+        "level": 1,
+        "name": "Resist Full Magic Attack",
+        "icon": "/i64/skill0000.png",
+        "description": null
+      }
+    ],
+    "soulCrystals": [],
+    "spawns": [{ "x": 2207.4, "y": 2206.45 }],
+    "locations": [
+      {
+        "id": 216,
+        "slug": "ukreplenie-breki",
+        "name": "Breka's Stronghold",
+        "nameSource": "canonical"
+      }
+    ],
+    "reagents": null
+  },
+  "traits": {
+    "weak": {
+      "weapon": [],
+      "element": [
+        { "label": "Earth", "value": 20, "source": "attribute" },
+        { "label": "Fire", "value": 20, "source": "attribute" },
+        { "label": "Holy", "value": 20, "source": "attribute" },
+        { "label": "Unholy", "value": 20, "source": "attribute" },
+        { "label": "Water", "value": 20, "source": "attribute" }
+      ],
+      "damage": [],
+      "status": [{ "label": "Bleed", "value": 10, "source": "skill" }]
+    },
+    "resist": {
+      "weapon": [],
+      "element": [{ "label": "Wind", "value": 53, "source": "attribute" }],
+      "damage": [{ "label": "Magic", "value": null, "source": "skill" }],
+      "status": []
+    },
+    "hasTactics": true
+  },
+  "exp": { "base": 809200, "penalty": 0, "premium": 1, "value": 809200 },
+  "drops": [
+    {
+      "item": {
+        "id": 9910,
+        "slug": "proof-of-loyalty",
+        "name": "Proof of Loyalty",
+        "grade": "NG",
+        "category": "Other",
+        "subtype": null,
+        "icon": "/i64/etc_broken_crystal_red_i00.png"
+      },
+      "min": 1,
+      "max": 2,
+      "chance": 100,
+      "groupChance": 100,
+      "effectiveChance": 100,
+      "baseChance": 100,
+      "penalty": 0,
+      "premium": 1,
+      "group": 0
+    },
+    {
+      "item": {
+        "id": 1952,
+        "slug": "salamander-skin-mail-texture",
+        "name": "Salamander Skin Mail Texture",
+        "grade": "D",
+        "category": "Other",
+        "subtype": "Material",
+        "icon": "/i64/etc_leather_gray_i00.png"
+      },
+      "min": 5,
+      "max": 15,
+      "chance": 88,
+      "groupChance": 100,
+      "effectiveChance": 88,
+      "baseChance": 88,
+      "penalty": 0,
+      "premium": 1,
+      "group": 2
+    },
+    {
+      "item": {
+        "id": 956,
+        "slug": "scroll-enchant-armor-d-grade",
+        "name": "Scroll: Enchant Armor (D-Grade)",
+        "grade": "D",
+        "category": "Other",
+        "subtype": "Armor Enchant Scroll",
+        "icon": "/i64/etc_scroll_of_enchant_armor_i01.png"
+      },
+      "min": 1,
+      "max": 4,
+      "chance": 50,
+      "groupChance": 100,
+      "effectiveChance": 50,
+      "baseChance": 50,
+      "penalty": 0,
+      "premium": 1,
+      "group": 3
+    },
+    {
+      "item": {
+        "id": 955,
+        "slug": "scroll-enchant-weapon-d-grade",
+        "name": "Scroll: Enchant Weapon (D-Grade)",
+        "grade": "D",
+        "category": "Other",
+        "subtype": "Weapon Enchant Scroll",
+        "icon": "/i64/etc_scroll_of_enchant_weapon_i01.png"
+      },
+      "min": 1,
+      "max": 1,
+      "chance": 27,
+      "groupChance": 100,
+      "effectiveChance": 27,
+      "baseChance": 27,
+      "penalty": 0,
+      "premium": 1,
+      "group": 3
+    },
+    {
+      "item": {
+        "id": 2048,
+        "slug": "bonebreaker-head",
+        "name": "Bonebreaker Head",
+        "grade": "D",
+        "category": "Other",
+        "subtype": "Material",
+        "icon": "/i64/etc_squares_gray_i00.png"
+      },
+      "min": 4,
+      "max": 10,
+      "chance": 23.2,
+      "groupChance": 100,
+      "effectiveChance": 23.2,
+      "baseChance": 23.2,
+      "penalty": 0,
+      "premium": 1,
+      "group": 1
+    },
+    {
+      "item": {
+        "id": 2051,
+        "slug": "staff-of-life-shaft",
+        "name": "Staff of Life Shaft",
+        "grade": "D",
+        "category": "Other",
+        "subtype": "Material",
+        "icon": "/i64/etc_branch_gold_i00.png"
+      },
+      "min": 4,
+      "max": 10,
+      "chance": 23.2,
+      "groupChance": 100,
+      "effectiveChance": 23.2,
+      "baseChance": 23.2,
+      "penalty": 0,
+      "premium": 1,
+      "group": 1
+    },
+    {
+      "item": {
+        "id": 2058,
+        "slug": "atuba-mace-head",
+        "name": "Atuba Mace Head",
+        "grade": "D",
+        "category": "Other",
+        "subtype": "Material",
+        "icon": "/i64/etc_squares_gray_i00.png"
+      },
+      "min": 4,
+      "max": 10,
+      "chance": 23.2,
+      "groupChance": 100,
+      "effectiveChance": 23.2,
+      "baseChance": 23.2,
+      "penalty": 0,
+      "premium": 1,
+      "group": 1
+    },
+    {
+      "item": {
+        "id": 2049,
+        "slug": "atuba-hammer-head",
+        "name": "Atuba Hammer Head",
+        "grade": "D",
+        "category": "Other",
+        "subtype": "Material",
+        "icon": "/i64/etc_squares_gray_i00.png"
+      },
+      "min": 4,
+      "max": 10,
+      "chance": 23.2,
+      "groupChance": 100,
+      "effectiveChance": 23.2,
+      "baseChance": 23.2,
+      "penalty": 0,
+      "premium": 1,
+      "group": 1
+    },
+    {
+      "item": {
+        "id": 6576,
+        "slug": "blessed-scroll-enchant-armor-d-grade",
+        "name": "Blessed Scroll: Enchant Armor (D-Grade)",
+        "grade": "D",
+        "category": "Other",
+        "subtype": "Blessed Armor Enchant Scroll",
+        "icon": "/i64/etc_blessed_scrl_of_ench_am_d_i01.png"
+      },
+      "min": 1,
+      "max": 1,
+      "chance": 15,
+      "groupChance": 100,
+      "effectiveChance": 15,
+      "baseChance": 15,
+      "penalty": 0,
+      "premium": 1,
+      "group": 3
+    },
+    {
+      "item": {
+        "id": 396,
+        "slug": "salamander-skin-mail",
+        "name": "Salamander Skin Mail",
+        "grade": "D",
+        "category": "Armor",
+        "subtype": "Light",
+        "icon": "/i64/armor_t45_ul_i00.png"
+      },
+      "min": 1,
+      "max": 1,
+      "chance": 12,
+      "groupChance": 100,
+      "effectiveChance": 12,
+      "baseChance": 12,
+      "penalty": 0,
+      "premium": 1,
+      "group": 2
+    },
+    {
+      "item": {
+        "id": 6575,
+        "slug": "blessed-scroll-enchant-weapon-d-grade",
+        "name": "Blessed Scroll: Enchant Weapon (D-Grade)",
+        "grade": "D",
+        "category": "Other",
+        "subtype": "Blessed Weapon Enchant Scroll",
+        "icon": "/i64/etc_blessed_scrl_of_ench_wp_d_i01.png"
+      },
+      "min": 1,
+      "max": 1,
+      "chance": 8,
+      "groupChance": 100,
+      "effectiveChance": 8,
+      "baseChance": 8,
+      "penalty": 0,
+      "premium": 1,
+      "group": 3
+    },
+    {
+      "item": {
+        "id": 159,
+        "slug": "bonebreaker",
+        "name": "Bonebreaker",
+        "grade": "D",
+        "category": "Weapon",
+        "subtype": "Blunt",
+        "icon": "/i64/weapon_bonebreaker_i00.png"
+      },
+      "min": 1,
+      "max": 1,
+      "chance": 1.8,
+      "groupChance": 100,
+      "effectiveChance": 1.8000000000000003,
+      "baseChance": 1.8000000000000003,
+      "penalty": 0,
+      "premium": 1,
+      "group": 1
+    },
+    {
+      "item": {
+        "id": 189,
+        "slug": "staff-of-life",
+        "name": "Staff of Life",
+        "grade": "D",
+        "category": "Weapon",
+        "subtype": "Blunt",
+        "icon": "/i64/weapon_life_stick_i00.png"
+      },
+      "min": 1,
+      "max": 1,
+      "chance": 1.8,
+      "groupChance": 100,
+      "effectiveChance": 1.8000000000000003,
+      "baseChance": 1.8000000000000003,
+      "penalty": 0,
+      "premium": 1,
+      "group": 1
+    },
+    {
+      "item": {
+        "id": 190,
+        "slug": "atuba-mace",
+        "name": "Atuba Mace",
+        "grade": "D",
+        "category": "Weapon",
+        "subtype": "Blunt",
+        "icon": "/i64/weapon_atuba_mace_i00.png"
+      },
+      "min": 1,
+      "max": 1,
+      "chance": 1.8,
+      "groupChance": 100,
+      "effectiveChance": 1.8000000000000003,
+      "baseChance": 1.8000000000000003,
+      "penalty": 0,
+      "premium": 1,
+      "group": 1
+    },
+    {
+      "item": {
+        "id": 187,
+        "slug": "atuba-hammer",
+        "name": "Atuba Hammer",
+        "grade": "D",
+        "category": "Weapon",
+        "subtype": "Blunt",
+        "icon": "/i64/weapon_atuba_hammer_i00.png"
+      },
+      "min": 1,
+      "max": 1,
+      "chance": 1.8,
+      "groupChance": 100,
+      "effectiveChance": 1.8000000000000003,
+      "baseChance": 1.8000000000000003,
+      "penalty": 0,
+      "premium": 1,
+      "group": 1
+    }
+  ],
+  "spoils": []
+}

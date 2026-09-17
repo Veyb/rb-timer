@@ -22,7 +22,8 @@
     "check": "biome check --error-on-warnings .",
     "check:fix": "biome check --write .",
     "seed:catalog": "node scripts/seed-catalog.js",
-    "export:catalog-grades": "node scripts/export-catalog-grades.js"
+    "export:catalog-grades": "node scripts/export-catalog-grades.js",
+    "fetch:raid-bosses": "node mocks/raid-bosses/fetch.js"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
@@ -42,6 +43,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
+    "sharp": "catalog:",
     "socket.io": "catalog:",
     "styled-components": "^6.0.0"
   },

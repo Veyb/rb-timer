@@ -128,6 +128,9 @@ catalogs:
     lefthook:
       specifier: 2.1.12
       version: 2.1.12
+    sharp:
+      specifier: 0.35.3
+      version: 0.35.3
     socket.io:
       specifier: 4.8.3
       version: 4.8.3
@@ -175,6 +178,9 @@ importers:
       react-router-dom:
         specifier: ^6.0.0
         version: 6.30.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      sharp:
+        specifier: 'catalog:'
+        version: 0.35.3(@types/node@22.20.1)
       socket.io:
         specifier: 'catalog:'
         version: 4.8.3(supports-color@5.5.0)
@@ -246,7 +252,7 @@ importers:
         specifier: 19.2.8
         version: 19.2.8(react@19.2.8)
       sharp:
-        specifier: 0.35.3
+        specifier: 'catalog:'
         version: 0.35.3(@types/node@22.20.1)
       socket.io-client:
         specifier: 'catalog:'

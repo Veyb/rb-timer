@@ -7,8 +7,21 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!**/*.example.js", "!**/next-env.d.ts"]
+    "includes": [
+      "**",
+      "!**/*.example.js",
+      "!**/next-env.d.ts",
+      "!apps/backend/mocks/raid-bosses-import/raid-boss-details/raid-boss-details.json"
+    ]
   },
+  "overrides": [
+    {
+      "includes": ["apps/backend/mocks/raid-bosses-import/*.ts"],
+      "files": {
+        "maxSize": 5242880
+      }
+    }
+  ],
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
