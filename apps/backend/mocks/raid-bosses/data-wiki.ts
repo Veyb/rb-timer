@@ -8,6 +8,13 @@
 //   see ../raid-bosses-import/drop-count-comparison.ts: ./data.ts's drops were capped at the
 //   top 20 by chance (a limit of the giran.info page ./data.ts was originally scraped from)
 //   for 96 of those 146.
+// - Drop item names: RAID_BOSS_DETAILS often omits the `Unidentified `/`Sealed ` prefix
+//   ./data.ts uses for the same item (same itemId/icon, same chance) — 189 drop rows (90
+//   distinct name pairs) were renamed back to ./data.ts's naming, matched per boss by trying
+//   every combination of those two prefixes, not just the longest. (An earlier pass tried only
+//   the longest matching prefix and wrongly concluded 32 items were entirely absent from the
+//   wiki source — they were not; every one of them resolved once all prefix combinations were
+//   tried.)
 // - mapX/mapY were left as-is from ./data.ts everywhere they already existed; RAID_BOSS_DETAILS
 //   has no map-pixel coordinate, only the world coordinate now used for worldX/worldY. Nothing
 //   in the app reads mapX/mapY or worldX/worldY yet (verified — the map feature is unbuilt).
@@ -32,10 +39,14 @@
 //   the placeholder slug 'x'. Applied directly here instead of at read time, since this file is
 //   meant to be the corrected replacement; the runtime fix stays in catalog-source.ts as a
 //   fallback for ./data.ts.
+// - WORLD_MAP_IMAGE and DUNGEON_PLANS are copied verbatim from ./data.ts — untouched by any of
+//   the above, so there is nothing to merge.
 //
 // Sorted by (level, name) ascending, same convention as ./data.ts.
 
-import type { RaidBossInfo } from './types';
+import type { DungeonPlan, RaidBossInfo } from './types';
+
+export const WORLD_MAP_IMAGE = 'images/world-map/map-c7.webp';
 
 export const RAID_BOSSES: RaidBossInfo[] = [
   {
@@ -18071,7 +18082,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t56_l_i00',
-        name: 'Stockings of Zubei',
+        name: 'Unidentified Stockings of Zubei',
         chance: 3.24,
         minCount: 1,
         maxCount: 1,
@@ -18087,7 +18098,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t59_ul_i00',
-        name: 'Avadon Robe',
+        name: 'Unidentified Avadon Robe',
         chance: 2.7,
         minCount: 1,
         maxCount: 1,
@@ -18111,7 +18122,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t56_u_i00',
-        name: 'Tunic of Zubei',
+        name: 'Unidentified Tunic of Zubei',
         chance: 2.16,
         minCount: 1,
         maxCount: 1,
@@ -18119,7 +18130,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_heavy_war_axe_i00',
-        name: 'Heavy War Axe',
+        name: 'Unidentified Heavy War Axe',
         chance: 0.75,
         minCount: 1,
         maxCount: 1,
@@ -18368,7 +18379,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_arthro_nail_i00',
-        name: 'Arthro Nail',
+        name: 'Unidentified Arthro Nail',
         chance: 1.5,
         minCount: 1,
         maxCount: 1,
@@ -18376,7 +18387,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_great_axe_i00',
-        name: 'Great Axe',
+        name: 'Unidentified Great Axe',
         chance: 1.5,
         minCount: 1,
         maxCount: 1,
@@ -18594,7 +18605,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t66_l_i00',
-        name: 'Avadon Gaiters',
+        name: 'Unidentified Avadon Gaiters',
         chance: 2.45,
         minCount: 1,
         maxCount: 1,
@@ -18602,7 +18613,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t64_l_i00',
-        name: "Zubei's Gaiters",
+        name: "Unidentified Zubei's Gaiters",
         chance: 2.45,
         minCount: 1,
         maxCount: 1,
@@ -18610,7 +18621,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t66_u_i00',
-        name: 'Avadon Breastplate',
+        name: 'Unidentified Avadon Breastplate',
         chance: 1.65,
         minCount: 1,
         maxCount: 1,
@@ -18618,7 +18629,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t64_u_i00',
-        name: "Zubei's Breastplate",
+        name: "Unidentified Zubei's Breastplate",
         chance: 1.65,
         minCount: 1,
         maxCount: 1,
@@ -18699,7 +18710,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       full: 'images/avatars/full/unknown.webp',
       mini: 'images/avatars/mini/unknown.webp',
     },
-    mapX: 1309.0,
+    mapX: 1309,
     mapY: 3617.2,
     worldX: 1923.4,
     worldY: 2747.11,
@@ -19134,7 +19145,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_kshanberk_i00',
-        name: 'Keshanberk',
+        name: 'Unidentified Keshanberk',
         chance: 1,
         minCount: 1,
         maxCount: 1,
@@ -19142,7 +19153,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_great_sword_i00',
-        name: 'Great Sword',
+        name: 'Unidentified Great Sword',
         chance: 1,
         minCount: 1,
         maxCount: 1,
@@ -19343,7 +19354,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t65_l_i00',
-        name: "Zubei's Leather Gaiters",
+        name: "Unidentified Zubei's Leather Gaiters",
         chance: 3.3,
         minCount: 1,
         maxCount: 1,
@@ -19359,7 +19370,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t67_ul_i00',
-        name: 'Avadon Leather Armor',
+        name: 'Unidentified Avadon Leather Armor',
         chance: 2.7,
         minCount: 1,
         maxCount: 1,
@@ -19367,7 +19378,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t65_u_i00',
-        name: "Zubei's Leather Shirt",
+        name: "Unidentified Zubei's Leather Shirt",
         chance: 2.2,
         minCount: 1,
         maxCount: 1,
@@ -19375,7 +19386,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_arthro_nail_i00',
-        name: 'Arthro Nail',
+        name: 'Unidentified Arthro Nail',
         chance: 1.5,
         minCount: 1,
         maxCount: 1,
@@ -19383,7 +19394,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_great_axe_i00',
-        name: 'Great Axe',
+        name: 'Unidentified Great Axe',
         chance: 1.5,
         minCount: 1,
         maxCount: 1,
@@ -19592,7 +19603,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t66_g_i02',
-        name: 'Sealed Avadon Gloves',
+        name: 'Unidentified Sealed Avadon Gloves',
         chance: 3,
         minCount: 1,
         maxCount: 1,
@@ -19600,7 +19611,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t64_g_i02',
-        name: "Sealed Zubei's Gauntlets",
+        name: "Unidentified Sealed Zubei's Gauntlets",
         chance: 3,
         minCount: 1,
         maxCount: 1,
@@ -19608,7 +19619,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t66_b_i02',
-        name: 'Sealed Avadon Boots',
+        name: 'Unidentified Sealed Avadon Boots',
         chance: 3,
         minCount: 1,
         maxCount: 1,
@@ -19616,7 +19627,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t64_b_i02',
-        name: "Sealed Zubei's Boots",
+        name: "Unidentified Sealed Zubei's Boots",
         chance: 3,
         minCount: 1,
         maxCount: 1,
@@ -19624,7 +19635,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_arthro_nail_i00',
-        name: 'Arthro Nail',
+        name: 'Unidentified Arthro Nail',
         chance: 1.5,
         minCount: 1,
         maxCount: 1,
@@ -19862,7 +19873,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'shield_shrnoens_shield_i00',
-        name: "Zubei's Shield",
+        name: "Unidentified Zubei's Shield",
         chance: 4.05,
         minCount: 1,
         maxCount: 1,
@@ -19870,7 +19881,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'shield_avadon_shield_i00',
-        name: 'Avadon Shield',
+        name: 'Unidentified Avadon Shield',
         chance: 4.05,
         minCount: 1,
         maxCount: 1,
@@ -19902,7 +19913,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_helmet_i00',
-        name: "Zubei's Helmet",
+        name: "Unidentified Zubei's Helmet",
         chance: 2.7,
         minCount: 1,
         maxCount: 1,
@@ -19910,7 +19921,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_leather_helmet_i00',
-        name: 'Avadon Circlet',
+        name: 'Unidentified Avadon Circlet',
         chance: 2.7,
         minCount: 1,
         maxCount: 1,
@@ -20192,7 +20203,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t65_l_i00',
-        name: "Zubei's Leather Gaiters",
+        name: "Unidentified Zubei's Leather Gaiters",
         chance: 3.24,
         minCount: 1,
         maxCount: 1,
@@ -20208,7 +20219,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t67_ul_i00',
-        name: 'Avadon Leather Armor',
+        name: 'Unidentified Avadon Leather Armor',
         chance: 2.7,
         minCount: 1,
         maxCount: 1,
@@ -20216,7 +20227,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t65_u_i00',
-        name: "Zubei's Leather Shirt",
+        name: "Unidentified Zubei's Leather Shirt",
         chance: 2.16,
         minCount: 1,
         maxCount: 1,
@@ -20224,7 +20235,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_kris_i00',
-        name: 'Kris',
+        name: 'Unidentified Kris',
         chance: 1,
         minCount: 1,
         maxCount: 1,
@@ -20232,7 +20243,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_hell_knife_i00',
-        name: 'Hell Knife',
+        name: 'Unidentified Hell Knife',
         chance: 1,
         minCount: 1,
         maxCount: 1,
@@ -20465,7 +20476,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t66_l_i00',
-        name: 'Avadon Gaiters',
+        name: 'Unidentified Avadon Gaiters',
         chance: 2.45,
         minCount: 1,
         maxCount: 1,
@@ -20473,7 +20484,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t64_l_i00',
-        name: "Zubei's Gaiters",
+        name: "Unidentified Zubei's Gaiters",
         chance: 2.45,
         minCount: 1,
         maxCount: 1,
@@ -20481,7 +20492,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t66_u_i00',
-        name: 'Avadon Breastplate',
+        name: 'Unidentified Avadon Breastplate',
         chance: 1.65,
         minCount: 1,
         maxCount: 1,
@@ -20723,7 +20734,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'shield_avadon_shield_i00',
-        name: 'Avadon Shield',
+        name: 'Unidentified Avadon Shield',
         chance: 3.6,
         minCount: 1,
         maxCount: 1,
@@ -20731,7 +20742,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'shield_shrnoens_shield_i00',
-        name: "Zubei's Shield",
+        name: "Unidentified Zubei's Shield",
         chance: 3.6,
         minCount: 1,
         maxCount: 1,
@@ -20747,7 +20758,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_leather_helmet_i00',
-        name: 'Avadon Circlet',
+        name: 'Unidentified Avadon Circlet',
         chance: 2.4,
         minCount: 1,
         maxCount: 1,
@@ -20755,7 +20766,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_helmet_i00',
-        name: "Zubei's Helmet",
+        name: "Unidentified Zubei's Helmet",
         chance: 2.4,
         minCount: 1,
         maxCount: 1,
@@ -20763,7 +20774,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_arthro_nail_i00',
-        name: 'Arthro Nail',
+        name: 'Unidentified Arthro Nail',
         chance: 1.5,
         minCount: 1,
         maxCount: 1,
@@ -21049,7 +21060,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_kshanberk_i00',
-        name: 'Keshanberk',
+        name: 'Unidentified Keshanberk',
         chance: 1,
         minCount: 1,
         maxCount: 1,
@@ -21057,7 +21068,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_great_sword_i00',
-        name: 'Great Sword',
+        name: 'Unidentified Great Sword',
         chance: 1,
         minCount: 1,
         maxCount: 1,
@@ -21255,7 +21266,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t56_l_i00',
-        name: 'Stockings of Zubei',
+        name: 'Unidentified Stockings of Zubei',
         chance: 3.3,
         minCount: 1,
         maxCount: 1,
@@ -21271,7 +21282,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t59_ul_i00',
-        name: 'Avadon Robe',
+        name: 'Unidentified Avadon Robe',
         chance: 2.7,
         minCount: 1,
         maxCount: 1,
@@ -21279,7 +21290,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t56_u_i00',
-        name: 'Tunic of Zubei',
+        name: 'Unidentified Tunic of Zubei',
         chance: 2.2,
         minCount: 1,
         maxCount: 1,
@@ -21287,7 +21298,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_arthro_nail_i00',
-        name: 'Arthro Nail',
+        name: 'Unidentified Arthro Nail',
         chance: 1.5,
         minCount: 1,
         maxCount: 1,
@@ -21295,7 +21306,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_great_axe_i00',
-        name: 'Great Axe',
+        name: 'Unidentified Great Axe',
         chance: 1.5,
         minCount: 1,
         maxCount: 1,
@@ -21520,7 +21531,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t66_g_i02',
-        name: 'Sealed Avadon Gloves',
+        name: 'Unidentified Sealed Avadon Gloves',
         chance: 3,
         minCount: 1,
         maxCount: 1,
@@ -21528,7 +21539,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t64_g_i02',
-        name: "Sealed Zubei's Gauntlets",
+        name: "Unidentified Sealed Zubei's Gauntlets",
         chance: 3,
         minCount: 1,
         maxCount: 1,
@@ -21536,7 +21547,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t66_b_i02',
-        name: 'Sealed Avadon Boots',
+        name: 'Unidentified Sealed Avadon Boots',
         chance: 3,
         minCount: 1,
         maxCount: 1,
@@ -21790,7 +21801,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t66_g_i02',
-        name: 'Sealed Avadon Gloves',
+        name: 'Unidentified Sealed Avadon Gloves',
         chance: 3,
         minCount: 1,
         maxCount: 1,
@@ -21798,7 +21809,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t64_g_i02',
-        name: "Sealed Zubei's Gauntlets",
+        name: "Unidentified Sealed Zubei's Gauntlets",
         chance: 3,
         minCount: 1,
         maxCount: 1,
@@ -21806,7 +21817,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t66_b_i02',
-        name: 'Sealed Avadon Boots',
+        name: 'Unidentified Sealed Avadon Boots',
         chance: 3,
         minCount: 1,
         maxCount: 1,
@@ -21814,7 +21825,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t64_b_i02',
-        name: "Sealed Zubei's Boots",
+        name: "Unidentified Sealed Zubei's Boots",
         chance: 3,
         minCount: 1,
         maxCount: 1,
@@ -22040,7 +22051,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t65_l_i00',
-        name: "Zubei's Leather Gaiters",
+        name: "Unidentified Zubei's Leather Gaiters",
         chance: 3.3,
         minCount: 1,
         maxCount: 1,
@@ -22056,7 +22067,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t67_ul_i00',
-        name: 'Avadon Leather Armor',
+        name: 'Unidentified Avadon Leather Armor',
         chance: 2.7,
         minCount: 1,
         maxCount: 1,
@@ -22064,7 +22075,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t65_u_i00',
-        name: "Zubei's Leather Shirt",
+        name: "Unidentified Zubei's Leather Shirt",
         chance: 2.2,
         minCount: 1,
         maxCount: 1,
@@ -22072,7 +22083,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_kris_i00',
-        name: 'Kris',
+        name: 'Unidentified Kris',
         chance: 1,
         minCount: 1,
         maxCount: 1,
@@ -22080,7 +22091,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_hell_knife_i00',
-        name: 'Hell Knife',
+        name: 'Unidentified Hell Knife',
         chance: 1,
         minCount: 1,
         maxCount: 1,
@@ -22326,7 +22337,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_heavy_war_axe_i00',
-        name: 'Heavy War Axe',
+        name: 'Unidentified Heavy War Axe',
         chance: 0.75,
         minCount: 1,
         maxCount: 1,
@@ -22564,7 +22575,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t66_l_i00',
-        name: 'Avadon Gaiters',
+        name: 'Unidentified Avadon Gaiters',
         chance: 2.45,
         minCount: 1,
         maxCount: 1,
@@ -22572,7 +22583,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t64_l_i00',
-        name: "Zubei's Gaiters",
+        name: "Unidentified Zubei's Gaiters",
         chance: 2.45,
         minCount: 1,
         maxCount: 1,
@@ -22580,7 +22591,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t66_u_i00',
-        name: 'Avadon Breastplate',
+        name: 'Unidentified Avadon Breastplate',
         chance: 1.65,
         minCount: 1,
         maxCount: 1,
@@ -22588,7 +22599,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t64_u_i00',
-        name: "Zubei's Breastplate",
+        name: "Unidentified Zubei's Breastplate",
         chance: 1.65,
         minCount: 1,
         maxCount: 1,
@@ -23080,7 +23091,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t68_l_i00',
-        name: 'Blue Wolf Gaiters',
+        name: 'Unidentified Blue Wolf Gaiters',
         chance: 39.5,
         minCount: 1,
         maxCount: 1,
@@ -23088,7 +23099,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t71_ul_i00',
-        name: 'Doom Plate Armor',
+        name: 'Unidentified Doom Plate Armor',
         chance: 34.2,
         minCount: 1,
         maxCount: 1,
@@ -23096,7 +23107,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t68_u_i00',
-        name: 'Blue Wolf Breastplate',
+        name: 'Unidentified Blue Wolf Breastplate',
         chance: 26.3,
         minCount: 1,
         maxCount: 1,
@@ -23104,7 +23115,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_demons_sword_i00',
-        name: "Demon's Dagger",
+        name: "Unidentified Demon's Dagger",
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -23112,7 +23123,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_hazard_bow_i00',
-        name: 'Bow of Peril',
+        name: 'Unidentified Bow of Peril',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -23313,7 +23324,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t72_ul_i00',
-        name: 'Leather Armor of Doom',
+        name: 'Unidentified Leather Armor of Doom',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -23321,7 +23332,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t69_ul_i00',
-        name: 'Blue Wolf Leather Armor',
+        name: 'Unidentified Blue Wolf Leather Armor',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -23329,7 +23340,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_bellion_cestus_i00',
-        name: 'Bellion Cestus',
+        name: 'Unidentified Bellion Cestus',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -23337,7 +23348,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_lancia_i00',
-        name: 'Lance',
+        name: 'Unidentified Lance',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -23599,7 +23610,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_sword_of_damascus_i00',
-        name: 'Sword of Damascus',
+        name: 'Unidentified Sword of Damascus',
         chance: 33.34,
         minCount: 1,
         maxCount: 1,
@@ -23607,7 +23618,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_guardians_sword_i00',
-        name: 'Guardian Sword',
+        name: 'Unidentified Guardian Sword',
         chance: 33.33,
         minCount: 1,
         maxCount: 1,
@@ -23615,7 +23626,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_tears_of_wizard_i00',
-        name: "Wizard's Tear",
+        name: "Unidentified Wizard's Tear",
         chance: 33.33,
         minCount: 1,
         maxCount: 1,
@@ -23888,7 +23899,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t68_g_i02',
-        name: 'Sealed Blue Wolf Gloves',
+        name: 'Unidentified Sealed Blue Wolf Gloves',
         chance: 25,
         minCount: 1,
         maxCount: 1,
@@ -23896,7 +23907,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t71_g_i02',
-        name: 'Sealed Doom Gloves',
+        name: 'Unidentified Sealed Doom Gloves',
         chance: 25,
         minCount: 1,
         maxCount: 1,
@@ -23904,7 +23915,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t68_b_i02',
-        name: 'Sealed Blue Wolf Boots',
+        name: 'Unidentified Sealed Blue Wolf Boots',
         chance: 25,
         minCount: 1,
         maxCount: 1,
@@ -23912,7 +23923,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t71_b_i02',
-        name: 'Sealed Doom Boots',
+        name: 'Unidentified Sealed Doom Boots',
         chance: 25,
         minCount: 1,
         maxCount: 1,
@@ -23936,7 +23947,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_deadmans_glory_i00',
-        name: "Deadman's Glory",
+        name: "Unidentified Deadman's Glory",
         chance: 20,
         minCount: 1,
         maxCount: 1,
@@ -24254,7 +24265,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_deadmans_glory_i00',
-        name: "Deadman's Glory",
+        name: "Unidentified Deadman's Glory",
         chance: 20,
         minCount: 1,
         maxCount: 1,
@@ -24262,7 +24273,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_art_of_battle_axe_i00',
-        name: 'Art of Battle Axe',
+        name: 'Unidentified Art of Battle Axe',
         chance: 20,
         minCount: 1,
         maxCount: 1,
@@ -24270,7 +24281,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_star_buster_i00',
-        name: 'Star Buster',
+        name: 'Unidentified Star Buster',
         chance: 20,
         minCount: 1,
         maxCount: 1,
@@ -24503,7 +24514,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t68_g_i02',
-        name: 'Sealed Blue Wolf Gloves',
+        name: 'Unidentified Sealed Blue Wolf Gloves',
         chance: 25,
         minCount: 1,
         maxCount: 1,
@@ -24511,7 +24522,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t71_g_i02',
-        name: 'Sealed Doom Gloves',
+        name: 'Unidentified Sealed Doom Gloves',
         chance: 25,
         minCount: 1,
         maxCount: 1,
@@ -24519,7 +24530,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t68_b_i02',
-        name: 'Sealed Blue Wolf Boots',
+        name: 'Unidentified Sealed Blue Wolf Boots',
         chance: 25,
         minCount: 1,
         maxCount: 1,
@@ -24527,7 +24538,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t71_b_i02',
-        name: 'Sealed Doom Boots',
+        name: 'Unidentified Sealed Doom Boots',
         chance: 25,
         minCount: 1,
         maxCount: 1,
@@ -24535,7 +24546,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_bellion_cestus_i00',
-        name: 'Bellion Cestus',
+        name: 'Unidentified Bellion Cestus',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -24543,7 +24554,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_lancia_i00',
-        name: 'Lance',
+        name: 'Unidentified Lance',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -24777,7 +24788,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t70_l_i00',
-        name: 'Blue Wolf Stockings',
+        name: 'Unidentified Blue Wolf Stockings',
         chance: 30,
         minCount: 1,
         maxCount: 1,
@@ -24785,7 +24796,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t73_l_i00',
-        name: 'Stockings of Doom',
+        name: 'Unidentified Stockings of Doom',
         chance: 30,
         minCount: 1,
         maxCount: 1,
@@ -24793,7 +24804,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t70_u_i00',
-        name: 'Blue Wolf Tunic',
+        name: 'Unidentified Blue Wolf Tunic',
         chance: 20,
         minCount: 1,
         maxCount: 1,
@@ -24801,7 +24812,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t73_u_i00',
-        name: 'Tunic of Doom',
+        name: 'Unidentified Tunic of Doom',
         chance: 20,
         minCount: 1,
         maxCount: 1,
@@ -24809,7 +24820,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_demons_sword_i00',
-        name: "Demon's Dagger",
+        name: "Unidentified Demon's Dagger",
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -24817,7 +24828,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_hazard_bow_i00',
-        name: 'Bow of Peril',
+        name: 'Unidentified Bow of Peril',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -25050,7 +25061,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'shield_doom_shield_i00',
-        name: 'Doom Shield',
+        name: 'Unidentified Doom Shield',
         chance: 40,
         minCount: 1,
         maxCount: 1,
@@ -25058,7 +25069,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_leather_helmet_i00',
-        name: 'Blue Wolf Helmet',
+        name: 'Unidentified Blue Wolf Helmet',
         chance: 30,
         minCount: 1,
         maxCount: 1,
@@ -25066,7 +25077,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_leather_helmet_i00',
-        name: 'Doom Helmet',
+        name: 'Unidentified Doom Helmet',
         chance: 30,
         minCount: 1,
         maxCount: 1,
@@ -25082,7 +25093,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_sword_of_damascus_i00',
-        name: 'Sword of Damascus',
+        name: 'Unidentified Sword of Damascus',
         chance: 33.34,
         minCount: 1,
         maxCount: 1,
@@ -25090,7 +25101,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_guardians_sword_i00',
-        name: 'Guardian Sword',
+        name: 'Unidentified Guardian Sword',
         chance: 33.33,
         minCount: 1,
         maxCount: 1,
@@ -25098,7 +25109,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_tears_of_wizard_i00',
-        name: "Wizard's Tear",
+        name: "Unidentified Wizard's Tear",
         chance: 33.33,
         minCount: 1,
         maxCount: 1,
@@ -25313,7 +25324,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t75_l_i02',
-        name: 'Sealed Dark Crystal Leggings',
+        name: 'Unidentified Sealed Dark Crystal Leggings',
         chance: 39.5,
         minCount: 1,
         maxCount: 1,
@@ -25321,7 +25332,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t78_ul_i02',
-        name: 'Sealed Tallum Leather Armor',
+        name: 'Unidentified Sealed Tallum Leather Armor',
         chance: 34.2,
         minCount: 1,
         maxCount: 1,
@@ -25329,7 +25340,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t75_u_i02',
-        name: 'Sealed Dark Crystal Leather Armor',
+        name: 'Unidentified Sealed Dark Crystal Leather Armor',
         chance: 26.3,
         minCount: 1,
         maxCount: 1,
@@ -25448,7 +25459,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'etc_gem_blue_i00',
-        name: 'Phoenix Ring Gemstone',
+        name: 'Sealed Phoenix Ring Gemstone',
         chance: 35.04,
         minCount: 3,
         maxCount: 10,
@@ -25456,7 +25467,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'etc_gem_blue_i00',
-        name: 'Phoenix Earring Gemstone',
+        name: 'Sealed Phoenix Earring Gemstone',
         chance: 27.52,
         minCount: 3,
         maxCount: 9,
@@ -25504,7 +25515,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'etc_broken_crystal_silver_i00',
-        name: 'Phoenix Necklace Beads',
+        name: 'Sealed Phoenix Necklace Beads',
         chance: 17.44,
         minCount: 3,
         maxCount: 7,
@@ -25584,7 +25595,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'accessary_phoenixs_ring_i00',
-        name: 'Phoenix Ring',
+        name: 'Sealed Phoenix Ring',
         chance: 43.8,
         minCount: 1,
         maxCount: 1,
@@ -25743,7 +25754,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'etc_gem_blue_i00',
-        name: 'Phoenix Ring Gemstone',
+        name: 'Sealed Phoenix Ring Gemstone',
         chance: 35.04,
         minCount: 3,
         maxCount: 10,
@@ -25775,7 +25786,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'etc_gem_blue_i00',
-        name: 'Phoenix Earring Gemstone',
+        name: 'Sealed Phoenix Earring Gemstone',
         chance: 27.52,
         minCount: 3,
         maxCount: 9,
@@ -25791,7 +25802,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'etc_broken_crystal_silver_i00',
-        name: 'Phoenix Necklace Beads',
+        name: 'Sealed Phoenix Necklace Beads',
         chance: 17.44,
         minCount: 3,
         maxCount: 7,
@@ -25863,7 +25874,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'accessary_phoenixs_ring_i00',
-        name: 'Phoenix Ring',
+        name: 'Sealed Phoenix Ring',
         chance: 43.8,
         minCount: 1,
         maxCount: 1,
@@ -25871,7 +25882,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'accessary_phoenixs_earing_i00',
-        name: 'Phoenix Earring',
+        name: 'Sealed Phoenix Earring',
         chance: 34.4,
         minCount: 1,
         maxCount: 1,
@@ -25879,7 +25890,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'accessary_phoenixs_necklace_i00',
-        name: 'Phoenix Necklace',
+        name: 'Sealed Phoenix Necklace',
         chance: 21.8,
         minCount: 1,
         maxCount: 1,
@@ -26142,7 +26153,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t74_l_i02',
-        name: 'Sealed Dark Crystal Gaiters',
+        name: 'Unidentified Sealed Dark Crystal Gaiters',
         chance: 39.5,
         minCount: 1,
         maxCount: 1,
@@ -26150,7 +26161,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t77_ul_i02',
-        name: 'Sealed Tallum Plate Armor',
+        name: 'Unidentified Sealed Tallum Plate Armor',
         chance: 34.2,
         minCount: 1,
         maxCount: 1,
@@ -26333,7 +26344,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'etc_pouch_yellow_i00',
-        name: 'Tallum Helm Design',
+        name: 'Sealed Tallum Helm Design',
         chance: 25.5,
         minCount: 2,
         maxCount: 6,
@@ -26405,7 +26416,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'shield_dark_crystal_shield_i02',
-        name: 'Sealed Dark Crystal Shield',
+        name: 'Unidentified Sealed Dark Crystal Shield',
         chance: 40,
         minCount: 1,
         maxCount: 1,
@@ -26421,7 +26432,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_helmet_i02',
-        name: 'Sealed Dark Crystal Helmet',
+        name: 'Unidentified Sealed Dark Crystal Helmet',
         chance: 30,
         minCount: 1,
         maxCount: 1,
@@ -26580,7 +26591,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'etc_pouch_yellow_i00',
-        name: 'Tallum Helm Design',
+        name: 'Sealed Tallum Helm Design',
         chance: 25.5,
         minCount: 2,
         maxCount: 6,
@@ -26692,7 +26703,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'shield_dark_crystal_shield_i02',
-        name: 'Sealed Dark Crystal Shield',
+        name: 'Unidentified Sealed Dark Crystal Shield',
         chance: 40,
         minCount: 1,
         maxCount: 1,
@@ -27393,7 +27404,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'etc_pouch_yellow_i00',
-        name: 'Tallum Helm Design',
+        name: 'Sealed Tallum Helm Design',
         chance: 25.5,
         minCount: 2,
         maxCount: 6,
@@ -27457,7 +27468,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'shield_dark_crystal_shield_i02',
-        name: 'Sealed Dark Crystal Shield',
+        name: 'Unidentified Sealed Dark Crystal Shield',
         chance: 40,
         minCount: 1,
         maxCount: 1,
@@ -27473,7 +27484,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_helmet_i02',
-        name: 'Sealed Dark Crystal Helmet',
+        name: 'Unidentified Sealed Dark Crystal Helmet',
         chance: 30,
         minCount: 1,
         maxCount: 1,
@@ -27481,7 +27492,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_helmet_i02',
-        name: 'Sealed Tallum Helmet',
+        name: 'Unidentified Sealed Tallum Helmet',
         chance: 30,
         minCount: 1,
         maxCount: 1,
@@ -28875,7 +28886,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'etc_pouch_yellow_i00',
-        name: 'Tallum Helm Design',
+        name: 'Sealed Tallum Helm Design',
         chance: 25.5,
         minCount: 2,
         maxCount: 6,
@@ -28939,7 +28950,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'shield_dark_crystal_shield_i02',
-        name: 'Sealed Dark Crystal Shield',
+        name: 'Unidentified Sealed Dark Crystal Shield',
         chance: 40,
         minCount: 1,
         maxCount: 1,
@@ -28955,7 +28966,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_helmet_i02',
-        name: 'Sealed Dark Crystal Helmet',
+        name: 'Unidentified Sealed Dark Crystal Helmet',
         chance: 30,
         minCount: 1,
         maxCount: 1,
@@ -28963,7 +28974,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_helmet_i02',
-        name: 'Sealed Tallum Helmet',
+        name: 'Unidentified Sealed Tallum Helmet',
         chance: 30,
         minCount: 1,
         maxCount: 1,
@@ -29210,7 +29221,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t74_g_i02',
-        name: 'Sealed Dark Crystal Gloves',
+        name: 'Unidentified Sealed Dark Crystal Gloves',
         chance: 25,
         minCount: 1,
         maxCount: 1,
@@ -29218,7 +29229,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t77_g_i02',
-        name: 'Sealed Tallum Gloves',
+        name: 'Unidentified Sealed Tallum Gloves',
         chance: 25,
         minCount: 1,
         maxCount: 1,
@@ -29465,7 +29476,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t74_l_i02',
-        name: 'Sealed Dark Crystal Gaiters',
+        name: 'Unidentified Sealed Dark Crystal Gaiters',
         chance: 39.5,
         minCount: 1,
         maxCount: 1,
@@ -29473,7 +29484,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t77_ul_i02',
-        name: 'Sealed Tallum Plate Armor',
+        name: 'Unidentified Sealed Tallum Plate Armor',
         chance: 34.2,
         minCount: 1,
         maxCount: 1,
@@ -29481,7 +29492,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t74_u_i02',
-        name: 'Sealed Dark Crystal Breastplate',
+        name: 'Unidentified Sealed Dark Crystal Breastplate',
         chance: 26.3,
         minCount: 1,
         maxCount: 1,
@@ -29712,7 +29723,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t75_l_i02',
-        name: 'Sealed Dark Crystal Leggings',
+        name: 'Unidentified Sealed Dark Crystal Leggings',
         chance: 39.5,
         minCount: 1,
         maxCount: 1,
@@ -29720,7 +29731,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t78_ul_i02',
-        name: 'Sealed Tallum Leather Armor',
+        name: 'Unidentified Sealed Tallum Leather Armor',
         chance: 34.2,
         minCount: 1,
         maxCount: 1,
@@ -29728,7 +29739,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t75_u_i02',
-        name: 'Sealed Dark Crystal Leather Armor',
+        name: 'Unidentified Sealed Dark Crystal Leather Armor',
         chance: 26.3,
         minCount: 1,
         maxCount: 1,
@@ -29863,7 +29874,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'etc_gem_blue_i00',
-        name: 'Phoenix Ring Gemstone',
+        name: 'Sealed Phoenix Ring Gemstone',
         chance: 35.04,
         minCount: 3,
         maxCount: 10,
@@ -29871,7 +29882,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'etc_gem_blue_i00',
-        name: 'Phoenix Earring Gemstone',
+        name: 'Sealed Phoenix Earring Gemstone',
         chance: 27.52,
         minCount: 3,
         maxCount: 9,
@@ -29887,7 +29898,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'etc_broken_crystal_silver_i00',
-        name: 'Phoenix Necklace Beads',
+        name: 'Sealed Phoenix Necklace Beads',
         chance: 17.44,
         minCount: 3,
         maxCount: 7,
@@ -29951,7 +29962,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'accessary_phoenixs_ring_i00',
-        name: 'Phoenix Ring',
+        name: 'Sealed Phoenix Ring',
         chance: 43.8,
         minCount: 1,
         maxCount: 1,
@@ -29959,7 +29970,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'accessary_phoenixs_earing_i00',
-        name: 'Phoenix Earring',
+        name: 'Sealed Phoenix Earring',
         chance: 34.4,
         minCount: 1,
         maxCount: 1,
@@ -29967,7 +29978,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'accessary_phoenixs_necklace_i00',
-        name: 'Phoenix Necklace',
+        name: 'Sealed Phoenix Necklace',
         chance: 21.8,
         minCount: 1,
         maxCount: 1,
@@ -30206,7 +30217,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t79_l_i02',
-        name: 'Sealed Tallum Stockings',
+        name: 'Unidentified Sealed Tallum Stockings',
         chance: 39.5,
         minCount: 1,
         maxCount: 1,
@@ -30214,7 +30225,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t76_ul_i02',
-        name: 'Sealed Dark Crystal Robe',
+        name: 'Unidentified Sealed Dark Crystal Robe',
         chance: 34.2,
         minCount: 1,
         maxCount: 1,
@@ -30222,7 +30233,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t79_u_i02',
-        name: 'Sealed Tallum Tunic',
+        name: 'Unidentified Sealed Tallum Tunic',
         chance: 26.3,
         minCount: 1,
         maxCount: 1,
@@ -30469,7 +30480,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t79_l_i02',
-        name: 'Sealed Tallum Stockings',
+        name: 'Unidentified Sealed Tallum Stockings',
         chance: 39.5,
         minCount: 1,
         maxCount: 1,
@@ -30477,7 +30488,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t76_ul_i02',
-        name: 'Sealed Dark Crystal Robe',
+        name: 'Unidentified Sealed Dark Crystal Robe',
         chance: 34.2,
         minCount: 1,
         maxCount: 1,
@@ -31035,7 +31046,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t74_g_i02',
-        name: 'Sealed Dark Crystal Gloves',
+        name: 'Unidentified Sealed Dark Crystal Gloves',
         chance: 25,
         minCount: 1,
         maxCount: 1,
@@ -31043,7 +31054,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t77_g_i02',
-        name: 'Sealed Tallum Gloves',
+        name: 'Unidentified Sealed Tallum Gloves',
         chance: 25,
         minCount: 1,
         maxCount: 1,
@@ -31314,7 +31325,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t85_ul_i02',
-        name: 'Sealed Majestic Robe',
+        name: 'Unidentified Sealed Majestic Robe',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -31588,7 +31599,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'accessary_inferno_ring_i00',
-        name: 'Majestic Ring',
+        name: 'Sealed Majestic Ring',
         chance: 43.8,
         minCount: 1,
         maxCount: 1,
@@ -32170,7 +32181,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'accessary_inferno_ring_i00',
-        name: 'Majestic Ring',
+        name: 'Sealed Majestic Ring',
         chance: 43.8,
         minCount: 1,
         maxCount: 1,
@@ -32186,7 +32197,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'accessary_inferno_earing_i00',
-        name: 'Majestic Earring',
+        name: 'Sealed Majestic Earring',
         chance: 34.4,
         minCount: 1,
         maxCount: 1,
@@ -32202,7 +32213,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'accessary_inferno_necklace_i00',
-        name: 'Majestic Necklace',
+        name: 'Sealed Majestic Necklace',
         chance: 21.8,
         minCount: 1,
         maxCount: 1,
@@ -32449,7 +32460,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t83_ul_i02',
-        name: 'Sealed Majestic Plate Armor',
+        name: 'Unidentified Sealed Majestic Plate Armor',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -32688,7 +32699,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t84_ul_i02',
-        name: 'Sealed Majestic Leather Armor',
+        name: 'Unidentified Sealed Majestic Leather Armor',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -32696,7 +32707,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t81_ul_i02',
-        name: 'Sealed Leather Armor of Nightmare',
+        name: 'Unidentified Sealed Leather Armor of Nightmare',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -32704,7 +32715,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_dragon_grinder_i00',
-        name: 'Dragon Grinder',
+        name: 'Unidentified Dragon Grinder',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -32712,7 +32723,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_tallum_glaive_i00',
-        name: 'Tallum Glaive',
+        name: 'Unidentified Tallum Glaive',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -32911,7 +32922,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t85_ul_i02',
-        name: 'Sealed Majestic Robe',
+        name: 'Unidentified Sealed Majestic Robe',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -32919,7 +32930,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t82_ul_i02',
-        name: 'Sealed Robe of Nightmare',
+        name: 'Unidentified Sealed Robe of Nightmare',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -32927,7 +32938,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_dragon_grinder_i00',
-        name: 'Dragon Grinder',
+        name: 'Unidentified Dragon Grinder',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -32935,7 +32946,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_tallum_glaive_i00',
-        name: 'Tallum Glaive',
+        name: 'Unidentified Tallum Glaive',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -33150,7 +33161,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t84_ul_i02',
-        name: 'Sealed Majestic Leather Armor',
+        name: 'Unidentified Sealed Majestic Leather Armor',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -33158,7 +33169,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t81_ul_i02',
-        name: 'Sealed Leather Armor of Nightmare',
+        name: 'Unidentified Sealed Leather Armor of Nightmare',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -33166,7 +33177,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_dark_legions_edge_i00',
-        name: "Dark Legion's Edge",
+        name: "Unidentified Dark Legion's Edge",
         chance: 33.34,
         minCount: 1,
         maxCount: 1,
@@ -33397,7 +33408,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t83_ul_i02',
-        name: 'Sealed Majestic Plate Armor',
+        name: 'Unidentified Sealed Majestic Plate Armor',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -33405,7 +33416,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t80_ul_i02',
-        name: 'Sealed Armor of Nightmare',
+        name: 'Unidentified Sealed Armor of Nightmare',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -33413,7 +33424,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_dark_legions_edge_i00',
-        name: "Dark Legion's Edge",
+        name: "Unidentified Dark Legion's Edge",
         chance: 33.34,
         minCount: 1,
         maxCount: 1,
@@ -33644,7 +33655,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'shield_shield_of_nightmare_i02',
-        name: 'Sealed Shield of Nightmare',
+        name: 'Unidentified Sealed Shield of Nightmare',
         chance: 40,
         minCount: 1,
         maxCount: 1,
@@ -33652,7 +33663,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_leather_helmet_i02',
-        name: 'Sealed Majestic Circlet',
+        name: 'Unidentified Sealed Majestic Circlet',
         chance: 30,
         minCount: 1,
         maxCount: 1,
@@ -33660,7 +33671,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_leather_helmet_i02',
-        name: 'Sealed Helm of Nightmare',
+        name: 'Unidentified Sealed Helm of Nightmare',
         chance: 30,
         minCount: 1,
         maxCount: 1,
@@ -34082,7 +34093,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t84_ul_i02',
-        name: 'Sealed Majestic Leather Armor',
+        name: 'Unidentified Sealed Majestic Leather Armor',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -34090,7 +34101,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t81_ul_i02',
-        name: 'Sealed Leather Armor of Nightmare',
+        name: 'Unidentified Sealed Leather Armor of Nightmare',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -34098,7 +34109,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_soul_separator_i00',
-        name: 'Soul Separator',
+        name: 'Unidentified Soul Separator',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -34106,7 +34117,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_soul_bow_i00',
-        name: 'Soul Bow',
+        name: 'Unidentified Soul Bow',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -35021,7 +35032,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t83_ul_i02',
-        name: 'Sealed Majestic Plate Armor',
+        name: 'Unidentified Sealed Majestic Plate Armor',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -35029,7 +35040,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t80_ul_i02',
-        name: 'Sealed Armor of Nightmare',
+        name: 'Unidentified Sealed Armor of Nightmare',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -35037,7 +35048,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_dragon_grinder_i00',
-        name: 'Dragon Grinder',
+        name: 'Unidentified Dragon Grinder',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -35045,7 +35056,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_tallum_glaive_i00',
-        name: 'Tallum Glaive',
+        name: 'Unidentified Tallum Glaive',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -35276,7 +35287,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'shield_shield_of_nightmare_i02',
-        name: 'Sealed Shield of Nightmare',
+        name: 'Unidentified Sealed Shield of Nightmare',
         chance: 40,
         minCount: 1,
         maxCount: 1,
@@ -35515,7 +35526,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t85_ul_i02',
-        name: 'Sealed Majestic Robe',
+        name: 'Unidentified Sealed Majestic Robe',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -35523,7 +35534,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t82_ul_i02',
-        name: 'Sealed Robe of Nightmare',
+        name: 'Unidentified Sealed Robe of Nightmare',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -35531,7 +35542,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_soul_separator_i00',
-        name: 'Soul Separator',
+        name: 'Unidentified Soul Separator',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -35539,7 +35550,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'weapon_soul_bow_i00',
-        name: 'Soul Bow',
+        name: 'Unidentified Soul Bow',
         chance: 50,
         minCount: 1,
         maxCount: 1,
@@ -35770,7 +35781,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'armor_t83_g_i02',
-        name: 'Sealed Majestic Gauntlets',
+        name: 'Unidentified Sealed Majestic Gauntlets',
         chance: 25,
         minCount: 1,
         maxCount: 1,
@@ -36025,7 +36036,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'accessary_inferno_ring_i00',
-        name: 'Majestic Ring',
+        name: 'Sealed Majestic Ring',
         chance: 43.8,
         minCount: 1,
         maxCount: 1,
@@ -36041,7 +36052,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
       },
       {
         itemId: 'accessary_inferno_earing_i00',
-        name: 'Majestic Earring',
+        name: 'Sealed Majestic Earring',
         chance: 34.4,
         minCount: 1,
         maxCount: 1,
@@ -36409,3 +36420,126 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     ],
   },
 ];
+
+export const DUNGEON_PLANS: Record<string, DungeonPlan> = {
+  'elven-ruins': {
+    name: 'Elven Ruins',
+    mapX: 1295.7,
+    mapY: 3785,
+    width: 54.3,
+    height: 51.9,
+    image: 'images/dungeon-plans/elven-ruins.webp',
+  },
+  'elven-fortress': {
+    name: 'Elven Fortress',
+    mapX: 1032.7,
+    mapY: 2489.7,
+    width: 149.8,
+    height: 109.3,
+    image: 'images/dungeon-plans/elven-fortress.webp',
+  },
+  'school-of-dark-arts': {
+    name: 'School of Dark Arts',
+    mapX: 600.4,
+    mapY: 2281.8,
+    width: 58.7,
+    height: 115.9,
+    image: 'images/dungeon-plans/school-of-dark-arts.webp',
+  },
+  'forgotten-temple': {
+    name: 'Forgotten Temple',
+    mapX: 513.7,
+    mapY: 3304.9,
+    width: 71.8,
+    height: 91.7,
+    image: 'images/dungeon-plans/forgotten-temple.webp',
+  },
+  'cruma-tower-3rd-floor': {
+    name: 'Cruma Tower: 3rd Floor',
+    mapX: 1067.1,
+    mapY: 2767.5,
+    width: 102.8,
+    height: 102.9,
+    image: 'images/dungeon-plans/cruma-tower-3rd-floor.webp',
+  },
+  'garden-of-eva': {
+    name: 'Garden of Eva',
+    mapX: 1553.2,
+    mapY: 3768.4,
+    width: 104.2,
+    height: 135.9,
+    image: 'images/dungeon-plans/garden-of-eva.webp',
+  },
+  'devil-s-isle': {
+    name: "Devil's Isle",
+    mapX: 1291.5,
+    mapY: 3445.4,
+    width: 116.2,
+    height: 177.8,
+    image: 'images/dungeon-plans/devil-s-isle.webp',
+  },
+  'cruma-tower-2nd-floor': {
+    name: 'Cruma Tower: 2nd Floor',
+    mapX: 1069.6,
+    mapY: 2773.5,
+    width: 97.8,
+    height: 88.2,
+    image: 'images/dungeon-plans/cruma-tower-2nd-floor.webp',
+  },
+  'the-giant-s-cave': {
+    name: "The Giant's Cave",
+    mapX: 2287.4,
+    mapY: 2324.7,
+    width: 158.9,
+    height: 111.4,
+    image: 'images/dungeon-plans/the-giant-s-cave.webp',
+  },
+  'tower-of-insolence-floor-1': {
+    name: 'Tower of Insolence: Floor 1',
+    mapX: 1814.3,
+    mapY: 2049.6,
+    width: 64.9,
+    height: 65.3,
+    image: 'images/dungeon-plans/tower-of-insolence-floor-1.webp',
+  },
+  'antharas-lair': {
+    name: "Antharas' Lair",
+    mapX: 1998.4,
+    mapY: 2763.2,
+    width: 152.9,
+    height: 116.7,
+    image: 'images/dungeon-plans/antharas-lair.webp',
+  },
+  'tower-of-insolence-floor-6': {
+    name: 'Tower of Insolence: Floor 6',
+    mapX: 1815.6,
+    mapY: 2058.6,
+    width: 52.4,
+    height: 48.9,
+    image: 'images/dungeon-plans/tower-of-insolence-floor-6.webp',
+  },
+  'tower-of-insolence-floor-3': {
+    name: 'Tower of Insolence: Floor 3',
+    mapX: 1817.8,
+    mapY: 2060.7,
+    width: 57.8,
+    height: 42.8,
+    image: 'images/dungeon-plans/tower-of-insolence-floor-3.webp',
+  },
+  'cruma-tower-1st-floor': {
+    name: 'Cruma Tower: 1st Floor',
+    mapX: 1107.5,
+    mapY: 2773.6,
+    width: 21.9,
+    height: 81.1,
+    image: 'images/dungeon-plans/cruma-tower-1st-floor.webp',
+  },
+  'the-ant-nest': {
+    name: 'The Ant Nest',
+    mapX: 746.3,
+    mapY: 3259.8,
+    width: 167.9,
+    height: 169.6,
+    image: 'images/dungeon-plans/the-ant-nest.webp',
+  },
+};
