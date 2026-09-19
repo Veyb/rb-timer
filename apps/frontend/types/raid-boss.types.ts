@@ -98,6 +98,7 @@ export interface RaidBoss {
   race: string;
   level: number;
   epic: boolean;
+  subclass: boolean;
   saMaxLevel: number | null;
   mapX: number;
   mapY: number;

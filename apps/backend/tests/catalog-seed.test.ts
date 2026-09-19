@@ -3,8 +3,8 @@
 // was, and that the two things the source shape makes easy to get wrong — a
 // shared avatar and a fractional drop chance — survive the round trip.
 //
-// Seeds a slice rather than all 153 bosses. `seedCatalog` takes the source as
-// an argument for exactly this: the full run writes 2791 drops and uploads 567
+// Seeds a slice rather than all 158 bosses. `seedCatalog` takes the source as
+// an argument for exactly this: the full run writes 3611 drops and uploads 659
 // images, which is a minute of wall clock to prove something a handful of
 // records proves just as well. The full run is exercised by `pnpm seed:catalog`
 // against a real database.
@@ -23,7 +23,7 @@ let slice: CatalogSource;
 
 /**
  * Two bosses that share an avatar, with everything they reference. Found rather
- * than hardcoded: 96 avatars serve 153 bosses, so a shared one always exists,
+ * than hardcoded: 96 avatars serve 158 bosses, so a shared one always exists,
  * but which one is not something to freeze into a test.
  */
 const takeSlice = (source: CatalogSource): CatalogSource => {
@@ -118,8 +118,35 @@ describe('seeding the catalogue', () => {
 
     expect(codes(stored.resistances)).toEqual([...withAffinity.resistances].sort());
     expect(codes(stored.vulnerabilities)).toEqual([...withAffinity.vulnerabilities].sort());
-    // The label is on the record, once, not beside each of the 120 usages.
+    // The label is on the record, once, not beside each of the 122 usages.
     expect(stored.resistances.every((row: { label: string }) => Boolean(row.label))).toBe(true);
+  });
+
+  it('writes whether a boss grants a subclass rather than leaving it at the default', async () => {
+    const [boss] = slice.bosses;
+    if (!boss) throw new Error('expected the slice to hold a boss');
+
+    const stored = await strapi.db
+      .query('api::raid-boss.raid-boss')
+      .findOne({ where: { slug: boss.slug } });
+
+    expect(stored.subclass).toBe(boss.subclass);
+
+    // Agreeing proves little on its own: the schema defaults the field to
+    // false, and so does every boss but four. Flipping the stored value and
+    // seeding again is what shows the payload carries it.
+    await strapi.documents('api::raid-boss.raid-boss').update({
+      documentId: stored.documentId,
+      data: { subclass: !boss.subclass },
+    });
+
+    await seedCatalog(strapi, slice);
+
+    const reseeded = await strapi.db
+      .query('api::raid-boss.raid-boss')
+      .findOne({ where: { slug: boss.slug } });
+
+    expect(reseeded.subclass).toBe(boss.subclass);
   });
 
   it('orders grades weakest first rather than alphabetically', async () => {

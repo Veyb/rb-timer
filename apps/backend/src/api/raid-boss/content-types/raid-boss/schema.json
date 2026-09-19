@@ -90,6 +90,11 @@
       "required": true,
       "default": false
     },
+    "subclass": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
     "saMaxLevel": {
       "type": "integer",
       "min": 0
@@ -103,11 +108,11 @@
       "required": true
     },
     "worldX": {
-      "type": "integer",
+      "type": "decimal",
       "required": true
     },
     "worldY": {
-      "type": "integer",
+      "type": "decimal",
       "required": true
     },
     "respawn": {

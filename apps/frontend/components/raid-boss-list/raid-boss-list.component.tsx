@@ -23,7 +23,8 @@ const Holder = styled.div`
     background-color: #1f1f1f;
   }
 
-  & .epic {
+  /* Spacing, not identity — shared by every tag the name cell carries. */
+  & .tag {
     margin-left: 0.8rem;
   }
 `;
@@ -120,8 +121,13 @@ export const RaidBossList = ({ list }: RaidBossListProps) => {
                 <span className="avatarCell">
                   {boss.name}
                   {boss.epic && (
-                    <Tag className="epic" color="gold">
+                    <Tag className="tag" color="gold">
                       epic
+                    </Tag>
+                  )}
+                  {boss.subclass && (
+                    <Tag className="tag" color="cyan">
+                      subclass
                     </Tag>
                   )}
                 </span>

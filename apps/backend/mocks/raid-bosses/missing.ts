@@ -34,6 +34,7 @@ export const MISSING_RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 34,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "Breka's Stronghold",
@@ -200,6 +201,7 @@ export const MISSING_RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 56,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "Devil's Isle",
@@ -462,6 +464,7 @@ export const MISSING_RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 34,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Execution Grounds',
@@ -644,6 +647,7 @@ export const MISSING_RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 52,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "Devil's Isle",
@@ -906,6 +910,7 @@ export const MISSING_RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 30,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Tanor Canyon',

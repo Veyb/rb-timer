@@ -10,7 +10,7 @@
 // code, a slug, a game id, a boss-and-item pair — and updated in place, so a
 // second run leaves the row counts where they were. Images are matched by
 // filename before uploading, because Strapi does not deduplicate and a careless
-// re-run would add another 566 files.
+// re-run would add a second copy of every image the catalogue uses.
 //
 // Usage:
 //   pnpm --filter backend seed:catalog

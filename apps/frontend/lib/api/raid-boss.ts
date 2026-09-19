@@ -33,7 +33,7 @@ export async function getRaidBossPage(page = 1) {
   return apiGetList<RaidBoss>(`/raid-bosses?${listQuery(page)}`);
 }
 
-/** Every boss, page by page. 153 of them, so two requests at the current size. */
+/** Every boss, page by page — there are more of them than one page holds. */
 export async function getRaidBossList() {
   const { data: first, meta: firstMeta } = await getRaidBossPage();
 
@@ -79,9 +79,10 @@ export async function getRaidBoss(slug: string) {
 /**
  * One boss's drops, richest first.
  *
- * Fetched per boss rather than alongside the list. Populating drops for all 153
- * at once weighs about 450 KB before icons and grades are added to each item;
- * one boss is 3.4 KB, and nobody hovers over more than a handful of rows.
+ * Fetched per boss rather than alongside the list. Populating drops for the
+ * whole catalogue at once runs to hundreds of kilobytes before icons and grades
+ * are added to each item; one boss is a few, and nobody hovers over more than a
+ * handful of rows.
  */
 export async function getBossDrops(bossDocumentId: string) {
   const query = qs.stringify(

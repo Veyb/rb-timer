@@ -15,6 +15,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 20,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Elven Ruins',
@@ -149,6 +150,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 20,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Dark Forest',
@@ -259,6 +261,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 20,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Elven Fortress',
@@ -388,6 +391,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 21,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'School of Dark Arts',
@@ -502,6 +506,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 21,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Elven Fortress',
@@ -616,6 +621,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 21,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Gludio Territory',
@@ -758,6 +764,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 21,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Evil Hunting Grounds',
@@ -868,6 +875,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 23,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Abandoned Camp',
@@ -1026,6 +1034,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 23,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Gludio Territory',
@@ -1152,6 +1161,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 23,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Gludio Territory',
@@ -1358,6 +1368,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 24,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Forgotten Temple',
@@ -1491,6 +1502,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 25,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Immortal Plateau',
@@ -1609,6 +1621,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 25,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Ruins of Despair',
@@ -1754,6 +1767,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 25,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Eastern Mining Zone',
@@ -1932,6 +1946,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Fairy',
     level: 25,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Plains of Dion',
@@ -2094,6 +2109,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 25,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Fellmere Lake',
@@ -2252,6 +2268,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 25,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Ruins of Agony',
@@ -2405,6 +2422,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 25,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Ruins of Despair',
@@ -2558,6 +2576,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 26,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Gludio Territory',
@@ -2676,6 +2695,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Bug',
     level: 26,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Beehive',
@@ -2845,6 +2865,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 28,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "Partisan's Hideaway",
@@ -3011,6 +3032,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 28,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Forgotten Temple',
@@ -3181,6 +3203,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 29,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Foot of the Mountain',
@@ -3382,6 +3405,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 30,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Field of Silence',
@@ -3564,6 +3588,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 30,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Giran Territory',
@@ -3765,6 +3790,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 30,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "Partisan's Hideaway",
@@ -3971,6 +3997,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 30,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Wasteland',
@@ -4153,6 +4180,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 30,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Wasteland',
@@ -4359,6 +4387,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 30,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Orc Barracks',
@@ -4525,6 +4554,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Bug',
     level: 32,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Cruma Marshlands',
@@ -4691,6 +4721,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 32,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Giran Territory',
@@ -4873,6 +4904,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 33,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Giran Territory',
@@ -5058,6 +5090,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 33,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "Partisan's Hideaway",
@@ -5264,6 +5297,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 33,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Beehive',
@@ -5449,6 +5483,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Animal',
     level: 34,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Innadril Territory',
@@ -5599,6 +5634,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Bug',
     level: 34,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Cruma Marshlands',
@@ -5781,6 +5817,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 35,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Plains of Dion',
@@ -5947,6 +5984,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 35,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Orc Barracks',
@@ -6129,6 +6167,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 35,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "Partisan's Hideaway",
@@ -6299,6 +6338,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 35,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Wasteland',
@@ -6481,6 +6521,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 35,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Execution Grounds',
@@ -6669,6 +6710,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 35,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "Partisan's Hideaway",
@@ -6835,6 +6877,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Bug',
     level: 35,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Cruma Marshlands',
@@ -7041,6 +7084,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Animal',
     level: 35,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Gorgon Flower Garden',
@@ -7191,6 +7235,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 35,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Execution Grounds',
@@ -7401,6 +7446,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 35,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Field of Silence',
@@ -7586,6 +7632,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 36,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Execution Grounds',
@@ -7796,6 +7843,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 36,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Field of Silence',
@@ -7994,6 +8042,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Dragon',
     level: 38,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Gorgon Flower Garden',
@@ -8160,6 +8209,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 40,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Cruma Marshlands',
@@ -8369,6 +8419,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 40,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Innadril Territory',
@@ -8575,6 +8626,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 40,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Immortal Plateau',
@@ -8781,6 +8833,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Animal',
     level: 41,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Giran Territory',
@@ -8979,6 +9032,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 41,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Eastern Mining Zone',
@@ -9188,6 +9242,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Fairy',
     level: 41,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Field of Silence',
@@ -9400,6 +9455,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 42,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Field of Whispers',
@@ -9606,6 +9662,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 42,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Innadril Territory',
@@ -9812,6 +9869,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 42,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Plains of the Lizardmen',
@@ -10021,6 +10079,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 42,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Plains of the Lizardmen',
@@ -10230,6 +10289,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 43,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Alligator Beach',
@@ -10436,6 +10496,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 43,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Death Pass',
@@ -10642,6 +10703,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 43,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Timak Outpost',
@@ -10848,6 +10910,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 43,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Innadril Territory',
@@ -11054,6 +11117,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 44,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Ivory Tower Crater',
@@ -11260,6 +11324,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 44,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Alligator Island',
@@ -11458,6 +11523,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Bug',
     level: 44,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Aden Territory',
@@ -11667,6 +11733,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 45,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Sea of Spores',
@@ -11876,6 +11943,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 45,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Ivory Tower Crater',
@@ -12082,6 +12150,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Plant',
     level: 45,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Sea of Spores',
@@ -12292,6 +12361,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 45,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Aden Territory',
@@ -12498,6 +12568,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 46,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Alligator Island',
@@ -12704,6 +12775,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 46,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Forest of Evil',
@@ -12910,6 +12982,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 46,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Hunters Village',
@@ -13116,6 +13189,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 46,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Hunters Valley',
@@ -13322,6 +13396,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 47,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Cruma Tower: 3rd Floor',
@@ -13520,6 +13595,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Dragon',
     level: 47,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Hunters Valley',
@@ -13726,6 +13802,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 47,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Alligator Island',
@@ -13924,6 +14001,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 47,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Neutral Waters',
@@ -14130,6 +14208,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 47,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Timak Outpost',
@@ -14336,6 +14415,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 48,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Forest of Evil',
@@ -14510,6 +14590,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 48,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Dragon Valley',
@@ -14719,6 +14800,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 49,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Forest of Evil',
@@ -14909,6 +14991,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 49,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'The Forest of Mirrors',
@@ -15087,6 +15170,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Bug',
     level: 49,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Sea of Spores',
@@ -15296,6 +15380,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 50,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Outlaw Forest',
@@ -15502,6 +15587,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 50,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Dragon Valley',
@@ -15711,6 +15797,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Fairy',
     level: 50,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Enchanted Valley',
@@ -15921,6 +16008,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 51,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Aden Territory',
@@ -16130,6 +16218,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 52,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Oren Territory',
@@ -16336,6 +16425,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Bug',
     level: 52,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Garden of Eva',
@@ -16545,6 +16635,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 53,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "Devil's Isle",
@@ -16751,6 +16842,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 53,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "Devil's Isle",
@@ -16961,6 +17053,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Elemental',
     level: 54,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Enchanted Valley',
@@ -17170,6 +17263,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 55,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Oren Territory',
@@ -17376,6 +17470,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 55,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Giran Territory',
@@ -17586,6 +17681,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 55,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Dragon Valley',
@@ -17796,6 +17892,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Elemental',
     level: 55,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Enchanted Valley',
@@ -18002,6 +18099,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Animal',
     level: 55,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Garden of Eva',
@@ -18208,6 +18306,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Elemental',
     level: 55,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Enchanted Valley',
@@ -18414,6 +18513,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 55,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Anghel Waterfall',
@@ -18620,6 +18720,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 55,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'The Forest of Mirrors',
@@ -18829,6 +18930,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 56,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Cruma Tower: 2nd Floor',
@@ -19035,6 +19137,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Animal',
     level: 56,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Aden Territory',
@@ -19241,6 +19344,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 56,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Outlaw Forest',
@@ -19434,6 +19538,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 57,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Timak Outpost',
@@ -19643,6 +19748,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Animal',
     level: 59,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Anghel Waterfall',
@@ -19849,6 +19955,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 60,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Neutral Waters',
@@ -20058,6 +20165,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 60,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Garden of Eva',
@@ -20267,6 +20375,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Fairy',
     level: 61,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Enchanted Valley',
@@ -20477,6 +20586,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 62,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'The Cemetery',
@@ -20684,6 +20794,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Giant',
     level: 62,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "The Giant's Cave",
@@ -20891,6 +21002,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 62,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Oren Territory',
@@ -21098,6 +21210,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 62,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Forsaken Plains',
@@ -21305,6 +21418,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Dragon',
     level: 63,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'The Forest of Mirrors',
@@ -21512,6 +21626,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 63,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Aden Territory',
@@ -21719,6 +21834,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Dragon',
     level: 64,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Dragon Valley',
@@ -21926,6 +22042,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 64,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Field of Massacre',
@@ -22133,6 +22250,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Giant',
     level: 64,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "The Giant's Cave",
@@ -22340,6 +22458,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 64,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "The Giant's Cave",
@@ -22547,6 +22666,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 65,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Tower of Insolence: Floor 1',
@@ -22754,6 +22874,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Elemental',
     level: 65,
     epic: false,
+    subclass: true,
     locations: [
       {
         name: 'Foot of the Mountain',
@@ -22961,6 +23082,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Animal',
     level: 65,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Anghel Waterfall',
@@ -23168,6 +23290,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 65,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Aden Territory',
@@ -23375,6 +23498,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 65,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "The Giant's Cave",
@@ -23582,6 +23706,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Elemental',
     level: 65,
     epic: false,
+    subclass: true,
     locations: [
       {
         name: 'Wasteland',
@@ -23789,6 +23914,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Elemental',
     level: 65,
     epic: false,
+    subclass: true,
     locations: [
       {
         name: 'Alligator Island',
@@ -23996,6 +24122,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 65,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Aden Territory',
@@ -24203,6 +24330,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 65,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'The Cemetery',
@@ -24410,6 +24538,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Elemental',
     level: 65,
     epic: false,
+    subclass: true,
     locations: [
       {
         name: 'Windy Hill',
@@ -24617,6 +24746,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 66,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Aden Territory',
@@ -24824,6 +24954,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Giant',
     level: 66,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "The Giant's Cave",
@@ -25031,6 +25162,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 67,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Восточная Пограничная Застава',
@@ -25238,6 +25370,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 69,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "Antharas' Lair",
@@ -25445,6 +25578,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 69,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Field of Massacre',
@@ -25652,6 +25786,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 70,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Aden Territory',
@@ -25859,6 +25994,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 70,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Aden Territory',
@@ -26066,6 +26202,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Dragon',
     level: 70,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Место обитания Рачиков',
@@ -26273,6 +26410,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 70,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Tower of Insolence: Floor 6',
@@ -26483,6 +26621,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Dragon',
     level: 70,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Blazing Swamp',
@@ -26690,6 +26829,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 70,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'The Forbidden Gateway',
@@ -26897,6 +27037,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Dragon',
     level: 70,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Aden Territory',
@@ -27104,6 +27245,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 70,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Aden Territory',
@@ -27311,6 +27453,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 71,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Tower of Insolence: Floor 3',
@@ -27518,6 +27661,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 72,
     epic: true,
+    subclass: false,
     locations: [
       {
         name: 'Cruma Tower: 1st Floor',
@@ -27725,6 +27869,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 72,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Ancient Battleground',
@@ -27932,6 +28077,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Elemental',
     level: 72,
     epic: true,
+    subclass: false,
     locations: [
       {
         name: 'Sea of Spores',
@@ -28143,6 +28289,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Bug',
     level: 72,
     epic: true,
+    subclass: false,
     locations: [
       {
         name: 'The Ant Nest',
@@ -28353,6 +28500,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 72,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Aden Territory',
@@ -28560,6 +28708,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Humanoid',
     level: 72,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Место обитания Рачиков',
@@ -28767,6 +28916,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Undead',
     level: 73,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Tower of Insolence: Floor 3',
@@ -28974,6 +29124,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Demonic',
     level: 74,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: "Antharas' Lair",
@@ -29181,6 +29332,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Construct',
     level: 74,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Blazing Swamp',
@@ -29388,6 +29540,7 @@ export const RAID_BOSSES: RaidBossInfo[] = [
     race: 'Beast',
     level: 74,
     epic: false,
+    subclass: false,
     locations: [
       {
         name: 'Место обитания Рачиков',

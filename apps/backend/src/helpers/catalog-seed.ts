@@ -147,7 +147,7 @@ export const seedCatalog = async (
     gradeIds.get(chosen[kind][slug] ?? derived) ?? gradeIds.get(DEFAULT_GRADE_CODE);
 
   // 2. Weapon types. Six records the bosses point at, rather than a label
-  // repeated beside each of the 120 usages.
+  // repeated beside each of the 122 usages.
   const weaponIds = new Map<string, string>();
   for (const weapon of WEAPON_TYPES) {
     const record = await upsert(
@@ -184,7 +184,7 @@ export const seedCatalog = async (
     locationIds.set(location.slug, record.documentId);
   }
 
-  // 4. Avatars. 96 of them serve 153 bosses, which is the whole reason they are
+  // 4. Avatars. 96 of them serve 158 bosses, which is the whole reason they are
   // a type rather than two media fields on the boss.
   const avatarIds = new Map<string, string>();
   for (const avatar of source.avatars) {
@@ -201,7 +201,7 @@ export const seedCatalog = async (
     avatarIds.set(avatar.slug, record.documentId);
   }
 
-  // 5. Items. 737 of them share 359 icons; `iconKey` is the source's `itemId`,
+  // 5. Items. 896 of them share 451 icons; `iconKey` is the source's `itemId`,
   // which names the icon and never the item.
   const itemIds = new Map<string, string>();
   for (const item of source.items) {
@@ -236,6 +236,7 @@ export const seedCatalog = async (
         race: boss.race,
         level: boss.level,
         epic: boss.epic,
+        subclass: boss.subclass,
         saMaxLevel: boss.saMaxLevel,
         mapX: boss.mapX,
         mapY: boss.mapY,
@@ -277,7 +278,7 @@ export const seedCatalog = async (
         raidBoss,
         item,
         // Set here rather than left to the lifecycle. It would compute the same
-        // string, but from two lookups per row — 5582 of them across the whole
+        // string, but from two lookups per row — 7222 of them across the whole
         // catalogue, for names already in hand.
         label: `${bossNames.get(drop.bossSlug)} — ${drop.itemName}`,
         chance: drop.chance,

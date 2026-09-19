@@ -47,6 +47,8 @@ export interface RaidBossInfo {
   race: string;
   level: number;
   epic: boolean;
+  /** Whether killing this boss grants a subclass. True for four bosses; see the catalogue spec. */
+  subclass: boolean;
   locations: RaidBossLocation[];
   avatar: RaidBossAvatar;
   mapX: number;
