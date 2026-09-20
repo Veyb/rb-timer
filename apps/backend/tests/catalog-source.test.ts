@@ -16,27 +16,39 @@ import {
 const source = readCatalogSource();
 
 /**
- * Every grade the mock states for each item name, read straight out of
- * `drops.ts` rather than out of the reader — otherwise the test below would
- * compare the reader with itself and pass whatever it did.
+ * One of the mock files, read as text in a sandbox the way `catalog-source.ts`
+ * itself reads them.
+ *
+ * Everything below that counts records counts them from here rather than from
+ * the reader. Read back off the reader the counts are true by construction and
+ * the assertion could never fail; against the files they are a real check, and
+ * they need no editing when the game patches, because both sides move together.
+ */
+const readMock = <T>(file: string, exported: string): T => {
+  const script = fs
+    .readFileSync(path.join(__dirname, '..', 'mocks', 'raid-bosses', file), 'utf8')
+    .replace(/^import[^;]+;$/gm, '')
+    .replace(/export const (\w+)\s*(?::[^=]+)?=/g, 'const $1 =')
+    .concat(`\n;({ ${exported} })`);
+
+  return (
+    vm.runInNewContext(script, Object.create(null), { timeout: 30_000 }) as Record<string, T>
+  )[exported] as T;
+};
+
+type MockDrop = { name: string; grade: string };
+
+/**
+ * Every grade the mock states for each item name.
  *
  * A set per name rather than a value, because "the source never states one item
  * at two grades" is half of what is being checked.
  */
 const gradesByItemName = () => {
-  const file = path.join(__dirname, '..', 'mocks', 'raid-bosses', 'drops.ts');
-  const script = fs
-    .readFileSync(file, 'utf8')
-    .replace(/^import[^;]+;$/gm, '')
-    .replace(/export const (\w+)\s*(?::[^=]+)?=/g, 'const $1 =')
-    .concat('\n;({ RAID_BOSS_DROPS })');
-
-  const { RAID_BOSS_DROPS } = vm.runInNewContext(script, Object.create(null), {
-    timeout: 30_000,
-  }) as { RAID_BOSS_DROPS: Record<string, { name: string; grade: string }[]> };
+  const rows = readMock<Record<string, MockDrop[]>>('drops.ts', 'RAID_BOSS_DROPS');
 
   const grades = new Map<string, Set<string>>();
-  for (const list of Object.values(RAID_BOSS_DROPS)) {
+  for (const list of Object.values(rows)) {
     for (const drop of list) {
       if (!grades.has(drop.name)) grades.set(drop.name, new Set());
       grades.get(drop.name)?.add(drop.grade);
@@ -47,30 +59,64 @@ const gradesByItemName = () => {
 };
 
 describe('the catalogue source reader', () => {
-  it('reads the whole catalogue', () => {
-    expect(source.bosses).toHaveLength(158);
-    expect(source.items).toHaveLength(850);
-    expect(source.drops).toHaveLength(3761);
-    expect(source.avatars).toHaveLength(96);
-    expect(source.icons.size).toBe(441);
-    // 25 skills against 267 usages: the whole point of the relation.
-    expect(source.skills).toHaveLength(25);
-    expect(source.bosses.reduce((total, boss) => total + boss.skills.length, 0)).toBe(267);
-    // All 66 are the source's own. The reader still knows how to split the
-    // placeholder slug the original scrape produced, but this source names
-    // every place itself, so nothing is dropped and nothing is un-collapsed.
-    expect(source.locations).toHaveLength(66);
+  // What a frozen census was really there to catch: the reader quietly losing
+  // records. Said as a rule instead — one boss out, one drop row out, one skill
+  // out — so it holds at any size and survives every patch without an edit.
+  //
+  // These four are one-to-one with the files. The three that are not — items,
+  // avatars and locations, which the reader folds — are checked where the fold
+  // itself is, further down.
+  it('yields a record for everything the mock files hold', () => {
+    const bosses = readMock<{ skills: string[] }[]>('data-wiki.ts', 'RAID_BOSSES');
+    const rows = readMock<Record<string, unknown[]>>('drops.ts', 'RAID_BOSS_DROPS');
+    const skills = readMock<Record<string, unknown>>('skills.ts', 'SKILLS');
+    const usages = (list: { skills: string[] }[]) =>
+      list.reduce((total, boss) => total + boss.skills.length, 0);
+
+    expect(source.bosses).toHaveLength(bosses.length);
+    expect(source.skills).toHaveLength(Object.keys(skills).length);
+    expect(source.drops).toHaveLength(
+      Object.values(rows).reduce((total, list) => total + list.length, 0),
+    );
+    // Far more usages than skills is the whole point of the relation; that the
+    // two match is what says no boss lost one on the way in.
+    expect(usages(source.bosses)).toBe(usages(bosses));
+    expect(source.skills.length).toBeLessThan(usages(source.bosses));
   });
 
   it('keys items by name, not by the icon the source calls itemId', () => {
-    // 850 names against 441 icons: `etc_sword_body_i00` alone is Heavy Sword
+    // Far more names than icons: `etc_sword_body_i00` alone is Heavy Sword
     // Edge, Saber Blade, Shilen Knife Edge and dozens more. Keying on it would
     // collapse the catalogue to about half.
-    const names = new Set(source.items.map((item) => item.name));
-    const iconKeys = new Set(source.items.map((item) => item.iconKey));
+    const iconKeys = new Set(source.items.map((item) => item.iconKey).filter(Boolean));
 
-    expect(names.size).toBe(850);
-    expect(iconKeys.size).toBeLessThan(names.size);
+    expect(iconKeys.size).toBeLessThan(source.items.length);
+    // The icon map and the items have to agree about which keys exist, or the
+    // seed uploads a picture nothing points at, or points at one it never
+    // uploaded.
+    expect(source.icons.size).toBe(iconKeys.size);
+  });
+
+  // The three the reader folds, where many rows collapse into one record.
+  // Counted out of the files too, so what is checked is that the fold kept
+  // every distinct value and invented none — which is the part a frozen total
+  // could only hint at.
+  it('folds repeated names, avatars and places into one record each', () => {
+    const bosses = readMock<{ avatar: { full: string }; locations: { slug: string }[] }[]>(
+      'data-wiki.ts',
+      'RAID_BOSSES',
+    );
+
+    expect(source.items).toHaveLength(gradesByItemName().size);
+    expect(source.avatars).toHaveLength(new Set(bosses.map((boss) => boss.avatar.full)).size);
+    expect(source.locations).toHaveLength(
+      new Set(bosses.flatMap((boss) => boss.locations.map((location) => location.slug))).size,
+    );
+
+    // Each is shared, which is why it is a record of its own rather than a
+    // field repeated on every boss that uses it.
+    expect(source.avatars.length).toBeLessThan(source.bosses.length);
+    expect(source.locations.length).toBeLessThan(source.bosses.length);
   });
 
   it('gives every item a distinct slug', () => {
@@ -81,8 +127,8 @@ describe('the catalogue source reader', () => {
   });
 
   it('gives every boss a distinct slug and keeps the game id', () => {
-    expect(new Set(source.bosses.map((boss) => boss.slug)).size).toBe(158);
-    expect(new Set(source.bosses.map((boss) => boss.gameId)).size).toBe(158);
+    expect(new Set(source.bosses.map((boss) => boss.slug)).size).toBe(source.bosses.length);
+    expect(new Set(source.bosses.map((boss) => boss.gameId)).size).toBe(source.bosses.length);
     expect(source.bosses.every((boss) => /^[a-z0-9-]+$/.test(boss.slug))).toBe(true);
   });
 
@@ -104,6 +150,10 @@ describe('the catalogue source reader', () => {
   it('carries the dungeon plans onto their locations', () => {
     const withPlan = source.locations.filter((location) => location.dungeon !== null);
 
+    // A count rather than a snapshot, because this one does not drift with the
+    // game: the plans are assembled by hand in `world-map.ts` and the source
+    // publishes none of them, so no refresh touches them. A change here is
+    // somebody's edit, which is exactly what should have to be confirmed.
     expect(withPlan).toHaveLength(15);
     expect(withPlan[0]?.dungeon?.width).toBeGreaterThan(0);
   });
@@ -112,9 +162,17 @@ describe('the catalogue source reader', () => {
     const scheduled = source.bosses.filter((boss) => boss.respawn.kind === 'scheduled');
     const sixHours = source.bosses.find((boss) => boss.respawn.baseMinutes === 360);
 
-    // Core, Orfen and Queen Ant — the source records them only as "Fixed".
-    expect(scheduled).toHaveLength(3);
-    expect(scheduled.every((boss) => boss.epic)).toBe(true);
+    // The epics and only the epics: the source records those, and nothing else,
+    // as "Fixed". Stated as the two sets of slugs rather than as a count, which
+    // is both what the test's name claims and what survives a patch that adds a
+    // boss which is neither.
+    expect(scheduled.length).toBeGreaterThan(0);
+    expect(scheduled.map((boss) => boss.slug).sort()).toEqual(
+      source.bosses
+        .filter((boss) => boss.epic)
+        .map((boss) => boss.slug)
+        .sort(),
+    );
     expect(scheduled.every((boss) => boss.respawn.baseMinutes === null)).toBe(true);
 
     expect(sixHours?.respawn.varianceMinutes).toBe(120);
@@ -192,7 +250,10 @@ describe('the catalogue source reader', () => {
     }
 
     expect(unknown).toEqual([]);
-    expect(checked).toBe(99);
+    // Guards against the vacuous pass, nothing more: an empty vocabulary or a
+    // renamed field would leave `unknown` empty because the loops never ran.
+    // What that takes is one modifier, not a particular number of them.
+    expect(checked).toBeGreaterThan(0);
   });
 
   // Not by name: the display name is the least stable field in the source, and
@@ -227,10 +288,11 @@ describe('the catalogue source reader', () => {
   });
 
   it("takes an item's grade from the source rather than working one out", () => {
-    // The reference states a grade beside every item it lists, on every one of
-    // the 3761 drop rows, and never states one item at two grades. The
-    // catalogue used to infer it instead and disagreed with the source on 500
-    // of these 850 — in both directions. It called fragments and recipes
+    // The reference states a grade beside every item it lists, on every drop
+    // row, and never states one item at two grades — both of which this test
+    // checks rather than asserts by count. The catalogue used to infer it
+    // instead and disagreed with the source on 500 items of the 850 it then
+    // held — in both directions. It called fragments and recipes
     // equipment because a high-level boss dropped them, and it called real C
     // equipment `NG` because an epic and an ordinary boss disagreed about it.
     const stated = gradesByItemName();
@@ -274,17 +336,21 @@ describe('the catalogue source reader', () => {
     // and `catalog-grades.json` still outranks anything derived here.
     const spirits = source.bosses.filter((boss) => boss.subclass);
 
-    expect(spirits).toHaveLength(4);
+    // Which four they are is pinned by game id in its own test above; here the
+    // count only keeps the `every` below from passing on an empty list.
+    expect(spirits.length).toBeGreaterThan(0);
     expect(spirits.every((boss) => boss.grade === DEFAULT_GRADE_CODE)).toBe(true);
 
-    // Epic says nothing about grade on this server. Core, Orfen and Queen Ant
-    // are levels 58, 56 and 56, and their best drops are `B` — which both the
-    // old bands and this rule agree on, by different routes.
-    expect(source.bosses.filter((boss) => boss.epic).map((boss) => boss.grade)).toEqual([
-      'b',
-      'b',
-      'b',
-    ]);
+    // Epic says nothing about grade on this server, which is the whole reason
+    // the rule reads the drop list instead of the boss. Stated as "ordinary
+    // bosses outrank every epic" rather than by naming the epics' grades: those
+    // come out of the drop tables the game rebalances most often, and the claim
+    // is about the two being unrelated, not about which letter it landed on.
+    const epics = source.bosses.filter((boss) => boss.epic);
+    const best = Math.max(...epics.map((boss) => rank(boss.grade)));
+
+    expect(epics.length).toBeGreaterThan(0);
+    expect(source.bosses.some((boss) => !boss.epic && rank(boss.grade) > best)).toBe(true);
     expect(source.bosses.some((boss) => boss.grade === 's')).toBe(false);
   });
 

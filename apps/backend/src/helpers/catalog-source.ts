@@ -17,10 +17,10 @@
  * than assumed:
  *
  *   * `itemId` is not an item identity. It is the source's icon field, and
- *     `itemId === basename(icon)` holds for all 3761 drop rows. 850 distinct
- *     item names share 441 icons, so keying items on it would collapse the
- *     catalogue to less than half. Items are keyed by name; `itemId` survives
- *     only as the key that finds the uploaded icon.
+ *     `itemId === basename(icon)` holds for every drop row, and distinct item
+ *     names outnumber icons roughly two to one, so keying items on it would
+ *     collapse the catalogue to about half. Items are keyed by name; `itemId`
+ *     survives only as the key that finds the uploaded icon.
  *
  *   * `_iNN` on an icon name looks like noise and is not: stripping it would
  *     merge the four enchant-armour scrolls into one, the four enchant-weapon
@@ -327,7 +327,8 @@ export interface CatalogSource {
 }
 
 /**
- * Turns an item name into a URL-safe slug. Checked: 850 names, 850 slugs.
+ * Turns an item name into a URL-safe slug. Every name gets one of its own,
+ * which `catalog-source.test.ts` checks against the catalogue as it stands.
  *
  * Only whitespace separates. Every other character that cannot appear in a slug
  * is removed rather than replaced, which is what makes `Knight's Sword` read
@@ -335,8 +336,8 @@ export interface CatalogSource {
  * `recipe-dasparions-staff60`.
  *
  * That is the source's own rule, arrived at by reading its slugs rather than by
- * preference: applied to the 850 item names and 158 boss names it publishes, it
- * reproduces every one of its slugs exactly. Matching matters because a slug is
+ * preference: applied to every item and boss name it publishes, it reproduces
+ * every one of its slugs exactly. Matching matters because a slug is
  * this catalogue's identity for a record, and two conventions for one name
  * means two records — the earlier rule, which turned an apostrophe into a
  * separator, disagreed on 135 items and 20 bosses.
@@ -452,9 +453,10 @@ const readRaw = (): {
 };
 
 /**
- * The location a boss belongs to. Every boss has exactly one — checked across
- * all 158, min 1 and max 1 — which is why the relation is many-to-one and not
- * the many-to-many the array shape would suggest.
+ * The location a boss belongs to. Every boss has exactly one — never none and
+ * never two, which `catalog-source.test.ts` checks across the whole roster —
+ * which is why the relation is many-to-one and not the many-to-many the array
+ * shape would suggest.
  */
 const locationOf = (boss: RawBoss) => {
   const raw = boss.locations[0];

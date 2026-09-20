@@ -148,8 +148,9 @@ export const seedCatalog = async (
   const gradeFor = (kind: 'bosses' | 'items', slug: string, derived: string) =>
     gradeIds.get(chosen[kind][slug] ?? derived) ?? gradeIds.get(DEFAULT_GRADE_CODE);
 
-  // 2. Skills. 25 records against 267 usages, and the reason the bosses point
-  // at them rather than carrying their own copy: a rebalance to the Undead
+  // 2. Skills. An order of magnitude fewer records than usages, which is the
+  // reason bosses point at them rather than carrying their own copy: a
+  // rebalance to the Undead
   // trait is one edit here instead of one edit on each of the bosses that have
   // it.
   const skillIds = new Map<string, string>();
@@ -203,8 +204,9 @@ export const seedCatalog = async (
     locationIds.set(location.slug, record.documentId);
   }
 
-  // 4. Avatars. 96 of them serve 158 bosses, which is the whole reason they are
-  // a type rather than two media fields on the boss.
+  // 4. Avatars. Fewer of them than there are bosses, because bosses share
+  // them — which is the whole reason they are a type rather than two media
+  // fields on the boss.
   const avatarIds = new Map<string, string>();
   for (const avatar of source.avatars) {
     const record = await upsert(
@@ -220,8 +222,8 @@ export const seedCatalog = async (
     avatarIds.set(avatar.slug, record.documentId);
   }
 
-  // 5. Items. 850 of them share 441 icons; `iconKey` is the source's `itemId`,
-  // which names the icon and never the item.
+  // 5. Items. They outnumber the icons roughly two to one; `iconKey` is the
+  // source's `itemId`, which names the icon and never the item.
   const itemIds = new Map<string, string>();
   for (const item of source.items) {
     const iconPath = item.iconKey ? source.icons.get(item.iconKey) : undefined;

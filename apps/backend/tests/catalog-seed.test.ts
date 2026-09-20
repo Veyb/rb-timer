@@ -4,7 +4,7 @@
 // shared avatar and a fractional drop chance — survive the round trip.
 //
 // Seeds a slice rather than all 158 bosses. `seedCatalog` takes the source as
-// an argument for exactly this: the full run writes 3761 drops and uploads
+// an argument for exactly this: the full run writes several thousand drops and uploads
 // hundreds of images, which is a minute of wall clock to prove something a
 // handful of records proves just as well. The full run is exercised by
 // `pnpm seed:catalog` against a real database.
@@ -24,9 +24,9 @@ let slice: CatalogSource;
 
 /**
  * Two bosses that share an avatar and a skill, with everything they reference.
- * Found rather than hardcoded: 96 avatars serve 158 bosses and 25 skills serve
- * 267 usages, so such a pair always exists — 35 of the 37 shared-avatar groups
- * qualify — but which one is not something to freeze into a test.
+ * Found rather than hardcoded: avatars and skills are both shared by many
+ * bosses, so such a pair always exists — nearly every shared-avatar group
+ * qualifies — but which one is not something to freeze into a test.
  *
  * Both halves are required rather than hoped for. The sharing is what the
  * avatar and skill tests below are about, and a slice that happened to pick a

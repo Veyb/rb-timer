@@ -15,18 +15,26 @@ it. The mock is the record; the database is a copy.
 
 ```
 apps/backend/mocks/raid-bosses/
-  data-wiki.ts        158 bosses: level, race, statistics, respawn,
+  data-wiki.ts        ~160 bosses: level, race, statistics, respawn,
                       coordinates, soul-crystal level, and the keys of the
                       skills each one carries
-  drops.ts            3761 drop rows keyed by the game's boss id, each with
+  drops.ts            ~3,800 drop rows keyed by the game's boss id, each with
                       the item's grade and the rate it actually falls at
-  skills.ts           25 skills and what each one shifts about a fight
+  skills.ts           ~25 skills and what each one shifts about a fight
   world-map.ts        two maps and the dungeon plans
   data-wiki-gamma.ts  the other game server, and only where it differs:
-                      seven bosses of 158, recorded in full
+                      seven bosses, recorded in full
   types.ts
   images/             item icons, skill icons, avatars, dungeon plans, maps
 ```
+
+Sizes above are rounded on purpose: they are there for scale, the game moves
+them on every patch, and a figure nobody is obliged to update is one nobody
+finds stale. No exact count is written down anywhere that has to be maintained —
+`apps/backend/tests/catalog-source.test.ts` counts the files and asserts the
+reader returns as much, so a refresh moves both sides at once. Reviewing what a
+refresh changed is the job of the pass's own report, which prints it before it
+writes.
 
 Every generated file carries `SOURCE_READ_ON`, the date of the copy of the
 source it was built from. `pnpm --filter backend seed:catalog` prints the oldest
@@ -58,9 +66,9 @@ new record under a new slug rather than an edit to an old one.
 | Command | Requests | Writes |
 | --- | --- | --- |
 | `refresh:drops` | 1 | drop tables, item grades and names, item icons, epic and subclass flags |
-| `refresh:profile` | 158 | level, race, statistics, respawn, soul-crystal level, skill keys |
+| `refresh:profile` | one per boss | level, race, statistics, respawn, soul-crystal level, skill keys |
 | `refresh:skills` | 0, plus one per icon it does not hold | `skills.ts` and the skill icons |
-| `refresh:map` | 158 | `wikiX`/`wikiY`, plus the source's own map the first time |
+| `refresh:map` | one per boss | `wikiX`/`wikiY`, plus the source's own map the first time |
 | `refresh:gamma` | 7 | `data-wiki-gamma.ts`, where the other server differs |
 
 Each has a `:write` sibling — `refresh:drops:write` and so on — so no flag has
