@@ -22,8 +22,17 @@
     "check": "biome check --error-on-warnings .",
     "check:fix": "biome check --write .",
     "seed:catalog": "node scripts/seed-catalog.js",
+    "prune:catalog": "node scripts/prune-catalog.js",
+    "prune:catalog:delete": "node scripts/prune-catalog.js --delete",
     "export:catalog-grades": "node scripts/export-catalog-grades.js",
-    "fetch:raid-bosses": "node mocks/raid-bosses/fetch.js"
+    "refresh:drops": "node scripts/catalogue/refresh-drops.js",
+    "refresh:drops:write": "node scripts/catalogue/refresh-drops.js --write",
+    "refresh:profile": "node scripts/catalogue/refresh-profile.js",
+    "refresh:profile:write": "node scripts/catalogue/refresh-profile.js --write",
+    "refresh:skills": "node scripts/catalogue/refresh-skills.js",
+    "refresh:skills:write": "node scripts/catalogue/refresh-skills.js --write",
+    "refresh:map": "node scripts/catalogue/refresh-map.js",
+    "refresh:map:write": "node scripts/catalogue/refresh-map.js --write"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
