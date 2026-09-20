@@ -24,7 +24,7 @@
 import type { RaidBossInfo } from './types';
 
 /** The copy of the source this file was built from. */
-export const SOURCE_READ_ON = '2026-09-19';
+export const SOURCE_READ_ON = '2026-09-20';
 
 export const RAID_BOSSES: RaidBossInfo[] = [
   {
