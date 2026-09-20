@@ -22,10 +22,13 @@
     ".tmp/",
     "src/admin/",
     "src/plugins/**",
-    // `catalog-source.ts` reads these as text (see its own top comment) and never
-    // `import`s them, so compiling them buys nothing — `strapi build`'s `tsc`
-    // emit would otherwise copy several MB of literal data through to `dist/`
-    // on every build for files no code path loads that way.
+    // Excluded from this config because of what it emits, not because they go
+    // unchecked: `catalog-source.ts` reads these as text (see its own top
+    // comment) and never `import`s them, so `strapi build`'s `tsc` emit would
+    // copy a second, frozen copy of the catalogue into `dist/` that no code path
+    // loads — and that a later reader could load by mistake, getting whatever
+    // the data looked like at build time. `mocks/tsconfig.json` type-checks them
+    // instead, without emitting; `check-types` runs it.
     "mocks/"
   ]
   // `**/*.test.ts` used to be excluded here (it comes from Strapi's template).

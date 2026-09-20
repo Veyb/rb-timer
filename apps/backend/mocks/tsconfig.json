@@ -1,0 +1,21 @@
+{
+  // Type-checks the mocks without emitting them.
+  //
+  // They are left out of `../tsconfig.json` so that `strapi build` does not copy
+  // the catalogue into `dist/` a second time — see the note beside `"mocks/"`
+  // there. That kept them out of `check-types` too, which is how a mock spent a
+  // day importing a type that no longer existed without anything complaining.
+  //
+  // Scoped to this directory, so clearing the inherited `exclude` is safe: every
+  // path it lists (`node_modules/`, `dist/`, `src/admin/` and the rest) is
+  // outside `mocks/` and cannot be reached from here anyway.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    // The parent points `tsBuildInfoFile` at one path; without this, two configs
+    // would take turns overwriting one file with their own idea of what is stale.
+    "incremental": false
+  },
+  "include": ["./**/*.ts"],
+  "exclude": []
+}

@@ -14,7 +14,7 @@
     "test:postgres": "vitest run --config vitest.postgres.config.mts",
     "test:watch": "vitest",
     "clean": "rm -rf dist dist-test",
-    "check-types": "tsc --noEmit",
+    "check-types": "tsc --noEmit && tsc -p mocks",
     "lint": "biome lint --error-on-warnings .",
     "lint:fix": "biome lint --write .",
     "format": "biome format --error-on-warnings .",
