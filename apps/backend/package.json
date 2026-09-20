@@ -32,7 +32,9 @@
     "refresh:skills": "node scripts/catalogue/refresh-skills.js",
     "refresh:skills:write": "node scripts/catalogue/refresh-skills.js --write",
     "refresh:map": "node scripts/catalogue/refresh-map.js",
-    "refresh:map:write": "node scripts/catalogue/refresh-map.js --write"
+    "refresh:map:write": "node scripts/catalogue/refresh-map.js --write",
+    "refresh:gamma": "node scripts/catalogue/refresh-gamma.js",
+    "refresh:gamma:write": "node scripts/catalogue/refresh-gamma.js --write"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",

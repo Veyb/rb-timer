@@ -20,9 +20,12 @@ const CHAIN = [
   { id: 'drops', apply: 'refresh:drops:write', did: 'written', after: 'refresh:profile' },
   { id: 'profile', apply: 'refresh:profile:write', did: 'written', after: 'refresh:skills' },
   { id: 'skills', apply: 'refresh:skills:write', did: 'written', after: 'refresh:map' },
+  { id: 'map', apply: 'refresh:map:write', did: 'written', after: 'refresh:gamma' },
+  // The other server, which moves rarely. Its bosses are read only where the
+  // two servers disagree, so this costs a handful of pages rather than 158.
   {
-    id: 'map',
-    apply: 'refresh:map:write',
+    id: 'gamma',
+    apply: 'refresh:gamma:write',
     did: 'written',
     after: 'build && pnpm --filter backend seed:catalog',
   },

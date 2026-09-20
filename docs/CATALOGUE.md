@@ -22,8 +22,8 @@ apps/backend/mocks/raid-bosses/
                       the item's grade and the rate it actually falls at
   skills.ts           25 skills and what each one shifts about a fight
   world-map.ts        two maps and the dungeon plans
-  data-wiki-gamma.ts  the other game server, kept because it costs nothing:
-                      level, statistics and drops only
+  data-wiki-gamma.ts  the other game server, and only where it differs:
+                      seven bosses of 158, recorded in full
   types.ts
   images/             item icons, skill icons, avatars, dungeon plans, maps
 ```
@@ -61,6 +61,7 @@ new record under a new slug rather than an edit to an old one.
 | `refresh:profile` | 158 | level, race, statistics, respawn, soul-crystal level, skill keys |
 | `refresh:skills` | 0, plus one per icon it does not hold | `skills.ts` and the skill icons |
 | `refresh:map` | 158 | `wikiX`/`wikiY`, plus the source's own map the first time |
+| `refresh:gamma` | 7 | `data-wiki-gamma.ts`, where the other server differs |
 
 Each has a `:write` sibling — `refresh:drops:write` and so on — so no flag has
 to be remembered, and each ends by naming the command that comes next.
@@ -72,7 +73,7 @@ page states the description of the level *that boss* has.
 ## The order, and why
 
 ```
-drops  ->  profile  ->  skills  ->  map  ->  build  ->  seed  ->  prune
+drops -> profile -> skills -> map -> gamma -> build -> seed -> prune
 ```
 
 **`drops` first** because it renames items and boss slugs. Run after the others,
@@ -85,6 +86,36 @@ whatever copy happens to be on disk.
 
 The rest is dependency order: the mock has to be complete before the seed reads
 it, and the prune compares the database against the same mock.
+
+## The other server
+
+`data-wiki-gamma.ts` holds Gamma, an older server the same wiki publishes. It
+is not a second catalogue: it holds only the bosses the two servers disagree
+about, and a boss absent from it is one they agree about, so `data-wiki.ts`
+applies to it unchanged.
+
+```
+  158 bosses on Gamma
+      151  identical, down to accuracy and evasion
+        7  differ -- the three epics and the four subclass bosses
+```
+
+Those seven are recorded in full, from their own Gamma pages, because a copy
+missing the fields a reader asks about cannot be used and its gaps are
+invisible until someone tries. What can differ is Gamma's; identity, location,
+imagery and both coordinate pairs are this server's, since it is the same boss
+in the same place and the Gamma pages name locations in another language.
+
+Which bosses differ is decided by the shared article, which cannot see
+accuracy, evasion, the soul-crystal level, respawn or skills. `--sweep` reads
+every boss's Gamma page instead of only the flagged ones, which is how that
+blind spot was measured rather than assumed — on 2026-09-20 it hid nothing.
+Re-run it when a doubt arises; it costs a page per boss and about eight
+minutes.
+
+Gamma moves rarely, which is the point of keeping it this way. Between the
+copies of 19 and 20 September this server rebalanced three epic drop tables and
+Gamma did not change by a single row.
 
 ## The cache, which is the thing to get right
 
@@ -132,6 +163,9 @@ pnpm --filter backend refresh:skills:write   # no requests
 
 pnpm --filter backend refresh:map            # about ten minutes
 pnpm --filter backend refresh:map:write
+
+pnpm --filter backend refresh:gamma          # the other server; seven pages
+pnpm --filter backend refresh:gamma:write
 
 # 3. Into the database.
 pnpm --filter backend build

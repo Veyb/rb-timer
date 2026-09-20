@@ -143,27 +143,6 @@ export interface SkillInfo {
   modifiers: SkillModifier[];
 }
 
-/**
- * What the reference states about the *other* game server, kept because it
- * costs nothing: the shared article embeds that server's level badges and stat
- * tables alongside both servers' drop tables, so one request describes both.
- *
- * Deliberately not `RaidBossInfo`. Only the fields below are stated for the
- * other server; everything else a boss carries — accuracy and evasion, the
- * soul-crystal level, respawn, location, coordinates, imagery, skills — would
- * have to be fetched per boss, and filling them from this server's values would
- * quietly pass one server's numbers off as the other's. Measured, the two
- * disagree on level, on every statistic here, on the soul-crystal level and on
- * the drops; they agree on race, on elemental attributes and on skills.
- */
-export interface GammaBossInfo {
-  id: string;
-  name: string;
-  level: number;
-  stats: Omit<RaidBossStats, 'acc' | 'eva'>;
-  drops: RaidBossDrop[];
-}
-
 export interface DungeonPlan {
   name: string;
   mapX: number;
