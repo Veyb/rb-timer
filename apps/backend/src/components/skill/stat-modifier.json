@@ -1,0 +1,46 @@
+{
+  "collectionName": "components_skill_stat_modifiers",
+  "info": {
+    "displayName": "Skill stat modifier",
+    "icon": "chartCircle",
+    "description": "How a skill shifts one of the boss's combat statistics. A wider vocabulary than `catalog.boss-stats` on purpose: the source's skills speak of things a boss has no column for — attack speed, critical damage, the damage it takes from criticals — and a modifier naming one of those is still worth keeping."
+  },
+  "options": {},
+  "attributes": {
+    "stat": {
+      "type": "enumeration",
+      "enum": [
+        "maxHp",
+        "hpRecovery",
+        "pAtk",
+        "mAtk",
+        "pDef",
+        "mDef",
+        "acc",
+        "eva",
+        "speed",
+        "atkSpd",
+        "attackRange",
+        "critDamage",
+        "pCritRate",
+        "pSkillEva",
+        "mSkillEva",
+        "receivedPCritRate",
+        "receivedPCritDamage",
+        "receivedMCritDamage",
+        "vampiricRage",
+        "vampiricSkills"
+      ],
+      "required": true
+    },
+    "value": {
+      "type": "decimal",
+      "required": true
+    },
+    "unit": {
+      "type": "enumeration",
+      "enum": ["percent", "flat", "level"],
+      "required": true
+    }
+  }
+}

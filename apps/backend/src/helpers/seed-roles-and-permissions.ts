@@ -38,6 +38,9 @@ const SHARED_CONTENT = ['api::boss.boss.find', 'api::boss.boss.findOne'];
  * keeps `find`/`findOne` from being the thin end of a wedge.
  */
 const CATALOGUE = [
+  // The maps a boss's coordinates are measured on. `find` only — a single type
+  // has no `findOne`.
+  'api::map.map.find',
   'api::raid-boss.raid-boss.find',
   'api::raid-boss.raid-boss.findOne',
   'api::boss-drop.boss-drop.find',
@@ -50,8 +53,8 @@ const CATALOGUE = [
   'api::avatar.avatar.findOne',
   'api::grade.grade.find',
   'api::grade.grade.findOne',
-  'api::weapon-type.weapon-type.find',
-  'api::weapon-type.weapon-type.findOne',
+  'api::skill.skill.find',
+  'api::skill.skill.findOne',
 ];
 
 /**

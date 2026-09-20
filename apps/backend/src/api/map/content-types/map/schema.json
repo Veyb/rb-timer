@@ -1,0 +1,30 @@
+{
+  "kind": "singleType",
+  "collectionName": "maps",
+  "info": {
+    "singularName": "map",
+    "pluralName": "maps",
+    "displayName": "Maps",
+    "description": "The pictures a boss's coordinates are measured on. A single type because there is one of each, and they belong to the catalogue as a whole rather than to any boss — the alternative was attaching them to some record that happens to exist, which would describe a relation that is not there. Only maps live here; anything else the catalogue needs a picture of gets a type of its own."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "map": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"],
+      "description": "The hand-assembled map, 3072x4096. A boss's `mapX`/`mapY` and every dungeon plan's rectangle are measured on this one."
+    },
+    "wikiMap": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"],
+      "description": "The source's own map, 3004x3004, which a boss's `wikiX`/`wikiY` are pixels of. Read the size off the file rather than writing it down anywhere: a coordinate whose image size is recorded separately can disagree with the image, and this catalogue has made that mistake once already."
+    }
+  }
+}

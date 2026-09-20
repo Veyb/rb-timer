@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_skill_weapon_modifiers",
+  "info": {
+    "displayName": "Weapon modifier",
+    "icon": "shield",
+    "description": "How a skill shifts damage taken from one kind of weapon. Signed: positive resists, negative is vulnerable to. One list rather than a resistance list and a vulnerability list, because they are one measurement read in two directions. The weapon is the field name, which is what stops an element being stored here."
+  },
+  "options": {},
+  "attributes": {
+    "weapon": {
+      "type": "enumeration",
+      "enum": ["blunt", "bow", "dagger", "fist", "spear", "sword"],
+      "required": true
+    },
+    "value": {
+      "type": "decimal",
+      "required": true
+    },
+    "unit": {
+      "type": "enumeration",
+      "enum": ["percent", "flat", "level"],
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_skill_element_modifiers",
+  "info": {
+    "displayName": "Skill element modifier",
+    "icon": "bolt",
+    "description": "How a skill shifts damage taken from one element. Signed, like every other modifier here. The catalogue held this on the boss until the skills arrived, as a whole number with no unit; a skill states percentages, flat amounts and bare levels, so the unit travels with the value."
+  },
+  "options": {},
+  "attributes": {
+    "element": {
+      "type": "enumeration",
+      "enum": ["holy", "dark", "earth", "wind", "fire", "water"],
+      "required": true
+    },
+    "value": {
+      "type": "decimal",
+      "required": true
+    },
+    "unit": {
+      "type": "enumeration",
+      "enum": ["percent", "flat", "level"],
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "collectionName": "components_skill_condition_modifiers",
+  "info": {
+    "displayName": "Skill condition modifier",
+    "icon": "emotionUnhappy",
+    "description": "How a skill shifts the boss's resistance to a state a player can put it in — sleep, hold, bleed. Stored but not shown: what a boss resists in this sense rarely decides how it is fought, and it costs nothing to keep once the same parser has read it."
+  },
+  "options": {},
+  "attributes": {
+    "condition": {
+      "type": "enumeration",
+      "enum": [
+        "bleed",
+        "debuffs",
+        "derangement",
+        "hold",
+        "knockback",
+        "poison",
+        "shock",
+        "sleep",
+        "speedDown"
+      ],
+      "required": true
+    },
+    "value": {
+      "type": "decimal",
+      "required": true
+    },
+    "unit": {
+      "type": "enumeration",
+      "enum": ["percent", "flat", "level"],
+      "required": true
+    }
+  }
+}

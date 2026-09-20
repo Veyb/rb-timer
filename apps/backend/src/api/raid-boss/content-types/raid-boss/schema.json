@@ -32,13 +32,7 @@
         },
         "list": {}
       },
-      "resistances": {
-        "edit": {
-          "mainField": "label"
-        },
-        "list": {}
-      },
-      "vulnerabilities": {
+      "skills": {
         "edit": {
           "mainField": "label"
         },
@@ -107,11 +101,11 @@
       "type": "decimal",
       "required": true
     },
-    "worldX": {
+    "wikiX": {
       "type": "decimal",
       "required": true
     },
-    "worldY": {
+    "wikiY": {
       "type": "decimal",
       "required": true
     },
@@ -132,27 +126,11 @@
       "component": "catalog.boss-stats",
       "required": true
     },
-    "resistances": {
+    "skills": {
       "type": "relation",
       "relation": "manyToMany",
-      "target": "api::weapon-type.weapon-type",
-      "inversedBy": "resistedBy"
-    },
-    "vulnerabilities": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::weapon-type.weapon-type",
-      "inversedBy": "vulnerableBy"
-    },
-    "elementModifiers": {
-      "type": "component",
-      "repeatable": true,
-      "component": "catalog.element-modifier"
-    },
-    "statModifiers": {
-      "type": "component",
-      "repeatable": true,
-      "component": "catalog.stat-modifier"
+      "target": "api::skill.skill",
+      "inversedBy": "raidBosses"
     },
     "location": {
       "type": "relation",

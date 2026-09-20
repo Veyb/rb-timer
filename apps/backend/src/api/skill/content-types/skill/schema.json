@@ -1,0 +1,104 @@
+{
+  "kind": "collectionType",
+  "collectionName": "skills",
+  "info": {
+    "singularName": "skill",
+    "pluralName": "skills",
+    "displayName": "Skill",
+    "description": "Something a boss carries that changes how it is fought: a racial trait, its armour, or a skill of its own. The record is shared by every boss that carries it, so a rebalance is one edit rather than one edit per boss. Only skills that say something about defending against the boss are here — lore, shared raid mechanics and the boss's own attacks are not part of the catalogue."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "config": {
+    "settings": {
+      "bulkable": true,
+      "filterable": true,
+      "searchable": true,
+      "pageSize": 25,
+      "mainField": "label",
+      "defaultSortBy": "label",
+      "defaultSortOrder": "ASC"
+    },
+    "metadatas": {
+      "label": {
+        "edit": {
+          "editable": false,
+          "description": "Set from the name and the level; not editable."
+        },
+        "list": {}
+      }
+    },
+    "layouts": {
+      "list": ["label", "gameId", "level", "origin"]
+    }
+  },
+  "attributes": {
+    "key": {
+      "type": "uid",
+      "required": true,
+      "description": "`<gameId>-<level>`, which is how the source's data names a skill and how a boss refers to one."
+    },
+    "label": {
+      "type": "string",
+      "required": false,
+      "maxLength": 255,
+      "description": "`Spirits Lv. 12`. Exists so the record can name itself in the admin panel: twelve of these are called `Spirits` and differ only by level, so a relation chip showing the name alone would be unusable."
+    },
+    "gameId": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "description": "The game's identifier for the skill, shared by all of its levels. Not unique on its own — the pair with `level` is, and `key` carries it."
+    },
+    "level": {
+      "type": "integer",
+      "required": true,
+      "min": 1
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "minLength": 1
+    },
+    "origin": {
+      "type": "enumeration",
+      "enum": ["racial", "armor", "personal"],
+      "required": true,
+      "description": "Whether the skill describes the boss itself, its race or its equipment. Two skills can say opposite things about one weapon; this is what lets a reader rank them, with what a boss is told about itself outweighing what it is told about its race."
+    },
+    "icon": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "weaponModifiers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "skill.weapon-modifier"
+    },
+    "elementModifiers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "skill.element-modifier"
+    },
+    "statModifiers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "skill.stat-modifier"
+    },
+    "conditionModifiers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "skill.condition-modifier"
+    },
+    "raidBosses": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::raid-boss.raid-boss",
+      "mappedBy": "skills"
+    }
+  }
+}
