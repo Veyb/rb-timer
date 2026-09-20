@@ -4,16 +4,17 @@
 // shared avatar and a fractional drop chance — survive the round trip.
 //
 // Seeds a slice rather than all 158 bosses. `seedCatalog` takes the source as
-// an argument for exactly this: the full run writes 3611 drops and uploads 659
-// images, which is a minute of wall clock to prove something a handful of
-// records proves just as well. The full run is exercised by `pnpm seed:catalog`
-// against a real database.
+// an argument for exactly this: the full run writes 3761 drops and uploads
+// hundreds of images, which is a minute of wall clock to prove something a
+// handful of records proves just as well. The full run is exercised by
+// `pnpm seed:catalog` against a real database.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import type { Core } from '@strapi/strapi';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { exportCatalogGrades } from '../src/helpers/catalog-export';
+import { pruneCatalog } from '../src/helpers/catalog-prune';
 import { seedCatalog } from '../src/helpers/catalog-seed';
 import { type CatalogSource, readCatalogSource } from '../src/helpers/catalog-source';
 import { cleanupStrapi, setupStrapi } from './helpers/strapi.cjs';
@@ -22,9 +23,14 @@ let strapi: Core.Strapi;
 let slice: CatalogSource;
 
 /**
- * Two bosses that share an avatar, with everything they reference. Found rather
- * than hardcoded: 96 avatars serve 158 bosses, so a shared one always exists,
- * but which one is not something to freeze into a test.
+ * Two bosses that share an avatar and a skill, with everything they reference.
+ * Found rather than hardcoded: 96 avatars serve 158 bosses and 25 skills serve
+ * 267 usages, so such a pair always exists — 35 of the 37 shared-avatar groups
+ * qualify — but which one is not something to freeze into a test.
+ *
+ * Both halves are required rather than hoped for. The sharing is what the
+ * avatar and skill tests below are about, and a slice that happened to pick a
+ * pair sharing neither would leave them passing while proving nothing.
  */
 const takeSlice = (source: CatalogSource): CatalogSource => {
   const byAvatar = new Map<string, typeof source.bosses>();
@@ -32,8 +38,10 @@ const takeSlice = (source: CatalogSource): CatalogSource => {
     byAvatar.set(boss.avatarSlug, [...(byAvatar.get(boss.avatarSlug) ?? []), boss]);
   }
 
-  const shared = [...byAvatar.values()].find((group) => group.length > 1);
-  if (!shared) throw new Error('expected at least one avatar shared by two bosses');
+  const shared = [...byAvatar.values()].find(
+    (group) => group.length > 1 && group[0]?.skills.some((key) => group[1]?.skills.includes(key)),
+  );
+  if (!shared) throw new Error('expected two bosses sharing both an avatar and a skill');
 
   const bosses = shared.slice(0, 2);
   const bossSlugs = new Set(bosses.map((boss) => boss.slug));
@@ -41,6 +49,10 @@ const takeSlice = (source: CatalogSource): CatalogSource => {
   const itemNames = new Set(drops.map((drop) => drop.itemName));
   const items = source.items.filter((item) => itemNames.has(item.name));
   const locationSlugs = new Set(bosses.map((boss) => boss.locationSlug));
+  // Only the skills these two carry. Seeding all 25 would leave 23 of them
+  // attached to nothing, and the count assertions could then no longer tell a
+  // skill that failed to relate from one no boss in the slice has.
+  const skillKeys = new Set(bosses.flatMap((boss) => boss.skills));
 
   return {
     bosses,
@@ -48,9 +60,11 @@ const takeSlice = (source: CatalogSource): CatalogSource => {
     items,
     locations: source.locations.filter((location) => locationSlugs.has(location.slug)),
     avatars: source.avatars.filter((avatar) => avatar.slug === bosses[0]?.avatarSlug),
+    skills: source.skills.filter((skill) => skillKeys.has(skill.key)),
     icons: source.icons,
-    worldMapPath: source.worldMapPath,
-    ambiguousItems: source.ambiguousItems,
+    mapPath: source.mapPath,
+    wikiMapPath: source.wikiMapPath,
+    sourceReadOn: source.sourceReadOn,
   };
 };
 
@@ -59,6 +73,7 @@ const counts = async () => ({
   locations: await strapi.db.query('api::location.location').count(),
   avatars: await strapi.db.query('api::avatar.avatar').count(),
   items: await strapi.db.query('api::item.item').count(),
+  skills: await strapi.db.query('api::skill.skill').count(),
   bosses: await strapi.db.query('api::raid-boss.raid-boss').count(),
   drops: await strapi.db.query('api::boss-drop.boss-drop').count(),
   files: await strapi.db.query('plugin::upload.file').count(),
@@ -81,6 +96,7 @@ describe('seeding the catalogue', () => {
     expect(after.grades).toBe(6);
     expect(after.bosses).toBe(slice.bosses.length);
     expect(after.items).toBe(slice.items.length);
+    expect(after.skills).toBe(slice.skills.length);
     expect(after.drops).toBe(slice.drops.length);
     expect(after.locations).toBe(slice.locations.length);
     expect(after.avatars).toBe(1);
@@ -98,28 +114,6 @@ describe('seeding the catalogue', () => {
       expect(records.length).toBeGreaterThan(0);
       expect(records.every((record: { slug?: string }) => Boolean(record.slug))).toBe(true);
     }
-  });
-
-  it('points a boss at weapon-type records rather than repeating a label', async () => {
-    const weapons = await strapi.db.query('api::weapon-type.weapon-type').findMany({});
-    expect(weapons).toHaveLength(6);
-
-    const withAffinity = slice.bosses.find(
-      (boss) => boss.resistances.length > 0 || boss.vulnerabilities.length > 0,
-    );
-    if (!withAffinity) return;
-
-    const [stored] = await strapi.db.query('api::raid-boss.raid-boss').findMany({
-      where: { slug: withAffinity.slug },
-      populate: { resistances: true, vulnerabilities: true },
-    });
-
-    const codes = (rows: { code: string }[]) => rows.map((row) => row.code).sort();
-
-    expect(codes(stored.resistances)).toEqual([...withAffinity.resistances].sort());
-    expect(codes(stored.vulnerabilities)).toEqual([...withAffinity.vulnerabilities].sort());
-    // The label is on the record, once, not beside each of the 122 usages.
-    expect(stored.resistances.every((row: { label: string }) => Boolean(row.label))).toBe(true);
   });
 
   it('writes whether a boss grants a subclass rather than leaving it at the default', async () => {
@@ -173,6 +167,24 @@ describe('seeding the catalogue', () => {
     expect(avatars[0].raidBosses).toHaveLength(2);
     expect(avatars[0].full.id).not.toBe(avatars[0].mini.id);
     expect(avatars[0].full.name).not.toBe(avatars[0].mini.name);
+  });
+
+  it('puts both world maps on a record something can reach', async () => {
+    const [record] = await strapi.db
+      .query('api::map.map')
+      .findMany({ populate: { map: true, wikiMap: true } });
+
+    // Uploaded and unreferenced, the only way to either image was a URL
+    // carrying the suffix Strapi generates at upload time — which changes on
+    // the next seed, so it could not be written down anywhere.
+    expect(record.map?.url).toBeTruthy();
+    expect(record.wikiMap?.url).toBeTruthy();
+    expect(record.map.id).not.toBe(record.wikiMap.id);
+
+    // The pixel basis for `wikiX`/`wikiY` is the image's own width, read off
+    // the file rather than recorded beside it, so the two cannot disagree.
+    expect(record.wikiMap.width).toBe(record.wikiMap.height);
+    expect(record.map.width).not.toBe(record.wikiMap.width);
   });
 
   it('keeps a fractional drop chance exactly', async () => {
@@ -594,6 +606,136 @@ describe('seeding the catalogue', () => {
     });
   });
 
+  it('keeps affinities on the skill rather than copying them onto the boss', () => {
+    const { attributes } = strapi.contentType('api::raid-boss.raid-boss');
+
+    // What a boss resists is a property of the skills it carries. Held on the
+    // boss as well it would be two answers to one question, and the refresh
+    // that rebalanced a skill would leave the boss's copy quietly stale.
+    expect(attributes).toHaveProperty('skills');
+    for (const gone of ['resistances', 'vulnerabilities', 'elementModifiers', 'statModifiers']) {
+      expect(attributes).not.toHaveProperty(gone);
+    }
+  });
+
+  describe('skills', () => {
+    /** The shared skill, as one boss reports it. */
+    const asReportedBy = async (slug: string, key: string) => {
+      const [boss] = await strapi.db.query('api::raid-boss.raid-boss').findMany({
+        where: { slug },
+        populate: { skills: { populate: { weaponModifiers: true } } },
+      });
+
+      return (boss.skills as { id: number; documentId: string; key: string }[]).find(
+        (skill) => skill.key === key,
+      );
+    };
+
+    it('relates a boss to every skill the source says it carries', async () => {
+      for (const boss of slice.bosses) {
+        const [stored] = await strapi.db
+          .query('api::raid-boss.raid-boss')
+          .findMany({ where: { slug: boss.slug }, populate: { skills: true } });
+
+        expect((stored.skills as { key: string }[]).map((skill) => skill.key).sort()).toEqual(
+          [...boss.skills].sort(),
+        );
+      }
+    });
+
+    it('carries each skill its icon, the way an item carries its own', async () => {
+      const stored = await strapi.db
+        .query('api::skill.skill')
+        .findMany({ populate: { icon: true } });
+
+      // Asserted against what the source states rather than against all of
+      // them: every skill in the catalogue has an icon today, and a future one
+      // that does not should not fail this.
+      const named = new Set(slice.skills.filter((skill) => skill.iconPath).map((s) => s.key));
+      expect(named.size).toBeGreaterThan(0);
+
+      for (const skill of stored as { key: string; icon?: { name: string; url: string } }[]) {
+        if (!named.has(skill.key)) continue;
+
+        // Named from the folder as well as the file: `skill4010.webp` alone
+        // would collide the day an item icon is called the same thing.
+        expect(skill.icon?.name).toMatch(/^skill-icons-/);
+        expect(skill.icon?.url).toBeTruthy();
+      }
+    });
+
+    it('gives two bosses carrying one skill the same record, not a copy each', async () => {
+      const [first, second] = slice.bosses;
+      const shared = first?.skills.find((key) => second?.skills.includes(key));
+      if (!shared || !first || !second) throw new Error('the slice is meant to share a skill');
+
+      const onFirst = await asReportedBy(first.slug, shared);
+      const onSecond = await asReportedBy(second.slug, shared);
+
+      expect(onFirst?.id).toBeDefined();
+      expect(onFirst?.id).toBe(onSecond?.id);
+
+      // One record means one edit, which is the whole reason a skill is not
+      // copied onto each boss. Rebalancing it has to reach both.
+      await strapi.documents('api::skill.skill').update({
+        documentId: onFirst?.documentId as string,
+        data: { weaponModifiers: [{ weapon: 'spear', value: 99, unit: 'percent' }] } as never,
+      });
+
+      for (const slug of [first.slug, second.slug]) {
+        const after = (await asReportedBy(slug, shared)) as unknown as {
+          weaponModifiers: { weapon: string; value: number }[];
+        };
+
+        expect(after.weaponModifiers).toEqual([
+          expect.objectContaining({ weapon: 'spear', value: 99 }),
+        ]);
+      }
+
+      // Put the source's own modifiers back, so the tests after this one see
+      // the catalogue and not the edit.
+      await seedCatalog(strapi, slice);
+    });
+
+    // A skill's modifiers are four lists and not one, so that the kind of thing
+    // being shifted is the field name rather than a value beside it. That is
+    // the whole point of the shape, and it is worth one test: a single list
+    // with a `kind` column would accept `kind: weapon` next to `subject: fire`
+    // and nothing would notice until a reader tried to use it.
+    const create = (subject: string) =>
+      strapi.documents('api::skill.skill').create({
+        data: {
+          key: `9999-${subject}`,
+          gameId: '9999',
+          level: 1,
+          name: 'Only a test',
+          origin: 'personal',
+          weaponModifiers: [{ weapon: subject, value: 10, unit: 'percent' }],
+        } as never,
+      });
+
+    it('refuses a weapon whose subject belongs to another vocabulary', async () => {
+      // Matched on the message rather than on any rejection: `fire` has to be
+      // refused for being outside the weapon vocabulary, not because the
+      // payload was malformed in some other way.
+      await expect(create('fire')).rejects.toThrow(/weapon/i);
+    });
+
+    it('accepts one the weapon vocabulary knows', async () => {
+      const created = await create('spear');
+
+      const stored = await strapi.db
+        .query('api::skill.skill')
+        .findOne({ where: { key: '9999-spear' }, populate: { weaponModifiers: true } });
+
+      expect(stored.weaponModifiers).toEqual([
+        expect.objectContaining({ weapon: 'spear', value: 10, unit: 'percent' }),
+      ]);
+
+      await strapi.documents('api::skill.skill').delete({ documentId: created.documentId });
+    });
+  });
+
   it('leaves everything where it was when run again', async () => {
     const before = await counts();
     const slugsBefore = await strapi.db
@@ -611,5 +753,115 @@ describe('seeding the catalogue', () => {
     // not look one up by name first would add another copy of every image.
     expect(after).toEqual(before);
     expect(slugsAfter).toEqual(slugsBefore);
+  });
+
+  /**
+   * Last on purpose: this is the one thing here that removes rows, and the
+   * tests above want a catalogue the seed left intact. The only one that
+   * actually deletes seeds again afterwards.
+   */
+  describe('pruning what the source stopped listing', () => {
+    /**
+     * The seeded slice minus one drop: a source that has stopped stating a row.
+     *
+     * The drop is chosen rather than taken first, and it matters. The slice's
+     * first drop is `Proof of Loyalty`, which both of its bosses drop, so
+     * removing it would leave the item still dropped and never exercise the
+     * second half of the prune at all. This picks one whose item nothing else
+     * in the slice names, so the drop goes and the item goes with it.
+     */
+    const withoutOneDrop = () => {
+      const namedOnce = (name: string) =>
+        slice.drops.filter((drop) => drop.itemName === name).length === 1;
+      const gone = slice.drops.find((drop) => namedOnce(drop.itemName));
+      if (!gone) throw new Error('expected a drop whose item nothing else in the slice names');
+
+      return {
+        gone,
+        source: { ...slice, drops: slice.drops.filter((drop) => drop !== gone) },
+      };
+    };
+
+    it('lists what it would remove and removes nothing', async () => {
+      const before = await counts();
+      const { gone, source } = withoutOneDrop();
+
+      const report = await pruneCatalog(strapi, { source });
+
+      expect(report.deleted).toBe(false);
+      expect(report.drops).toEqual([`${gone.bossSlug} — ${gone.itemName}`]);
+      expect(report.items).toEqual([gone.itemName]);
+      expect(await counts()).toEqual(before);
+    });
+
+    it('refuses a source that yields no bosses, rather than emptying the catalogue', async () => {
+      const before = await counts();
+
+      // The failure this guards against is a source that failed to load, which
+      // from here is indistinguishable from a game with no raid bosses left.
+      await expect(
+        pruneCatalog(strapi, { source: { ...slice, bosses: [], drops: [] }, deleting: true }),
+      ).rejects.toThrow(/no bosses/);
+
+      expect(await counts()).toEqual(before);
+    });
+
+    it('names an item somebody graded by hand instead of removing it', async () => {
+      const { gone, source } = withoutOneDrop();
+
+      const item = await strapi.db
+        .query('api::item.item')
+        .findOne({ where: { name: gone.itemName } });
+
+      const gradesFile = path.join(
+        fs.mkdtempSync(path.join(os.tmpdir(), 'catalog-grades-')),
+        'catalog-grades.json',
+      );
+      fs.writeFileSync(gradesFile, JSON.stringify({ bosses: {}, items: { [item.slug]: 'a' } }));
+
+      const before = await counts();
+      const report = await pruneCatalog(strapi, { source, deleting: true, gradesFile });
+
+      expect(report.keptByHand).toEqual([gone.itemName]);
+      expect(report.items).toEqual([]);
+
+      const after = await counts();
+      // The drop went; the item stayed, because the grade is work the catalogue
+      // cannot derive again.
+      expect(after.drops).toBe(before.drops - 1);
+      expect(after.items).toBe(before.items);
+      expect(after.files).toBe(before.files);
+
+      await seedCatalog(strapi, slice);
+    });
+
+    it('removes the drop first, then the item nothing drops any more', async () => {
+      const { source } = withoutOneDrop();
+      const before = await counts();
+
+      const report = await pruneCatalog(strapi, { source, deleting: true });
+
+      expect(report.deleted).toBe(true);
+
+      const after = await counts();
+      expect(after.drops).toBe(before.drops - 1);
+      expect(after.items).toBe(before.items - 1);
+      // Imagery is never removed: a file nothing references looks exactly like
+      // one an operator uploaded.
+      expect(after.files).toBe(before.files);
+      expect(after.bosses).toBe(before.bosses);
+
+      // An item another drop still names is kept, whatever else went.
+      const survivors = await strapi.db.query('api::item.item').findMany({ select: ['name'] });
+      const stillDropped = new Set(source.drops.map((drop) => drop.itemName));
+      for (const name of stillDropped) {
+        expect(survivors.map((item: { name: string }) => item.name)).toContain(name);
+      }
+
+      // Seeding puts back exactly what the source states, which is how the
+      // prune is meant to be recovered from.
+      await seedCatalog(strapi, slice);
+      expect(await counts()).toEqual(before);
+    });
   });
 });
