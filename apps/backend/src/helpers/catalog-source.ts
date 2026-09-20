@@ -1,34 +1,26 @@
 /**
- * Reads the raid-boss reference at `apps/backend/mocks/raid-bosses/data-wiki.ts`
- * and turns it into the shapes the catalogue stores. Pure: no Strapi, no
- * database, no filesystem beyond reading that one file and naming the images
- * beside it — so the corrections below can be tested without booting anything.
+ * Reads the raid-boss reference under `apps/backend/mocks/raid-bosses/` and
+ * turns it into the shapes the catalogue stores. Pure: no Strapi, no database,
+ * no filesystem beyond reading those files and naming the images beside them —
+ * so the corrections below can be tested without booting anything.
  *
- * The file is a 968 KB TypeScript literal that nothing imports at runtime; it
- * is input to the seed and only that. It is read as text, its `import type`
- * line and type annotations stripped, and evaluated, rather than `import`ed
- * normally. Fragile in principle, and the shape is stable: the file was
- * assembled once by merging the original scrape with a second, more complete
- * source, and is edited rather than regenerated.
+ * Four files, together about a megabyte of TypeScript literal that nothing
+ * imports at runtime: the bosses, their drops, the skills they carry and the
+ * maps. They are separate because they are refreshed separately — see
+ * `readRaw`, which joins them and refuses a join that has drifted. Each is read
+ * as text, its `import type` line and type annotations stripped, and evaluated,
+ * rather than `import`ed normally. Fragile in principle, and the shape is
+ * stable: the refresh passes edit these files in place rather than rewriting
+ * them, so a field no source states survives every run.
  *
- * `data.ts` beside it is the original scrape, kept valid and unused. Pointing
- * `SOURCE_RELATIVE` back at it is the whole of a revert, which is why the
- * placeholder-location repair below is kept although this source does not
- * need it.
- *
- * Three things about the source shape, each verified against the data rather
+ * Two things about the source shape, each verified against the data rather
  * than assumed:
  *
  *   * `itemId` is not an item identity. It is the source's icon field, and
- *     `itemId === basename(icon)` holds for all 3611 drop rows. 896 distinct
- *     item names share 451 icons, so keying items on it would collapse the
+ *     `itemId === basename(icon)` holds for all 3761 drop rows. 850 distinct
+ *     item names share 441 icons, so keying items on it would collapse the
  *     catalogue to less than half. Items are keyed by name; `itemId` survives
  *     only as the key that finds the uploaded icon.
- *
- *   * The original scrape gave four bosses the location slug `x`, collapsing
- *     under it two different places it could not slugify — both named in
- *     Russian. This source names both places properly, so the split below
- *     finds nothing to do; it stays for the revert.
  *
  *   * `_iNN` on an icon name looks like noise and is not: stripping it would
  *     merge the four enchant-armour scrolls into one, the four enchant-weapon
@@ -71,25 +63,15 @@ const findRepoRoot = () => {
 
 const REPO_ROOT = findRepoRoot();
 const SOURCE_FILE = path.join(REPO_ROOT, SOURCE_RELATIVE);
+const DROPS_FILE = path.join(path.dirname(SOURCE_FILE), 'drops.ts');
+const MAPS_FILE = path.join(path.dirname(SOURCE_FILE), 'world-map.ts');
+const SKILLS_FILE = path.join(path.dirname(SOURCE_FILE), 'skills.ts');
 
 /** Where the images sit, relative to the source file. */
 const IMAGES_DIR = path.join(path.dirname(SOURCE_FILE), 'images');
 
-/**
- * The two places the original scrape flattened into the slug `x`, keyed by the
- * Russian name it did produce. Translations chosen when that scrape was the
- * source — it contained no English name for either.
- *
- * Unreachable against `data-wiki.ts`, which names both places itself. Kept so
- * that pointing `SOURCE_RELATIVE` back at `data.ts` is the whole of a revert.
- */
-const COLLAPSED_LOCATIONS: Record<string, { slug: string; name: string }> = {
-  'Восточная Пограничная Застава': {
-    slug: 'eastern-border-outpost',
-    name: 'Eastern Border Outpost',
-  },
-  'Место обитания Рачиков': { slug: 'lachik-habitat', name: 'Lachik Habitat' },
-};
+/** A skill's icon is stored as a key; this is what it resolves against. */
+const SKILL_ICONS_DIR = path.join(IMAGES_DIR, 'skill-icons');
 
 /** Weakest first, so `order` sorts the way the game does. */
 export const GRADES = [
@@ -103,61 +85,30 @@ export const GRADES = [
 
 export const DEFAULT_GRADE_CODE = 'ng';
 
-/**
- * A boss's grade, from its level.
- *
- * Grade is this catalogue's own idea — the source has no such field — and 158
- * bosses is too many to set by hand for a value that level predicts. The bands
- * were chosen by the operator; the seed applies them as the default, and
- * `catalog-grades.json` still wins wherever somebody disagreed.
- *
- * `S` is deliberately unreachable: the three epics sit at level 72 and take `A`
- * like everything else above 61. It stays in the vocabulary for later.
- */
-export const gradeForLevel = (level: number): string => {
-  if (level < 40) return 'd';
-  if (level <= 49) return 'c';
-  if (level <= 61) return 'b';
+const GRADE_ORDER = new Map(GRADES.map((grade) => [grade.code, grade.order]));
 
-  return 'a';
+/**
+ * The stronger of two grades, or the default when neither is known.
+ *
+ * This is how a boss gets its grade: the best thing in its drop list. Where the
+ * catalogue used to read a boss's level through bands somebody chose, it now
+ * reads what the boss actually gives you, which is both what the grade is for
+ * and something the source states rather than something we infer.
+ *
+ * Measured before the rules were swapped: across all 158 bosses the two agree
+ * on 154, no boss's top grade rests on a single row, and no boss has an empty
+ * drop list. The four they disagree about are the subclass spirits, whose six
+ * drops are all `NG` because what they give you is a subclass and not
+ * equipment; they take `NG`, and an operator who reads that as wrong sets it in
+ * `catalog-grades.json`, which still wins.
+ */
+const strongerGrade = (left: string | undefined, right: string | undefined): string => {
+  const rank = (code: string | undefined) => GRADE_ORDER.get(code ?? '') ?? -1;
+
+  if (rank(left) < 0 && rank(right) < 0) return DEFAULT_GRADE_CODE;
+
+  return rank(left) >= rank(right) ? (left as string) : (right as string);
 };
-
-/**
- * The grade an item states in its own name — `Scroll: Enchant Armor (D-Grade)`.
- *
- * Sixteen items say so, and the name outranks the grade of the bosses that drop
- * them: an item naming its own grade is evidence about itself, where the drop
- * table is evidence about who carries it. In practice the two never disagree —
- * checked across all sixteen, and where the bosses span bands the name picks one
- * of the bands they span — so this decides nothing today that the boss rule
- * decided differently. What it does decide is the eight the boss rule could not:
- * the C- and D-grade scrolls, dropped across two bands each.
- */
-export const gradeFromName = (name: string): string | null => {
-  const match = name.match(/\((NG|S|A|B|C|D)-Grade\)/i);
-  if (!match?.[1]) return null;
-
-  const code = match[1].toLowerCase();
-
-  return GRADES.some((grade) => grade.code === code) ? code : null;
-};
-
-/**
- * The weapon vocabulary, as records rather than an enumeration on each boss.
- *
- * Six terms against 122 usages: `dagger` alone appears 34 times. A label kept
- * beside each usage would be the same string stored 34 times and 34 rows to
- * change, and a localised one would be 34 copies per language of a word that
- * needs translating once.
- */
-export const WEAPON_TYPES = [
-  { code: 'blunt', label: 'Blunt' },
-  { code: 'bow', label: 'Bow' },
-  { code: 'dagger', label: 'Dagger' },
-  { code: 'fist', label: 'Fist' },
-  { code: 'spear', label: 'Spear' },
-  { code: 'sword', label: 'Sword' },
-];
 
 /**
  * Grades are this catalogue's own idea — the source has no such field — and are
@@ -184,10 +135,12 @@ export const GRADES_FILE = path.join(
   'catalog-grades.json',
 );
 
-export const readCatalogGrades = (): CatalogGrades => {
-  if (!fs.existsSync(GRADES_FILE)) return { bosses: {}, items: {} };
+/** Takes a path for the same reason `exportCatalogGrades` does: so a test can
+ * write one somewhere other than the repository's own. */
+export const readCatalogGrades = (file: string = GRADES_FILE): CatalogGrades => {
+  if (!fs.existsSync(file)) return { bosses: {}, items: {} };
 
-  const parsed = JSON.parse(fs.readFileSync(GRADES_FILE, 'utf8')) as Partial<CatalogGrades>;
+  const parsed = JSON.parse(fs.readFileSync(file, 'utf8')) as Partial<CatalogGrades>;
 
   return { bosses: parsed.bosses ?? {}, items: parsed.items ?? {} };
 };
@@ -195,6 +148,8 @@ export const readCatalogGrades = (): CatalogGrades => {
 interface RawDrop {
   itemId: string;
   name: string;
+  /** `ng`, `d`, `c`, `b` or `a`, as the source states beside the item's name. */
+  grade: string;
   chance: number;
   minCount: number;
   maxCount: number;
@@ -213,15 +168,20 @@ interface RawBoss {
   avatar: { full: string; mini: string };
   mapX: number;
   mapY: number;
-  worldX: number;
-  worldY: number;
+  /**
+   * Where the boss's pin sits on the source's own 3004-pixel map, not a world
+   * coordinate. It was called `worldX`/`worldY` until it was checked: the pair
+   * stored for Queen Ant, `1557.91 / 2527.95`, is that pin's `left` and `top`
+   * exactly. Real world coordinates, if a source for them appears, arrive as
+   * fields of their own.
+   */
+  wikiX: number;
+  wikiY: number;
   respawn: { fixed: boolean; baseHours: number | null; varianceHours: number | null };
   stats: Record<string, number>;
-  weaponResistances: string[];
-  weaponVulnerabilities: string[];
-  elementModifiers?: Record<string, number>;
+  /** Keys into `skills.ts`, of the form `<group>-<level>`. */
+  skills: string[];
   saMaxLevel?: number;
-  statModifiers?: Record<string, number>;
   drops: RawDrop[];
 }
 
@@ -232,6 +192,23 @@ interface RawPlan {
   width: number;
   height: number;
   image: string;
+}
+
+interface RawModifier {
+  kind: string;
+  subject: string;
+  value: number;
+  unit: string;
+}
+
+interface RawSkill {
+  key: string;
+  group: string;
+  level: number;
+  name: string;
+  origin: string;
+  icon: string | null;
+  modifiers: RawModifier[];
 }
 
 export interface CatalogLocation {
@@ -252,10 +229,12 @@ export interface CatalogItem {
   /** The source's `itemId`: names the icon, never the item. */
   iconKey: string | null;
   /**
-   * What the item calls itself, else the grade of the bosses that drop it when
-   * they agree. When neither settles it — six items, `Proof of Loyalty` above
-   * all, which falls from 155 bosses across every band — it stays at the
-   * default rather than guessing, and the name is listed in `ambiguousItems`.
+   * The grade the source states for the item, not one this catalogue worked
+   * out. It used to be inferred — from a `(D-Grade)` in the name where there
+   * was one, otherwise from the levels of the bosses that drop it when they
+   * agreed — and that disagreed with the source on 500 of the 850 items. It
+   * also had no answer at all for 63 of them, which is how the defect was
+   * found: an operator saw a long list of `C` equipment sitting at `NG`.
    */
   grade: string;
 }
@@ -272,23 +251,21 @@ export interface CatalogBoss {
    * than derived: nothing in a boss's level, race or grade implies it.
    */
   subclass: boolean;
-  /** Derived from `level`; see `gradeForLevel`. */
+  /** The best grade in this boss's drop list; see `strongerGrade`. */
   grade: string;
   saMaxLevel: number | null;
   mapX: number;
   mapY: number;
-  worldX: number;
-  worldY: number;
+  wikiX: number;
+  wikiY: number;
   respawn: {
     kind: 'interval' | 'scheduled';
     baseMinutes: number | null;
     varianceMinutes: number | null;
   };
   stats: Record<string, number>;
-  resistances: string[];
-  vulnerabilities: string[];
-  elementModifiers: { element: string; value: number }[];
-  statModifiers: { stat: string; value: number }[];
+  /** Keys of the skills this boss carries; see `CatalogSource.skills`. */
+  skills: string[];
   locationSlug: string;
   avatarSlug: string;
 }
@@ -301,20 +278,69 @@ export interface CatalogDrop {
   maxCount: number;
 }
 
+/**
+ * A skill the bosses carry, with its modifiers already sorted by what they
+ * shift.
+ *
+ * The source's own shape is one list of modifiers each naming its `kind`; the
+ * catalogue stores four lists, so that the kind is the field name and a weapon
+ * cannot be recorded as an element. Splitting here rather than in the seeder
+ * keeps the seeder a straight copy and puts the one place that can fail — a
+ * kind nothing knows — beside the rest of the reader's tripwires.
+ */
+export interface CatalogSkill {
+  key: string;
+  gameId: string;
+  level: number;
+  name: string;
+  origin: string;
+  /** Absolute path to the icon file, or null for a skill the source has none for. */
+  iconPath: string | null;
+  weaponModifiers: { weapon: string; value: number; unit: string }[];
+  elementModifiers: { element: string; value: number; unit: string }[];
+  statModifiers: { stat: string; value: number; unit: string }[];
+  conditionModifiers: { condition: string; value: number; unit: string }[];
+}
+
 export interface CatalogSource {
   locations: CatalogLocation[];
   avatars: CatalogAvatar[];
   items: CatalogItem[];
   bosses: CatalogBoss[];
   drops: CatalogDrop[];
+  skills: CatalogSkill[];
   /** icon key -> absolute path, for the upload step. */
   icons: Map<string, string>;
-  worldMapPath: string;
-  /** Items whose source bosses disagree on grade, so it was not derived. */
-  ambiguousItems: string[];
+  mapPath: string;
+  /**
+   * The source's own map, which `wikiX`/`wikiY` are pixels of. Separate from
+   * `mapPath`, which is a different picture at a different size and is
+   * what `mapX`/`mapY` are measured against.
+   */
+  wikiMapPath: string;
+  /**
+   * The date of the copy of the source the catalogue was built from — the
+   * oldest of the data files', because the catalogue is only as current as its
+   * stalest part. Null until a refresh has written one.
+   */
+  sourceReadOn: string | null;
 }
 
-/** Turns an item name into a URL-safe slug. Checked: 896 names, 896 slugs. */
+/**
+ * Turns an item name into a URL-safe slug. Checked: 850 names, 850 slugs.
+ *
+ * Only whitespace separates. Every other character that cannot appear in a slug
+ * is removed rather than replaced, which is what makes `Knight's Sword` read
+ * `knights-sword` and `Recipe: Dasparion's Staff(60%)` read
+ * `recipe-dasparions-staff60`.
+ *
+ * That is the source's own rule, arrived at by reading its slugs rather than by
+ * preference: applied to the 850 item names and 158 boss names it publishes, it
+ * reproduces every one of its slugs exactly. Matching matters because a slug is
+ * this catalogue's identity for a record, and two conventions for one name
+ * means two records — the earlier rule, which turned an apostrophe into a
+ * separator, disagreed on 135 items and 20 bosses.
+ */
 export const slugify = (value: string) =>
   value
     .toLowerCase()
@@ -323,47 +349,172 @@ export const slugify = (value: string) =>
     // alphanumeric filter below.
     .normalize('NFKD')
     .replace(/\p{Mn}/gu, '')
-    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]+/g, '')
+    .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '');
 
-const readRaw = (): { bosses: RawBoss[]; plans: Record<string, RawPlan>; worldMap: string } => {
-  const text = fs.readFileSync(SOURCE_FILE, 'utf8');
-  const script = text
+/**
+ * The copy of the source a generated file was built from, as its own header
+ * records it. Read as text rather than evaluated, so a file written before the
+ * refreshes started stamping one simply has none.
+ */
+const readStamp = (file: string): string | null =>
+  fs.readFileSync(file, 'utf8').match(/export const SOURCE_READ_ON = '([^']*)';/)?.[1] ?? null;
+
+/** Evaluates one of the data files and hands back the names it exports. */
+const evaluate = <T>(file: string, exported: string): T => {
+  const script = fs
+    .readFileSync(file, 'utf8')
     .replace(/^import[^;]+;$/gm, '')
     .replace(/export const (\w+)\s*(?::[^=]+)?=/g, 'const $1 =')
-    .concat('\n;({ RAID_BOSSES, DUNGEON_PLANS, WORLD_MAP_IMAGE })');
+    .concat(`\n;({ ${exported} })`);
 
-  const result = vm.runInNewContext(script, Object.create(null), {
-    filename: SOURCE_FILE,
+  return vm.runInNewContext(script, Object.create(null), {
+    filename: file,
     timeout: 30_000,
-  }) as { RAID_BOSSES: RawBoss[]; DUNGEON_PLANS: Record<string, RawPlan>; WORLD_MAP_IMAGE: string };
+  }) as T;
+};
+
+/**
+ * The three data files, joined.
+ *
+ * They are separate because they are refreshed separately: drops come from one
+ * article request, everything else from one request per boss, and the map from
+ * neither. The join is on the game's own id, and it is checked rather than
+ * assumed — a boss whose drops went missing because one file was refreshed and
+ * the other was not would otherwise read as a boss that drops nothing, which is
+ * indistinguishable from the truth.
+ */
+const readRaw = (): {
+  bosses: RawBoss[];
+  plans: Record<string, RawPlan>;
+  map: string;
+  wikiMap: string;
+  skills: RawSkill[];
+} => {
+  const { RAID_BOSSES } = evaluate<{ RAID_BOSSES: Omit<RawBoss, 'drops'>[] }>(
+    SOURCE_FILE,
+    'RAID_BOSSES',
+  );
+  const { RAID_BOSS_DROPS } = evaluate<{ RAID_BOSS_DROPS: Record<string, RawDrop[]> }>(
+    DROPS_FILE,
+    'RAID_BOSS_DROPS',
+  );
+  const { DUNGEON_PLANS, MAP_IMAGE, WIKI_MAP_IMAGE } = evaluate<{
+    DUNGEON_PLANS: Record<string, RawPlan>;
+    MAP_IMAGE: string;
+    WIKI_MAP_IMAGE: string;
+  }>(MAPS_FILE, 'DUNGEON_PLANS, MAP_IMAGE, WIKI_MAP_IMAGE');
+  const { SKILLS } = evaluate<{ SKILLS: RawSkill[] }>(SKILLS_FILE, 'SKILLS');
+
+  const withoutDrops = RAID_BOSSES.filter((boss) => !RAID_BOSS_DROPS[boss.id]);
+  if (withoutDrops.length) {
+    throw new Error(
+      `${withoutDrops.length} bosses have no entry in drops.ts (${withoutDrops
+        .slice(0, 3)
+        .map((boss) => boss.slug)
+        .join(', ')}). The two files have drifted; re-run the drop refresh.`,
+    );
+  }
+
+  const known = new Set(RAID_BOSSES.map((boss) => boss.id));
+  const orphaned = Object.keys(RAID_BOSS_DROPS).filter((id) => !known.has(id));
+  if (orphaned.length) {
+    throw new Error(
+      `drops.ts names ${orphaned.length} bosses the catalogue does not hold (${orphaned
+        .slice(0, 3)
+        .join(', ')}). The two files have drifted; re-run the profile refresh.`,
+    );
+  }
+
+  // The same join, on the third file. A boss naming a skill nothing defines
+  // would otherwise seed as a boss carrying one fewer skill than it has, which
+  // reads exactly like a boss that carries fewer.
+  const defined = new Set(SKILLS.map((skill) => skill.key));
+  const dangling = [
+    ...new Set(RAID_BOSSES.flatMap((boss) => boss.skills).filter((key) => !defined.has(key))),
+  ];
+  if (dangling.length) {
+    throw new Error(
+      `${dangling.length} skill keys are carried by a boss but not defined in skills.ts ` +
+        `(${dangling.slice(0, 3).join(', ')}). Re-run the skill refresh.`,
+    );
+  }
 
   return {
-    bosses: result.RAID_BOSSES,
-    plans: result.DUNGEON_PLANS,
-    worldMap: result.WORLD_MAP_IMAGE,
+    bosses: RAID_BOSSES.map((boss) => ({ ...boss, drops: RAID_BOSS_DROPS[boss.id] })),
+    plans: DUNGEON_PLANS,
+    map: MAP_IMAGE,
+    wikiMap: WIKI_MAP_IMAGE,
+    skills: SKILLS,
   };
 };
 
 /**
- * The location a boss belongs to, with the original scrape's `x` collapse
- * undone if it is there. Every boss has exactly one — checked across all 158,
- * min 1 and max 1 — which is why the relation is many-to-one and not the
- * many-to-many the array shape would suggest.
+ * The location a boss belongs to. Every boss has exactly one — checked across
+ * all 158, min 1 and max 1 — which is why the relation is many-to-one and not
+ * the many-to-many the array shape would suggest.
  */
 const locationOf = (boss: RawBoss) => {
   const raw = boss.locations[0];
   if (!raw) throw new Error(`Boss ${boss.slug} has no location`);
 
-  const repaired = COLLAPSED_LOCATIONS[raw.name];
-
-  return repaired ?? { slug: raw.slug, name: raw.name };
+  return { slug: raw.slug, name: raw.name };
 };
 
 const toMinutes = (hours: number | null) => (hours === null ? null : Math.round(hours * 60));
 
+/**
+ * One skill, with its modifiers sorted into a list per kind.
+ *
+ * A kind nothing recognises stops the read rather than being dropped. The
+ * parser that writes `skills.ts` already refuses a subject none of its
+ * vocabularies knows, so reaching here means the two have drifted apart — and a
+ * modifier silently missing from the catalogue is the one failure this shape
+ * exists to prevent.
+ */
+const toCatalogSkill = (skill: RawSkill): CatalogSkill => {
+  const catalogSkill: CatalogSkill = {
+    key: skill.key,
+    gameId: skill.group,
+    level: skill.level,
+    name: skill.name,
+    origin: skill.origin,
+    iconPath: skill.icon ? path.join(SKILL_ICONS_DIR, `${skill.icon}.webp`) : null,
+    weaponModifiers: [],
+    elementModifiers: [],
+    statModifiers: [],
+    conditionModifiers: [],
+  };
+
+  for (const { kind, subject, value, unit } of skill.modifiers) {
+    switch (kind) {
+      case 'weapon':
+        catalogSkill.weaponModifiers.push({ weapon: subject, value, unit });
+        break;
+      case 'element':
+        catalogSkill.elementModifiers.push({ element: subject, value, unit });
+        break;
+      case 'stat':
+        catalogSkill.statModifiers.push({ stat: subject, value, unit });
+        break;
+      case 'condition':
+        catalogSkill.conditionModifiers.push({ condition: subject, value, unit });
+        break;
+      default:
+        throw new Error(
+          `skills.ts: ${skill.key} states a modifier of kind "${kind}" (${subject}), which the ` +
+            'catalogue has no list for. Add one, or fix the skill refresh.',
+        );
+    }
+  }
+
+  return catalogSkill;
+};
+
 export const readCatalogSource = (): CatalogSource => {
-  const { bosses: raw, plans, worldMap } = readRaw();
+  const { bosses: raw, plans, map, wikiMap, skills: rawSkills } = readRaw();
 
   const locations = new Map<string, CatalogLocation>();
   const avatars = new Map<string, CatalogAvatar>();
@@ -371,7 +522,6 @@ export const readCatalogSource = (): CatalogSource => {
   const icons = new Map<string, string>();
   const bosses: CatalogBoss[] = [];
   const drops: CatalogDrop[] = [];
-  const gradesByItem = new Map<string, Set<string>>();
 
   for (const boss of raw) {
     const location = locationOf(boss);
@@ -396,12 +546,13 @@ export const readCatalogSource = (): CatalogSource => {
       level: boss.level,
       epic: boss.epic,
       subclass: boss.subclass,
-      grade: gradeForLevel(boss.level),
+      // Raised below to the best grade in this boss's drop list.
+      grade: DEFAULT_GRADE_CODE,
       saMaxLevel: boss.saMaxLevel ?? null,
       mapX: boss.mapX,
       mapY: boss.mapY,
-      worldX: boss.worldX,
-      worldY: boss.worldY,
+      wikiX: boss.wikiX,
+      wikiY: boss.wikiY,
       respawn: boss.respawn.fixed
         ? // The source records these three epics as the literal string "Fixed"
           // and names no day. The shape is here; the entries are authored later.
@@ -412,19 +563,12 @@ export const readCatalogSource = (): CatalogSource => {
             varianceMinutes: toMinutes(boss.respawn.varianceHours),
           },
       stats: boss.stats,
-      resistances: boss.weaponResistances.map((weapon) => weapon.toLowerCase()),
-      vulnerabilities: boss.weaponVulnerabilities.map((weapon) => weapon.toLowerCase()),
-      elementModifiers: Object.entries(boss.elementModifiers ?? {}).map(([element, value]) => ({
-        element,
-        value,
-      })),
-      statModifiers: Object.entries(boss.statModifiers ?? {}).map(([stat, value]) => ({
-        stat,
-        value,
-      })),
+      skills: boss.skills,
       locationSlug: location.slug,
       avatarSlug,
     });
+
+    const current = bosses[bosses.length - 1] as CatalogBoss;
 
     for (const drop of boss.drops) {
       if (!items.has(drop.name)) {
@@ -432,14 +576,11 @@ export const readCatalogSource = (): CatalogSource => {
           slug: slugify(drop.name),
           name: drop.name,
           iconKey: drop.itemId || null,
-          // Filled in below, once every boss that drops it is known.
-          grade: DEFAULT_GRADE_CODE,
+          grade: drop.grade,
         });
       }
 
-      const seen = gradesByItem.get(drop.name) ?? new Set<string>();
-      seen.add(gradeForLevel(boss.level));
-      gradesByItem.set(drop.name, seen);
+      current.grade = strongerGrade(current.grade, drop.grade);
 
       if (drop.itemId && drop.icon && !icons.has(drop.itemId)) {
         icons.set(drop.itemId, path.join(path.dirname(SOURCE_FILE), drop.icon));
@@ -470,38 +611,21 @@ export const readCatalogSource = (): CatalogSource => {
     };
   }
 
-  // An item's grade, in order of authority: what it calls itself, then the
-  // bosses that drop it when they agree. 890 of the 896 land on one; the last
-  // six span bands and say nothing about themselves, so they keep the default
-  // rather than being guessed at.
-  const ambiguousItems: string[] = [];
-  for (const item of items.values()) {
-    const named = gradeFromName(item.name);
-    if (named) {
-      item.grade = named;
-      continue;
-    }
-
-    const seen = gradesByItem.get(item.name);
-    if (!seen) continue;
-
-    if (seen.size === 1) {
-      const [only] = [...seen];
-      item.grade = only as string;
-    } else {
-      ambiguousItems.push(item.name);
-    }
-  }
-
   return {
-    ambiguousItems: ambiguousItems.sort(),
     locations: [...locations.values()],
     avatars: [...avatars.values()],
     items: [...items.values()],
     bosses,
     drops,
+    skills: rawSkills.map(toCatalogSkill),
     icons,
-    worldMapPath: path.join(path.dirname(SOURCE_FILE), worldMap),
+    mapPath: path.join(path.dirname(SOURCE_FILE), map),
+    wikiMapPath: path.join(path.dirname(SOURCE_FILE), wikiMap),
+    sourceReadOn:
+      [SOURCE_FILE, DROPS_FILE, SKILLS_FILE]
+        .map(readStamp)
+        .filter((stamp): stamp is string => stamp !== null)
+        .sort()[0] ?? null,
   };
 };
 

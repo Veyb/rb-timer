@@ -8,8 +8,9 @@
  * the boss-and-item pair check above all, which is the only thing enforcing
  * that constraint.
  *
- * Order is dependency order and not negotiable: grades, then locations and
- * avatars and items (each with its imagery), then bosses, then drops.
+ * Order is dependency order and not negotiable: grades, then the skills a boss
+ * points at, then locations and avatars and items (each with its imagery),
+ * then bosses, then drops.
  *
  * Slugs are set explicitly at every step. Strapi generates a `uid` from its
  * `targetField` only in the admin panel — `POST /uid/generate` is an admin
@@ -28,14 +29,15 @@ import {
   IMAGES_ROOT,
   readCatalogGrades,
   readCatalogSource,
-  WEAPON_TYPES,
 } from './catalog-source';
 
 const FILE_UID = 'plugin::upload.file';
 
 export interface SeedReport {
+  /** The copy of the source the mock was built from; see `SOURCE_READ_ON`. */
+  sourceReadOn: string | null;
   grades: number;
-  weaponTypes: number;
+  skills: number;
   locations: number;
   avatars: number;
   items: number;
@@ -64,9 +66,9 @@ const uploadNameFor = (filePath: string) =>
  *
  * Strapi does not deduplicate: the same bytes uploaded twice become two rows
  * and two files on disk. Without this check a second seed run would add another
- * 567 files, and every record would end up pointing at the newest copy while
- * the older ones lingered unreferenced — which is exactly the orphan pile this
- * change had to clear out in the first place.
+ * copy of all 710, and every record would end up pointing at the newest while
+ * the older ones lingered unreferenced — which is exactly the orphan pile an
+ * earlier change had to clear out.
  */
 const uploadOnce = async (
   strapi: Core.Strapi,
@@ -138,25 +140,42 @@ export const seedCatalog = async (
     gradeIds.set(grade.code, record.documentId);
   }
 
-  // Hand-set grades win; where nobody has said otherwise the derived one
-  // applies — a boss's from its level, an item's from the bosses that drop it
-  // when they agree. `DEFAULT_GRADE_CODE` is the last resort, and after this
-  // change it is reached only by the 14 items whose sources span bands.
+  // Hand-set grades win; where nobody has said otherwise the source's applies —
+  // an item's as the reference states it, a boss's as the strongest thing in
+  // its drop list. `DEFAULT_GRADE_CODE` is the last resort, reached by the four
+  // subclass bosses, whose drops carry no grade at all.
   const chosen = readCatalogGrades();
   const gradeFor = (kind: 'bosses' | 'items', slug: string, derived: string) =>
     gradeIds.get(chosen[kind][slug] ?? derived) ?? gradeIds.get(DEFAULT_GRADE_CODE);
 
-  // 2. Weapon types. Six records the bosses point at, rather than a label
-  // repeated beside each of the 122 usages.
-  const weaponIds = new Map<string, string>();
-  for (const weapon of WEAPON_TYPES) {
+  // 2. Skills. 25 records against 267 usages, and the reason the bosses point
+  // at them rather than carrying their own copy: a rebalance to the Undead
+  // trait is one edit here instead of one edit on each of the bosses that have
+  // it.
+  const skillIds = new Map<string, string>();
+  for (const skill of source.skills) {
     const record = await upsert(
       strapi,
-      'api::weapon-type.weapon-type',
-      { code: weapon.code },
-      weapon,
+      'api::skill.skill',
+      { key: skill.key },
+      {
+        key: skill.key,
+        // Set here for the same reason a drop's is: twelve of these are called
+        // `Spirits` and differ only by level, so the admin needs something to
+        // tell them apart with.
+        label: `${skill.name} Lv. ${skill.level}`,
+        gameId: skill.gameId,
+        level: skill.level,
+        name: skill.name,
+        origin: skill.origin,
+        icon: skill.iconPath ? await uploadOnce(strapi, skill.iconPath, fileCache, counters) : null,
+        weaponModifiers: skill.weaponModifiers,
+        elementModifiers: skill.elementModifiers,
+        statModifiers: skill.statModifiers,
+        conditionModifiers: skill.conditionModifiers,
+      },
     );
-    weaponIds.set(weapon.code, record.documentId);
+    skillIds.set(skill.key, record.documentId);
   }
 
   // 3. Locations, with the 15 dungeon plans that have one.
@@ -201,7 +220,7 @@ export const seedCatalog = async (
     avatarIds.set(avatar.slug, record.documentId);
   }
 
-  // 5. Items. 896 of them share 451 icons; `iconKey` is the source's `itemId`,
+  // 5. Items. 850 of them share 441 icons; `iconKey` is the source's `itemId`,
   // which names the icon and never the item.
   const itemIds = new Map<string, string>();
   for (const item of source.items) {
@@ -240,8 +259,8 @@ export const seedCatalog = async (
         saMaxLevel: boss.saMaxLevel,
         mapX: boss.mapX,
         mapY: boss.mapY,
-        worldX: boss.worldX,
-        worldY: boss.worldY,
+        wikiX: boss.wikiX,
+        wikiY: boss.wikiY,
         respawn: {
           kind: boss.respawn.kind,
           baseMinutes: boss.respawn.baseMinutes,
@@ -251,10 +270,7 @@ export const seedCatalog = async (
         // list is empty on purpose rather than absent.
         respawnSchedule: [],
         stats: boss.stats,
-        resistances: boss.resistances.map((code) => weaponIds.get(code)).filter(Boolean),
-        vulnerabilities: boss.vulnerabilities.map((code) => weaponIds.get(code)).filter(Boolean),
-        elementModifiers: boss.elementModifiers,
-        statModifiers: boss.statModifiers,
+        skills: boss.skills.map((key) => skillIds.get(key)).filter(Boolean),
         location: locationIds.get(boss.locationSlug),
         avatar: avatarIds.get(boss.avatarSlug),
         grade: gradeFor('bosses', boss.slug, boss.grade),
@@ -288,14 +304,52 @@ export const seedCatalog = async (
     );
   }
 
-  // The world map is not attached to any record yet — the map screen is a later
-  // change — but it is part of the catalogue's imagery and belongs in the
-  // library with the rest.
-  await uploadOnce(strapi, source.worldMapPath, fileCache, counters);
+  // The two maps, on their own record. Two, because a boss carries two
+  // positions measured against two different pictures: `mapX`/`mapY` against
+  // the hand-assembled map and `wikiX`/`wikiY` against the source's.
+  //
+  // They hang off a record rather than sitting loose in the media library for
+  // one reason: a file's public URL carries a suffix Strapi generates at upload
+  // time, so it changes on the next seed and cannot be written down anywhere.
+  // Uploaded but unreferenced, the image was reachable only by someone who
+  // already knew this run's address for it.
+  const maps = {
+    map: await uploadOnce(strapi, source.mapPath, fileCache, counters),
+    wikiMap: await uploadOnce(strapi, source.wikiMapPath, fileCache, counters),
+  };
+
+  // The one write in this file that does not go through the Document Service,
+  // and the reason is worth knowing. Writing a media field through it starts a
+  // populate of the response that it does not await: the call returns in 16ms,
+  // `app.destroy()` closes the connection pool at 29ms, and the populate then
+  // spends sixty seconds failing to acquire a connection before the process
+  // exits non-zero. Every other record here is followed by thousands more
+  // operations, so the populate finishes long before anything shuts down; this
+  // one is last, and it hit it every run.
+  //
+  // The documented way out does not work: `update` takes `populate`, whose
+  // default the documentation gives as null, and passing `populate: {}` or
+  // `fields: ['id']` leaves the media populate running all the same.
+  //
+  // Nothing is bypassed by going around it. Strapi's own guidance is to prefer
+  // the Document Service, and the reasons it gives are Draft & Publish,
+  // internationalisation, content history and `documentId` — this type has the
+  // first two switched off, history records what an operator does in the admin
+  // panel rather than what a seed does, and `db.query` fills `documentId`
+  // itself. It also has no lifecycles. The row is the same row.
+  //
+  // A single type has one row or none, so there is nothing to match on.
+  const existing = await strapi.db.query('api::map.map').findOne({});
+  if (existing) {
+    await strapi.db.query('api::map.map').update({ where: { id: existing.id }, data: maps });
+  } else {
+    await strapi.db.query('api::map.map').create({ data: maps });
+  }
 
   return {
+    sourceReadOn: source.sourceReadOn,
     grades: GRADES.length,
-    weaponTypes: WEAPON_TYPES.length,
+    skills: source.skills.length,
     locations: source.locations.length,
     avatars: source.avatars.length,
     items: source.items.length,
