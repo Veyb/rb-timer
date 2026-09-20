@@ -10,13 +10,12 @@
     "includes": [
       "**",
       "!**/*.example.js",
-      "!**/next-env.d.ts",
-      "!apps/backend/mocks/raid-bosses-import/raid-boss-details/raid-boss-details.json"
+      "!**/next-env.d.ts"
     ]
   },
   "overrides": [
     {
-      "includes": ["apps/backend/mocks/raid-bosses-import/*.ts"],
+      "includes": ["apps/backend/mocks/raid-bosses/*.ts"],
       "files": {
         "maxSize": 5242880
       }
