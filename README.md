@@ -2,6 +2,16 @@
 
 Timer for tracking the respawn of raid bosses
 
+## The raid-boss catalogue
+
+The catalogue — bosses, drops, items, skills and their imagery — is built from
+the game's own reference wiki into a mock under `apps/backend/mocks/raid-bosses/`
+and seeded from there. Refreshing it after a game patch is four commands in a
+particular order, run by hand, against a source that rate-limits.
+
+**[docs/CATALOGUE.md](docs/CATALOGUE.md)** has the procedure, what each pass
+costs, and the two ways of getting it wrong that fail quietly.
+
 ## Development
 
 Requires Node.js 22 (see `.nvmrc`) and [pnpm](https://pnpm.io) (`corepack enable pnpm`).
