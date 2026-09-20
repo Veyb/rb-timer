@@ -25,6 +25,12 @@ export {
   redeemInviteCode,
   revokeInviteCode,
 } from './invite-code';
-export { getBossDrops, getRaidBoss, getRaidBossList, getRaidBossPage } from './raid-boss';
+export {
+  getBossDrops,
+  getMaps,
+  getRaidBoss,
+  getRaidBossList,
+  getRaidBossPage,
+} from './raid-boss';
 export { getMemberRoles } from './role';
 export { deleteOwnAccount, getUsersMe } from './user';

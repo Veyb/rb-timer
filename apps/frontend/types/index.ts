@@ -20,12 +20,16 @@ export type {
   Element,
   Grade,
   Location,
+  Maps,
+  ModifierUnit,
   RaidBoss,
   Respawn,
   RespawnEntry,
-  WeaponType,
+  Skill,
+  Weapon,
   Weekday,
 } from './raid-boss.types';
+export { WEAPON_LABELS } from './raid-boss.types';
 export type { Role, RoleType } from './role.types';
 export type { MayHaveTestId } from './test-id.types';
 export type { SocketUser, User } from './user.types';

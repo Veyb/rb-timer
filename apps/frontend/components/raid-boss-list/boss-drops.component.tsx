@@ -55,11 +55,16 @@ const Holder = styled.div`
 `;
 
 /**
- * Formats a drop chance the way the source states it: 100 and 50 stay whole,
- * 37.7861 keeps its digits. `toFixed` would write "100.0000%" for the first and
- * round the second away.
+ * Formats a drop chance to two decimals: 37.7861 reads 37.79%, and 100 and 50
+ * stay whole rather than becoming "100.00%".
+ *
+ * A rate that rounds to nothing is shown as a bound instead of as zero. One
+ * drop in the catalogue is rarer than that — Erdrath's `Spellbook: Magician's
+ * Will` at 0.0013% — and "0%" would say it never falls, which is the one thing
+ * a drop table must not say about something that does.
  */
-const formatChance = (chance: number) => `${Number(chance.toFixed(4))}%`;
+const formatChance = (chance: number) =>
+  chance > 0 && chance < 0.005 ? '<0.01%' : `${Number(chance.toFixed(2))}%`;
 
 const formatCount = (min: number, max: number) => (min === max ? `${min}` : `${min}–${max}`);
 

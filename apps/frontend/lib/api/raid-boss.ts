@@ -2,8 +2,8 @@
 import qs from 'qs';
 
 // local modules
-import type { BossDrop, Meta, RaidBoss } from '../../types';
-import { apiGetList } from './base';
+import type { BossDrop, Maps, Meta, RaidBoss } from '../../types';
+import { apiGet, apiGetList } from './base';
 
 /**
  * No `authHeaders` anywhere in this file, and that is the point rather than an
@@ -28,6 +28,29 @@ const listQuery = (page: number) =>
     },
     { encodeValuesOnly: true },
   );
+
+/**
+ * The two maps the catalogue's coordinates are measured on.
+ *
+ * A single type, so the response is one object rather than a list, and there is
+ * no filtering to do. They are read from here and not by their file URL because
+ * that URL carries a suffix Strapi generates at upload time, which changes
+ * whenever the catalogue is seeded again.
+ *
+ * The route is singular — `/map` — because Strapi builds a single type's route
+ * from its singular name, the way its own `/api/global` does. There is one
+ * record; it holds two maps.
+ */
+export async function getMaps() {
+  const query = qs.stringify(
+    { populate: { map: true, wikiMap: true } },
+    { encodeValuesOnly: true },
+  );
+
+  const { data } = await apiGet<{ data: Maps | null }>(`/map?${query}`);
+
+  return data;
+}
 
 export async function getRaidBossPage(page = 1) {
   return apiGetList<RaidBoss>(`/raid-bosses?${listQuery(page)}`);
@@ -61,10 +84,18 @@ export async function getRaidBoss(slug: string) {
         respawn: true,
         respawnSchedule: true,
         stats: true,
-        resistances: true,
-        vulnerabilities: true,
-        elementModifiers: true,
-        statModifiers: true,
+        // The modifier lists have to be named: Strapi returns a component list
+        // as an empty array unless it is populated, so `skills: true` alone
+        // would give every skill and nothing it says.
+        skills: {
+          populate: {
+            icon: true,
+            weaponModifiers: true,
+            elementModifiers: true,
+            statModifiers: true,
+            conditionModifiers: true,
+          },
+        },
         drops: { populate: { item: { populate: { icon: true, grade: true } } } },
       },
     },
